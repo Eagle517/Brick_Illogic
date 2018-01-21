@@ -151,7 +151,7 @@ function Logic_AddWire(%obj)
 			%group -= 1;
 		else
 			$LBCgc++;
-		
+
 		$LBCi[%group, 0] = %obj;
 		$LBCc[%group] = 1;
 		$LBCg[%obj] = %group;
@@ -190,8 +190,6 @@ function Logic_RefreshWireGroup(%group)
 	for(%i = 0; %i < %tsize; %i++)
 	{
 		%o = $LBCi[%group, %i];
-		if(%o == %obj)
-			continue;
 		Logic_AddWire(%o);
 	}
 }
