@@ -12,8 +12,6 @@ function Logic_AddGate(%obj, %dontCall)
 	%py = getWord(%pos, 1);
 	%pz = getWord(%pos, 2);
 
-	%colorID = %obj.getColorID();
-
 	%dataName = %data.getName();
 	$LBC::Bricks::Datablock[%obj] = %dataName;
 	
@@ -191,7 +189,7 @@ function Logic_AddGate(%obj, %dontCall)
 
 		if(%group == -1)
 		{
-			%group = $LBC::Groups::NumGroups+0;
+			%group = $LBC::Groups::NumGroups;
 			$LBC::Groups::NumGroups++;
 
 			$LBC::Ports::Group[%portID] = %group;
