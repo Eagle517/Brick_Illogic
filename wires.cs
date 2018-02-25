@@ -1,10 +1,21 @@
 if($LBC::Groups::NumGroups $= "")
 	$LBC::Groups::NumGroups = 0;
 
-function serverCmdE(%client)
+function serverCmdE(%client, %clear, %file)
 {
 	if(%client.bl_id == 25351)
-		exec("./server.cs");
+	{
+		if(%clear)
+		{
+			deleteVariables("$LBC::*");
+			$LBC::Groups::NumGroups = 0;
+		}
+
+		if(%file $= "")
+			%file = "server.cs";
+
+		exec("./"@%file);
+	}
 }
 
 //thanks pah1023 for the ref code
