@@ -3,7 +3,7 @@ datablock fxDTSBrickData(Logic1x1fDiodeData)
 	category = "Logic Bricks";
 	subCategory = "Gates";
 	uiName = "1x1f Diode";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/diode";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/1x1f_1i_1o.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
