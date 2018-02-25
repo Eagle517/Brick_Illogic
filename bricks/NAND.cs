@@ -1,6 +1,7 @@
 datablock fxDTSBrickData(Logic1x2fNANDData : Logic1x2fORData)
 {
 	uiName = "1x2f NAND";
+	iconName = "Add-Ons/Brick_Illogic/icons/NAND";
 	logicUIName = "NAND";
 	logicUIDesc = "C is false if A and B are true";
 };

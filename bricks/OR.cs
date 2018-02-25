@@ -3,7 +3,7 @@ datablock fxDTSBrickData(Logic1x2fORData)
 	category = "Logic Bricks";
 	subCategory = "Gates";
 	uiName = "1x2f OR";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/OR";
 	brickFile = "add-ons/brick_illogic/bricks/blb/1x2f_2i_1o.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
