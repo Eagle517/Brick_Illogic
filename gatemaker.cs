@@ -147,7 +147,7 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 
 	%x = %wid % 2 == 0 ? mFloor(getWord(%pos, 0)*2+0.5)/2 : mFloor(getWord(%pos, 0)*2+1)/2-0.25;
 	%y = %len % 2 == 0 ? mFloor(getWord(%pos, 1)*2+0.5)/2 : mFloor(getWord(%pos, 1)*2+1)/2-0.25;
-	%z = (mFloor(getWord(%pos, 2)*5+0.5)/5)+0.1;
+	%z = (mFloor(getWord(%pos, 2)*5+0.5)/5)+((%height*0.2)/2);
 	%pos = %x SPC %y SPC %z;
 
 	%shape = new StaticShape()
@@ -209,28 +209,30 @@ function GameConnection::Logic_MoveGate(%this)
 {
 	cancel(%this.LGM_moveSched);
 	%gate = %this.LGM_gate;
-	%player = %this.player;
-	if(!isObject(%gate) || !isObject(%player))
+
+	%control = %this.getControlObject();
+	if(!isObject(%gate) || !isObject(%control) || ((%class = %control.getClassName()) !$= "Camera" && %class !$= "Player"))
 		return;
 
-	%eye = %player.getEyePoint();
-	%vec = %player.getEyeVector();
-	%end = vectorAdd(%eye, vectorScale(%vec, 5*getWord(%player.getScale(), 2)));
-	%ray = containerRayCast(%eye, %end, $TypeMasks::All, %player, %gate);
+	%eye = %control.getEyePoint();
+	%vec = %control.getEyeVector();
+	%end = vectorAdd(%eye, vectorScale(%vec, 5*getWord(%control.getScale(), 2)));
+	%ray = containerRayCast(%eye, %end, $TypeMasks::All, %control, %gate);
 	if(isObject(%ray))
 		%pos = getWords(%ray, 1, 3);
 	else
 		%pos = %end;
 
+	%pos = vectorSub(%pos, vectorScale(%vec, 0.01));
 	%x = %gate.width % 2 == 0 ? mFloor(getWord(%pos, 0)*2+0.5)/2 : mFloor(getWord(%pos, 0)*2+1)/2-0.25;
 	%y = %gate.length % 2 == 0 ? mFloor(getWord(%pos, 1)*2+0.5)/2 : mFloor(getWord(%pos, 1)*2+1)/2-0.25;
-	%z = (mFloor(getWord(%pos, 2)*5+0.5)/5)+0.1;
+	%z = (mFloor(getWord(%pos, 2)*5+0.5)/5)+(%gate.height*0.2)/2;
 	%pos = %x SPC %y SPC %z;
 	%gpos = %gate.getPosition();
 	if(%pos !$= %gpos)
 	{
 		%gate.setTransform(%pos);
-		%gate.axis.setTransform(vectorAdd(%pos, "0 0 " @ %gate.height/2+0.5));
+		%gate.axis.setTransform(vectorAdd(%pos, "0 0 " @ %gate.height*0.2/2+0.5));
 
 		%offset = vectorSub(%pos, %gpos);
 		%ports = %gate.portCount;
@@ -251,7 +253,7 @@ function GameConnection::Logic_AddGatePort(%this, %type)
 
 	%shape = new StaticShape()
 	{
-		datablock = (%type ? "Illogic_BrickInputData":"Illogic_BrickOutputData");
+		datablock = %type ? "Illogic_BrickInputData":"Illogic_BrickOutputData";
 		position = "0 0 0";
 		portType = %type;
 	};
@@ -266,11 +268,11 @@ function GameConnection::Logic_MoveGatePort(%this)
 	cancel(%this.LGM_movePortSched);
 	%gate = %this.LGM_gate;
 	%port = %this.LGM_port;
-	%player = %this.player;
+	%control = %this.getControlObject();
 
 	if(!isObject(%port))
 		return;
-	if(!isObject(%player) || !isObject(%gate))
+	if(!isObject(%gate) || !isObject(%control) || ((%class = %control.getClassName()) !$= "Camera" && %class !$= "Player"))
 	{
 		%port.delete();
 		return;
@@ -278,13 +280,13 @@ function GameConnection::Logic_MoveGatePort(%this)
 
 	%this.LGM_movePortSched = %this.schedule(1, "Logic_MoveGatePort");
 
-	%eye = %player.getEyePoint();
-	%vec = %player.getEyeVector();
-	%end = vectorAdd(%eye, vectorScale(%vec, 5*getWord(%player.getScale(), 2)));
+	%eye = %control.getEyePoint();
+	%vec = %control.getEyeVector();
+	%end = vectorAdd(%eye, vectorScale(%vec, 5*getWord(%control.getScale(), 2)));
 	%ray = containerRayCast(%eye, %end, $TypeMasks::StaticObjectType, %port);
 	if(isObject(%hit = firstWord(%ray)) && %hit == %gate)
 	{
-		%pos = mFloor(getWord(%ray, 1)*2)/2 SPC mFloor(getWord(%ray, 2)*2)/2 SPC (mFloor(getWord(%ray, 3)*5+0.5)/5);
+		%pos = mFloor(getWord(%ray, 1)*2)/2 SPC mFloor(getWord(%ray, 2)*2)/2 SPC (mFloor(getWord(%ray, 3)*5)/5)+0.1;
 		%norm = getWords(%ray, 4, 6);
 		if(mAbs(%x = getWord(%norm, 0)) == 1)
 		{
@@ -316,7 +318,7 @@ function GameConnection::Logic_MoveGatePort(%this)
 				%data = "Illogic_BrickInputVertData";
 
 			%euler = 180-(90*(%z+1)) SPC "0 0";
-			%offset = "0.25 0.25 0";
+			%offset = "0.25 0.25 -0.1";
 			%newNorm = "0 0" SPC %z;
 		}
 
@@ -372,6 +374,41 @@ package Illogic_GateMaker
 		if(%slot == 0 && %val)
 		{
 			if(isObject(%client = %obj.client))
+			{
+				if(isObject(%client.LGM_port))
+				{
+					%client.Logic_FinalizePort();
+					return;
+				}
+
+				if(isEventPending(%client.LGM_moveSched))
+					cancel(%client.LGM_moveSched);
+
+				%eye = %obj.getEyePoint();
+				%vec = %obj.getEyeVector();
+				%ray = containerRayCast(%eye, vectorAdd(%eye, vectorScale(%vec, 5*getWord(%obj.getScale(), 2))), $TypeMasks::StaticObjectType);
+				if(isObject(%hit = firstWord(%ray)))
+				{
+					if(%hit.getClassName() $= "fxPlane")
+						return;
+
+					if(%hit.getDatablock().getName() $= "Illogic_BrickData")
+					{
+						%gateName = %hit.gateName;
+						%gateDesc = %hit.gateDesc;
+						%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "\c6"@%gateDesc, 3);
+					}
+				}
+			}
+		}
+	}
+
+	function Observer::onTrigger(%this, %obj, %slot, %val)
+	{
+		parent::onTrigger(%this, %obj, %slot, %val);
+		if(%slot == 0 && %val)
+		{
+			if(isObject(%client = %obj.getControllingClient()))
 			{
 				if(isObject(%client.LGM_port))
 				{
