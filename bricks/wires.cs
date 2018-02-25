@@ -1,13 +1,3 @@
-datablock fxDTSBrickData(LogicWire1x1Data : brick1x1Data)
-{
-	category = "Logic Bricks";
-	subCategory = "Wires";
-	uiName = "Wire 1x1";
-
-	isLogic = true;
-	isLogicWire = true;
-};
-
 datablock fxDTSBrickData(LogicWire1x1fData : brick1x1fData)
 {
 	category = "Logic Bricks";
@@ -93,6 +83,26 @@ datablock fxDTSBrickData(LogicWire1x16fData : brick1x16fData)
 	category = "Logic Bricks";
 	subCategory = "Wires";
 	uiName = "Wire 1x16f";
+
+	isLogic = true;
+	isLogicWire = true;
+};
+
+datablock fxDTSBrickData(LogicWire1x1Data : brick1x1Data)
+{
+	category = "Logic Bricks";
+	subCategory = "Wires";
+	uiName = "Wire 1x1";
+
+	isLogic = true;
+	isLogicWire = true;
+};
+
+datablock fxDTSBrickData(LogicWire1x1x5fData : brick1x1x5Data)
+{
+	category = "Logic Bricks";
+	subCategory = "Wires";
+	uiName = "Wire 1x1x5";
 
 	isLogic = true;
 	isLogicWire = true;
