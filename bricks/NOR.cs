@@ -1,6 +1,7 @@
 datablock fxDTSBrickData(Logic1x2fNORData : Logic1x2fORData)
 {
 	uiName = "1x2f NOR";
+	iconName = "Add-Ons/Brick_Illogic/icons/NOR";
 	logicUIName = "NOR";
 	logicUIDesc = "C is false if A or B are true";
 };

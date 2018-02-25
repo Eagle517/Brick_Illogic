@@ -1,6 +1,7 @@
 datablock fxDTSBrickData(Logic1x2fANDData : Logic1x2fORData)
 {
 	uiName = "1x2f AND";
+	iconName = "Add-Ons/Brick_Illogic/icons/AND";
 	logicUIName = "AND";
 	logicUIDesc = "C is true if A and B are true";
 };
