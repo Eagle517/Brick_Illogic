@@ -37,3 +37,9 @@ function Logic1x1fNOTData::Logic_onGateAdded(%this, %obj)
 {
 	%obj.Logic_SetOutput(1, !$LBC::Ports::BrickState[%obj, 0]);
 }
+
+function Logic1x1fNOTData::onPlant(%this, %obj)
+{
+	%obj.setColor(0);
+	parent::onPlant(%this, %obj);
+}

@@ -32,3 +32,9 @@ function Logic1x1fDiodeData::doLogic(%this, %obj)
 {
 	%obj.Logic_SetOutput(1, $LBC::Ports::BrickState[%obj, 0]);
 }
+
+function Logic1x1fDiodeData::onPlant(%this, %obj)
+{
+	%obj.setColor(3);
+	parent::onPlant(%this, %obj);
+}
