@@ -1,8 +1,8 @@
+if($LBC::Ports::NumPorts $= "")
+	$LBC::Ports::NumPorts = 0;
+
 function Logic_AddGate(%obj, %dontCall)
 {
-	if(!isObject(%obj))
-		return;
-
 	%data = %obj.getDatablock();
 	%box = %obj.getWorldBox();
 	%size = vectorSub(getWords(%box, 3, 5), getWords(%box, 0, 2));
@@ -39,10 +39,11 @@ function Logic_AddGate(%obj, %dontCall)
 	$LBC::Bricks::PortCount[%obj] = %numPorts;
 	for(%i = 0; %i < %numPorts; %i++)
 	{
-		%portID = $LBC::Ports::NumPorts+0;
+		%group = -1;
+		%portID = $LBC::Ports::NumPorts;
 		$LBC::Ports::NumPorts++;
 
-		%type = %data.logicPortType[%i];
+		//%type = %data.logicPortType[%i];
 		%ppos = %data.logicPortPos[%i];
 		%dir = %data.logicPortDir[%i];
 		if(%dir < 4)
@@ -51,7 +52,7 @@ function Logic_AddGate(%obj, %dontCall)
 		$LBC::Bricks::Port[%obj, %i] = %portID;
 
 		$LBC::Ports::Brick[%portID] = %obj;
-		$LBC::Ports::Type[%portID] = %type;
+		$LBC::Ports::Type[%portID] = %data.logicPortType[%i];
 		$LBC::Ports::Dir[%portID] = %dir;
 		$LBC::Ports::BrickIDX[%portID] = %i;
 
@@ -77,13 +78,13 @@ function Logic_AddGate(%obj, %dontCall)
 
 		%sx = %px+(%x*0.25);
 		%sy = %py+(%y*0.25);
-		%sz = %pz+(%z*0.25);
+		%sz = %pz+(%z*0.1);
 		%start = %sx SPC %sy SPC %sz;
 
-		$LBC::Ports::PortPos[%portID] = %x SPC %y SPC %z;
-		$LBC::Ports::PortPos[%portID, 0] = %x;
-		$LBC::Ports::PortPos[%portID, 1] = %y;
-		$LBC::Ports::PortPos[%portID, 2] = %z;
+		// $LBC::Ports::PortPos[%portID] = %x SPC %y SPC %z;
+		// $LBC::Ports::PortPos[%portID, 0] = %x;
+		// $LBC::Ports::PortPos[%portID, 1] = %y;
+		// $LBC::Ports::PortPos[%portID, 2] = %z;
 
 		$LBC::Ports::WorldPos[%portID] = %start;
 		$LBC::Ports::WorldPos[%portID, 0] = %sx;
@@ -103,9 +104,9 @@ function Logic_AddGate(%obj, %dontCall)
 		if(%doRay)
 		{
 			////talk(%dir @"|||"@ %start @"|||"@ %end);
-			%ray = containerRayCast(%start, vectorAdd(%start, vectorScale(%rotDir[%dir], 0.3)), $TypeMasks::FxBrickAlwaysObjectType, %obj);
+			%ray = containerRayCast(%start, %end, $TypeMasks::FxBrickAlwaysObjectType, %obj);
 
-			if(isObject(%sobj = firstWord(%ray)) && $LBC::Bricks::isLogic[%sobj] && !%sobj.isDead())
+			if($LBC::Bricks::isLogic[%sobj = firstWord(%ray)] && !%sobj.isDead())
 			{
 				if($LBC::Bricks::isWire[%sobj])
 				{
@@ -128,7 +129,7 @@ function Logic_AddGate(%obj, %dontCall)
 					else
 					{
 						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Ports::Wire[%portID] = %sobj;
+						//$LBC::Ports::Wire[%portID] = %sobj;
 						$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
 						$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
 						$LBC::Groups::PortCount[%group]++;
@@ -160,13 +161,10 @@ function Logic_AddGate(%obj, %dontCall)
 					if(%bestDist == -1)
 						continue;
 					
-					//echo("best port:" @ %bestIdx, " (", %bestDist, ") ", %i);
-					//talk(%bestDist SPC %bestPort);
 					%group = $LBC::Ports::Group[%bestPort];
 					if(%group == -1)
 					{
 						%group = $LBC::Groups::NumGroups+0;
-						//talk("adding port to group: "@%group);
 						$LBC::Groups::NumGroups++;
 
 						$LBC::Ports::Group[%portID] = %group;
@@ -176,13 +174,12 @@ function Logic_AddGate(%obj, %dontCall)
 						$LBC::Ports::Group[%bestPort] = %group;
 						$LBC::Groups::Port[%group, 1] = %bestPort;
 						$LBC::Groups::PortIDX[%group, %bestPort] = 1;
-						$LBC::Groups::PortCount[%group] = 2;
 
+						$LBC::Groups::PortCount[%group] = 2;
 						$LBC::Groups::WireCount[%group] = 0;
 					}
 					else
 					{
-						//talk("GROUP: " @ %Group);
 						$LBC::Ports::Group[%portID] = %group;
 						$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
 						$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
@@ -190,23 +187,11 @@ function Logic_AddGate(%obj, %dontCall)
 					}
 				}
 			}
-			else
-			{
-				%group = $LBC::Groups::NumGroups+0;
-				//talk("adding port to group: "@%group);
-				$LBC::Groups::NumGroups++;
-
-				$LBC::Ports::Group[%portID] = %group;
-				$LBC::Groups::Port[%group, 0] = %portID;
-				$LBC::Groups::PortIDX[%group, %portID] = 0;
-				$LBC::Groups::PortCount[%group] = 1;
-				$LBC::Groups::WireCount[%group] = 0;
-			}
 		}
-		else
+
+		if(%group == -1)
 		{
 			%group = $LBC::Groups::NumGroups+0;
-			//talk("adding port to group: "@%group);
 			$LBC::Groups::NumGroups++;
 
 			$LBC::Ports::Group[%portID] = %group;
@@ -227,8 +212,8 @@ function Logic_AddGate(%obj, %dontCall)
 
 function Logic_RemoveGate(%obj)
 {
-	%bports = $LBC::Bricks::PortCount[%obj];
-	for(%i = 0; %i < %bports; %i++)
+	%ports = $LBC::Bricks::PortCount[%obj];
+	for(%i = 0; %i < %ports; %i++)
 	{
 		%port = $LBC::Bricks::Port[%obj, %i];
 		%group = $LBC::Ports::Group[%port];
@@ -260,7 +245,6 @@ function Logic_RemoveGate(%obj)
 		$LBC::Ports::State[%port] = false;
 		$LBC::Ports::BrickState[%obj, %i] = false;
 
-		%gports = $LBC::Groups::PortCount[%group];
 		$LBC::Groups::Port[%group, (%idx = $LBC::Groups::PortIDX[%group, %port])] = (%gport = $LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]-1]);
 		$LBC::Groups::PortIDX[%group, %gport] = %idx;
 		$LBC::Groups::PortCount[%group]--;
@@ -288,316 +272,3 @@ function Logic_RemoveGate(%obj)
 		//deleteVariables("$LBC::Ports::BrickIDX"@%port);
 	}
 }
-
-function Logic_CheckGateConnections(%obj, %dontCall)
-{
-	if(!isObject(%obj))
-		return;
-
-	%data = %obj.getDatablock();
-	%box = %obj.getWorldBox();
-	%size = vectorSub(getWords(%box, 3, 5), getWords(%box, 0, 2));
-	%pos = %obj.getPosition();
-
-	%dataName = %data.getName();
-	$LBC::Bricks::Datablock[%obj] = %dataName;
-	
-	initContainerBoxSearch(%pos, vectorAdd(%size, "0.02 0.02 0.02"), $TypeMasks::FxBrickAlwaysObjectType);
-	while(%sobj = containerSearchNext())
-	{
-		if($LBC::Bricks::isLogic[%sobj])
-		{
-			%doRay = true;
-			break;
-		}
-	}
-
-	%rot = %obj.angleID;
-	%rotDir[0] = "1 0 0";
-	%rotDir[1] = "0 1 0";
-	%rotDir[2] = "-1 0 0";
-	%rotDir[3] = "0 -1 0";
-	%rotDir[4] = "0 0 1";
-	%rotDir[5] = "0 0 -1";
-
-	%numPorts = %data.numLogicPorts;
-	$LBC::Bricks::PortCount[%obj] = %numPorts;
-	for(%i = 0; %i < %numPorts; %i++)
-	{
-		%portID = $LBC::Bricks::Port[%obj, %i];
-
-		if(%doRay)
-		{
-			////talk(%dir @"|||"@ %start @"|||"@ %end);
-			%ray = containerRayCast($LBC::Ports::WorldPos[%portID], $LBC::Ports::ConnPos[%portID], $TypeMasks::FxBrickAlwaysObjectType, %obj);
-
-			if(isObject(%sobj = firstWord(%ray)) && $LBC::Bricks::isLogic[%sobj] && !%sobj.isDead())
-			{
-				if($LBC::Bricks::isWire[%sobj])
-				{
-					%group = $LBC::Wires::Group[%sobj];
-					if(%group == -1)
-					{
-						%group = $LBC::Groups::NumGroups+0;
-						//talk("adding port to group: "@%group);
-						$LBC::Groups::NumGroups++;
-
-						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Groups::Port[%group, 0] = %portID;
-						$LBC::Groups::PortIDX[%group, %portID] = 0;
-						$LBC::Groups::PortCount[%group] = 1;
-						$LBC::Groups::Wire[%group, 0] = %sobj;
-						$LBC::Groups::WireIDX[%group, %sobj] = 0;
-						$LBC::Groups::WireCount[%group] = 1;
-					}
-					else
-					{
-						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Ports::Wire[%portID] = %sobj;
-						$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
-						$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
-						$LBC::Groups::PortCount[%group]++;
-						// $LBC::Wires::Port[%sobj, $LBC::Wires::PortCount[%sobj]+0] = %portID;
-						// $LBC::Wires::PortIDX[%sobj, %portID] = $LBC::Wires::PortCount[%sobj]+0;
-						// $LBC::Wires::PortCount[%sobj]++;
-					}
-				}
-				else if($LBC::Bricks::isGate[%sobj])
-				{
-					%bestDist = -1;
-					%ports = $LBC::Bricks::PortCount[%sobj];
-					for(%a = 0; %a < %ports; %a++)
-					{
-						%aport = $LBC::Bricks::Port[%sobj, %a];
-
-						%xx = $LBC::Ports::ConnPos[%portID, 0]-$LBC::Ports::ConnPos[%aport, 0];
-						%yy = $LBC::Ports::ConnPos[%portID, 1]-$LBC::Ports::ConnPos[%aport, 1];
-						%zz = $LBC::Ports::ConnPos[%portID, 2]-$LBC::Ports::ConnPos[%aport, 2];
-						%distSqr = (%xx*%xx)+(%yy*%yy)+(%zz*%zz);
-						if(%distSqr <= 0.011 && (%distSqr < %bestDist || %bestDist == -1))
-						{
-							%bestDist = %distSqr;
-							%bestPort = %aport;
-							%bestIdx = %a;
-						}
-					}
-
-					if(%bestDist == -1)
-						continue;
-					
-					//echo("best port:" @ %bestIdx, " (", %bestDist, ") ", %i);
-					//talk(%bestDist SPC %bestPort);
-					%group = $LBC::Ports::Group[%bestPort];
-					if(%group == -1)
-					{
-						%group = $LBC::Groups::NumGroups+0;
-						//talk("adding port to group: "@%group);
-						$LBC::Groups::NumGroups++;
-
-						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Groups::Port[%group, 0] = %portID;
-						$LBC::Groups::PortIDX[%group, %portID] = 0;
-
-						$LBC::Ports::Group[%bestPort] = %group;
-						$LBC::Groups::Port[%group, 1] = %bestPort;
-						$LBC::Groups::PortIDX[%group, %bestPort] = 1;
-						$LBC::Groups::PortCount[%group] = 2;
-
-						$LBC::Groups::WireCount[%group] = 0;
-					}
-					else
-					{
-						//talk("GROUP: " @ %Group);
-						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
-						$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
-						$LBC::Groups::PortCount[%group]++;
-					}
-				}
-			}
-			else
-			{
-				%group = $LBC::Groups::NumGroups;
-				//talk("adding port to group: "@%group);
-				$LBC::Groups::NumGroups++;
-
-				$LBC::Ports::Group[%portID] = %group;
-				$LBC::Groups::Port[%group, 0] = %portID;
-				$LBC::Groups::PortIDX[%group, %portID] = 0;
-				$LBC::Groups::PortCount[%group] = 1;
-				$LBC::Groups::WireCount[%group] = 0;
-			}
-		}
-		else
-		{
-			%group = $LBC::Groups::NumGroups;
-			//talk("adding port to group: "@%group);
-			$LBC::Groups::NumGroups++;
-
-			$LBC::Ports::Group[%portID] = %group;
-			$LBC::Groups::Port[%group, 0] = %portID;
-			$LBC::Groups::PortIDX[%group, %portID] = 0;
-			$LBC::Groups::PortCount[%group] = 1;
-			$LBC::Groups::WireCount[%group] = 0;
-		}
-		Logic_QueueGroup(%group);
-	}
-
-	$LBC::Bricks::isGate[%obj] = true;
-	$LBC::Bricks::isLogic[%obj] = true;
-
-	// if(!%dontCall && isFunction(%dataName, "Logic_onGateAdded"))
-	// 	%data.Logic_onGateAdded(%obj);
-}
-
-function Logic_CheckPortConnection(%obj, %port)
-{
-	if(!isObject(%obj))
-		return;
-
-	%data = %obj.getDatablock();
-	%box = %obj.getWorldBox();
-	%size = vectorSub(getWords(%box, 3, 5), getWords(%box, 0, 2));
-	
-	%pos = %obj.getPosition();
-	%px = getWord(%pos, 0);
-	%py = getWord(%pos, 1);
-	%pz = getWord(%pos, 2);
-
-	%colorID = %obj.getColorID();
-
-	%dataName = %data.getName();
-	$LBC::Bricks::Datablock[%obj] = %dataName;
-	
-	initContainerBoxSearch(%pos, vectorAdd(%size, "0.02 0.02 0.02"), $TypeMasks::FxBrickAlwaysObjectType);
-	while(%sobj = containerSearchNext())
-	{
-		if($LBC::Bricks::isLogic[%sobj])
-		{
-			%doRay = true;
-			break;
-		}
-	}
-
-	%rot = %obj.angleID;
-	%rotDir[0] = "1 0 0";
-	%rotDir[1] = "0 1 0";
-	%rotDir[2] = "-1 0 0";
-	%rotDir[3] = "0 -1 0";
-	%rotDir[4] = "0 0 1";
-	%rotDir[5] = "0 0 -1";
-
-	%numPorts = %data.numLogicPorts;
-	$LBC::Bricks::PortCount[%obj] = %numPorts;
-	for(%i = 0; %i < %numPorts; %i++)
-	{
-		%portID = $LBC::Bricks::Port[%obj, %port];
-		////talk(%dir @"|||"@ %start @"|||"@ %end);
-		%ray = containerRayCast(%start, vectorAdd(%start, vectorScale(%rotDir[%dir], 0.3)), $TypeMasks::FxBrickAlwaysObjectType, %obj);
-
-		if(isObject(%sobj = firstWord(%ray)) && $LBC::Bricks::isLogic[%sobj] && !%sobj.isDead())
-		{
-			if($LBC::Bricks::isWire[%sobj])
-			{
-				%group = $LBC::Wires::Group[%sobj];
-				if(%group == -1)
-				{
-					%group = $LBC::Groups::NumGroups+0;
-					//talk("adding port to group: "@%group);
-					$LBC::Groups::NumGroups++;
-
-					$LBC::Ports::Group[%portID] = %group;
-					$LBC::Groups::Port[%group, 0] = %portID;
-					$LBC::Groups::PortIDX[%group, %portID] = 0;
-					$LBC::Groups::PortCount[%group] = 1;
-					$LBC::Groups::Wire[%group, 0] = %sobj;
-					$LBC::Groups::WireIDX[%group, %sobj] = 0;
-					$LBC::Groups::WireCount[%group] = 1;
-				}
-				else
-				{
-					$LBC::Ports::Group[%portID] = %group;
-					$LBC::Ports::Wire[%portID] = %sobj;
-					$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
-					$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
-					$LBC::Groups::PortCount[%group]++;
-					// $LBC::Wires::Port[%sobj, $LBC::Wires::PortCount[%sobj]+0] = %portID;
-					// $LBC::Wires::PortIDX[%sobj, %portID] = $LBC::Wires::PortCount[%sobj]+0;
-					// $LBC::Wires::PortCount[%sobj]++;
-				}
-			}
-			else if($LBC::Bricks::isGate[%sobj])
-			{
-				%bestDist = -1;
-				%ports = $LBC::Bricks::PortCount[%sobj];
-				for(%a = 0; %a < %ports; %a++)
-				{
-					%aport = $LBC::Bricks::Port[%sobj, %a];
-
-					%xx = $LBC::Ports::ConnPos[%portID, 0]-$LBC::Ports::ConnPos[%aport, 0];
-					%yy = $LBC::Ports::ConnPos[%portID, 1]-$LBC::Ports::ConnPos[%aport, 1];
-					%zz = $LBC::Ports::ConnPos[%portID, 2]-$LBC::Ports::ConnPos[%aport, 2];
-					%distSqr = (%xx*%xx)+(%yy*%yy)+(%zz*%zz);
-					if(%distSqr <= 0.011 && (%distSqr < %bestDist || %bestDist == -1))
-					{
-						%bestDist = %distSqr;
-						%bestPort = %aport;
-						%bestIdx = %a;
-					}
-				}
-
-				if(%bestDist == -1)
-					continue;
-				
-				//echo("best port:" @ %bestIdx, " (", %bestDist, ") ", %i);
-				//talk(%bestDist SPC %bestPort);
-				%group = $LBC::Ports::Group[%bestPort];
-				if(%group == -1)
-				{
-					%group = $LBC::Groups::NumGroups+0;
-					//talk("adding port to group: "@%group);
-					$LBC::Groups::NumGroups++;
-
-					$LBC::Ports::Group[%portID] = %group;
-					$LBC::Groups::Port[%group, 0] = %portID;
-					$LBC::Groups::PortIDX[%group, %portID] = 0;
-
-					$LBC::Ports::Group[%bestPort] = %group;
-					$LBC::Groups::Port[%group, 1] = %bestPort;
-					$LBC::Groups::PortIDX[%group, %bestPort] = 1;
-					$LBC::Groups::PortCount[%group] = 2;
-
-					$LBC::Groups::WireCount[%group] = 0;
-				}
-				else
-				{
-					//talk("GROUP: " @ %Group);
-					$LBC::Ports::Group[%portID] = %group;
-					$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
-					$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
-					$LBC::Groups::PortCount[%group]++;
-				}
-			}
-		}
-		else
-		{
-			%group = $LBC::Groups::NumGroups+0;
-			//talk("adding port to group: "@%group);
-			$LBC::Groups::NumGroups++;
-
-			$LBC::Ports::Group[%portID] = %group;
-			$LBC::Groups::Port[%group, 0] = %portID;
-			$LBC::Groups::PortIDX[%group, %portID] = 0;
-			$LBC::Groups::PortCount[%group] = 1;
-			$LBC::Groups::WireCount[%group] = 0;
-		}
-		Logic_QueueGroup(%group);
-	}
-
-	// $LBC::Bricks::isGate[%obj] = true;
-	// $LBC::Bricks::isLogic[%obj] = true;
-
-	// if(!%dontCall && isFunction(%dataName, "Logic_onGateAdded"))
-	// 	%data.Logic_onGateAdded(%obj);
-}
-
