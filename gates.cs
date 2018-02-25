@@ -117,7 +117,7 @@ function Logic_AddGate(%obj, %dontCall)
 						$LBC::Groups::NumGroups++;
 
 						$LBC::Ports::Group[%portID] = %group;
-						$LBC::Wires::Group[%sobj]
+						$LBC::Wires::Group[%sobj] = %group;
 						$LBC::Groups::Port[%group, 0] = %portID;
 						$LBC::Groups::PortIDX[%group, %portID] = 0;
 						$LBC::Groups::PortCount[%group] = 1;
