@@ -89,9 +89,10 @@ package IllogicBricks
 };
 activatePackage("IllogicBricks");
 
+//Wires
 exec("./bricks/wires.cs");
 
-//exec("./bricks/2x2fAND.cs");
+//Gates
 exec("./bricks/NOT.cs");
 exec("./bricks/OR.cs");
 exec("./bricks/AND.cs");
@@ -101,7 +102,12 @@ exec("./bricks/XOR.cs");
 exec("./bricks/XNOR.cs");
 exec("./bricks/diode.cs");
 
+//Inputs
 exec("./bricks/switch.cs");
 exec("./bricks/button.cs");
 
+//Memory
+exec("./bricks/DFlipFlop.cs");
+
+//Special
 exec("./bricks/bridge.cs");
