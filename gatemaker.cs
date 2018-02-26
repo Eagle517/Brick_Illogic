@@ -359,7 +359,7 @@ function GameConnection::Logic_FinalizePort(%this)
 	%rotDir["0 0 -1"] = 5;
 
 	%port.portDir = %rotDir[%port.lastNorm];
-	%port.portPos = vectorSvectorSub(%port.getPosition(), %gate.getPosition());
+	%port.portPos = vectorSub(%port.getPosition(), %gate.getPosition());
 
 	%gate.ports[%gate.portCount] = %port;
 	%gate.portCount++;
