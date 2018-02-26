@@ -143,7 +143,7 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 
 	%wid = mClamp(%wid, 1, 64);
 	%len = mClamp(%len, 1, 64);
-	%height = mClamp(%height, 1, 192);
+	%height = mClamp(%height, 1, 160);
 
 	%x = %wid % 2 == 0 ? mFloor(getWord(%pos, 0)*2+0.5)/2 : mFloor(getWord(%pos, 0)*2+1)/2-0.25;
 	%y = %len % 2 == 0 ? mFloor(getWord(%pos, 1)*2+0.5)/2 : mFloor(getWord(%pos, 1)*2+1)/2-0.25;
@@ -167,7 +167,7 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 	%axis = new StaticShape()
 	{
 		datablock = "Illogic_BrickAxisData";
-		position = vectorAdd(%pos, "0 0 " @ %height/2+0.5);
+		position = vectorAdd(%pos, "0 0 " @ %height*0.2/2+0.5);
 	};
 	%axis.setNodeColor("x", "1 0 0 1");
 	%axis.setNodeColor("y", "0 1 0 1");
@@ -351,19 +351,399 @@ function GameConnection::Logic_FinalizePort(%this)
 	if(!isObject(%gate) || !isObject(%port))
 		return;
 	
-	%rotDir["1 0 0"] = 0;
+	%rotDir["-1 0 0"] = 0;
 	%rotDir["0 1 0"] = 1;
-	%rotDir["-1 0 0"] = 2;
+	%rotDir["1 0 0"] = 2;
 	%rotDir["0 -1 0"] = 3;
 	%rotDir["0 0 1"] = 4;
 	%rotDir["0 0 -1"] = 5;
 
 	%port.portDir = %rotDir[%port.lastNorm];
-	%port.portPos = vectorSub(%gate.getPosition(), %port.getPosition());
+	%port.portPos = vectorSvectorSub(%port.getPosition(), %gate.getPosition());
 
 	%gate.ports[%gate.portCount] = %port;
 	%gate.portCount++;
 	%this.LGM_port = 0;
+}
+
+function GameConnection::Logic_SaveBLB(%this, %filename)
+{
+	%gate = %this.LGM_gate;
+	if(!isObject(%gate) || %gate.portCount < 1)
+		return;
+
+	%filename = expandFileName(%filename);
+
+	%x = %this.width;
+	%y = %this.length;
+	%z = %this.height;
+
+	%nQuads = 0;
+	%eQuads = 0;
+	%sQuads = 0;
+	%wQuads = 0;
+	%tQuads = 0;
+	%bQuads = 0;
+
+	%ports = %gate.portCount;
+	for(%i = 0; %i < %ports; %i++)
+	{
+		%port = %this.ports[%i];
+		%dir = %port.portDir;
+		switch(%dir)
+		{
+			case 1:
+				%nQuad[%nQuads] = %port;
+				%nQuads++;
+			case 2:
+				%eQuad[%eQuads] = %port;
+				%eQuads++;
+			case 3:
+				%sQuad[%sQuads] = %port;
+				%sQuads++;
+			case 0:
+				%wQuad[%wQuads] = %port;
+				%wQuads++;
+			case 4:
+				%tQuad[%tQuads] = %port;
+				%tQuads++;
+			case 5:
+				%bQuad[%bQuads] = %port;
+				%bQuads++;
+		}
+	}
+
+	%file = new FileObject();
+	%file.openForWrite(%filename);
+	%file.writeLine(%x SPC %y SPC %z);
+	%file.writeLine("SPECIAL\n");
+
+	for(%i = 0; %i < %x; %i++)
+		%b = %b @ "b";
+
+	for(%i = 0; %i < %x; %i++)
+		%u = %u @ "u";
+
+	for(%i = 0; %i < %x; %i++)
+		%XX = %XX @ "X";
+
+	for(%i = 0; %i < %x; %i++)
+		%d = %d @ "d";
+
+	for(%ia = 0; %ia < %y; %ia++)
+	{
+		if(%z < 2)
+		{
+			%file.writeLine(%b);
+			%file.writeLine("");
+		}
+
+		if(%z == 2)
+		{
+			%file.writeLine(%u);
+			%file.writeLine(%d);
+			%file.writeLine("");
+		}
+
+		if(%z > 2)
+		{
+			%file.writeLine(%u);
+
+			for(%ib = 0; %ib <= %z - 3; %ib++)
+			{
+				%file.writeLine(%XX);
+			}
+
+			%file.writeLine(%d);
+			%file.writeLine("");
+		}
+	}
+
+	//Collision
+	%file.writeLine("1\n");
+	%file.writeLine("0 0 0");
+	%file.writeLine(%x SPC %y SPC %z);
+
+	//Coverage
+	%file.writeLine("COVERAGE:");
+	%file.writeLine("1 : " @ %x * %y);
+	%file.writeLine("1 : " @ %x * %y);
+	%file.writeLine("1 : " @ %x * %z);
+	%file.writeLine("1 : " @ %y * %z);
+	%file.writeLine("1 : " @ %x * %z);
+	%file.writeLine("1 : " @ %y * %z);
+
+	//Top quads
+	%file.writeLine("----------------top quads:");
+	%file.writeLine(1+(%tQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:PRINT");
+	%file.writeLine("POSITION:");
+	%file.writeLine(0.5 * %x SPC 0.5 * %y SPC %z * 0.5);
+	%file.writeLine(0.5 * %x SPC -0.5 * %y SPC %z * 0.5);
+	%file.writeLine(-0.5 * %x SPC -0.5 * %y SPC %z * 0.5);
+	%file.writeLine(-0.5 * %x SPC 0.5 * %y SPC %z * 0.5);
+
+	%file.writeLine("UV COORDS:");
+	// %file.writeLine("0" SPC %y);
+	// %file.writeLine("0 0");
+	// %file.writeLine(%x SPC "0");
+	// %file.writeLine(%x SPC %y);
+	%file.writeLine("0 1");
+	%file.writeLine("0 0");
+	%file.writeLine("1 0");
+	%file.writeLine("1 1");
+
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 0 1");
+	%file.writeLine("0 0 1");
+	%file.writeLine("0 0 1");
+	%file.writeLine("0 0 1");
+
+	for(%i = 0; %i < %tQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %tQuad[%i];
+		%port.writeBLBData(%file, 0);
+	}
+
+	//Bottom quads
+	%file.writeLine("----------------bottom quads:");
+
+	if(%x > 1 && %y > 1)
+	{
+		%file.writeLine(5+(%bQuads*5));
+
+		%file.writeLine("");
+		%file.writeLine("TEX:BOTTOMLOOP");
+		%file.writeLine("POSITION:");
+		%file.writeLine(%x / 2 - 0.5 SPC -0.5 * %y + 0.5 SPC %z * -0.5);
+		%file.writeLine(%x / 2 - 0.5 SPC %y / 2 - 0.5 SPC %z * -0.5);
+		%file.writeLine(-0.5 * %x + 0.5 SPC %y / 2 - 0.5 SPC %z * -0.5);
+		%file.writeLine(-0.5 * %x + 0.5 SPC -0.5 * %y + 0.5 SPC %z * -0.5);
+		%file.writeLine("UV COORDS:");
+		%file.writeLine("0 0");
+		%file.writeLine("0" SPC %y - 1);
+		%file.writeLine(%x - 1 SPC %y - 1);
+		%file.writeLine(%x - 1 SPC "0");
+		%file.writeLine("NORMALS:");
+		%file.writeLine("0 0 -1");
+		%file.writeLine("0 0 -1");
+		%file.writeLine("0 0 -1");
+		%file.writeLine("0 0 -1");
+	}
+	else
+		%file.writeLine(4*(%bQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:BOTTOMEDGE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(-0.5 * %x SPC -0.5 * %y SPC  %z * -0.5);
+	%file.writeLine(0.5 * %x SPC -0.5 * %y SPC  %z * -0.5);
+	%file.writeLine(0.5 * %x - 0.5 SPC -0.5 * %y + 0.5 SPC  %z * -0.5);
+	%file.writeLine(-0.5 * %x + 0.5 SPC -0.5 * %y + 0.5 SPC  %z * -0.5);
+	%file.writeLine("UV COORDS:");
+	%file.writeLine("-0.5 0");
+	%file.writeLine(%x - 0.5 SPC "0");
+	%file.writeLine(%x - 1 SPC "0.5");
+	%file.writeLine("0 0.5");
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+
+	%file.writeLine("");
+	%file.writeLine("TEX:BOTTOMEDGE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(0.5 * %x SPC 0.5 * %y SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x SPC 0.5 * %y SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x + 0.5 SPC 0.5 * %y - 0.5 SPC %z * -0.5);
+	%file.writeLine(0.5 * %x - 0.5 SPC 0.5 * %y - 0.5 SPC %z * -0.5);
+	%file.writeLine("UV COORDS:");
+	%file.writeLine("-0.5 0");
+	%file.writeLine(%x - 0.5 SPC "0");
+	%file.writeLine(%x - 1 SPC "0.5");
+	%file.writeLine("0 0.5");
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+
+	%file.writeLine("");
+	%file.writeLine("TEX:BOTTOMEDGE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(0.5 * %x SPC -0.5 * %y SPC %z * -0.5);
+	%file.writeLine(0.5 * %x SPC 0.5 * %y SPC %z * -0.5);
+	%file.writeLine(0.5 * %x - 0.5 SPC 0.5 * %y - 0.5 SPC %z * -0.5);
+	%file.writeLine(0.5 * %x - 0.5 SPC -0.5 * %y + 0.5 SPC %z * -0.5);
+	%file.writeLine("UV COORDS:");
+	%file.writeLine("-0.5 0");
+	%file.writeLine(%y - 0.5 SPC "0");
+	%file.writeLine(%y - 1 SPC "0.5");
+	%file.writeLine("0 0.5");
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+
+	%file.writeLine("");
+	%file.writeLine("TEX:BOTTOMEDGE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(-0.5 * %x SPC 0.5 * %y SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x SPC -0.5 * %y SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x + 0.5 SPC -0.5 * %y + 0.5 SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x + 0.5 SPC 0.5 * %y - 0.5 SPC %z * -0.5);
+	%file.writeLine("UV COORDS:");
+	%file.writeLine("-0.5 0");
+	%file.writeLine(%y - 0.5 SPC "0");
+	%file.writeLine(%y - 1 SPC "0.5");
+	%file.writeLine("0 0.5");
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+	%file.writeLine("0 0 -1");
+
+	for(%i = 0; %i < %bQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %bQuad[%i];
+		%port.writeBLBData(%file, 0);
+	}
+
+	//North quad
+	%file.writeLine("----------------north quads:");
+	%file.writeLine(1+(%nQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:SIDE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(-0.5 * %x SPC %y / 2 SPC %z * 0.5);  //-0.5 0.5
+	%file.writeLine(-0.5 * %x SPC %y / 2 SPC %z * -0.5); //-0.5 0.5
+	%file.writeLine(%x / 2 SPC %y / 2 SPC %z * -0.5);       //0.5 0.5
+	%file.writeLine(%x / 2 SPC %y / 2 SPC %z * 0.5);        //0.5 0.5
+
+	%file.writeLine("UV COORDS:");
+	%file.writeLine((-((11 - ((11 / %x) * 2)) / 512) + 1) SPC (11 - ((11 / %z) * 5)) / 512);
+	%file.writeLine((-((11 - ((11 / %x) * 2)) / 512) + 1) SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %x) * 2)) / 512 SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %x) * 2)) / 512 SPC (11 - ((11 / %z) * 5)) / 512);
+
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 1 0");
+	%file.writeLine("0 1 0");
+	%file.writeLine("0 1 0");
+	%file.writeLine("0 1 0");
+
+	for(%i = 0; %i < %nQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %nQuad[%i];
+		%port.writeBLBData(%file, 0);
+	}
+
+	//East quad
+	%file.writeLine("----------------east quads:");
+	%file.writeLine(1+(%eQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:SIDE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(%x / 2 SPC %y / 2 - %y SPC %z * 0.5);
+	%file.writeLine(%x / 2 SPC %y / 2 SPC %z * 0.5);
+	%file.writeLine(%x / 2 SPC %y / 2 SPC %z * -0.5);
+	%file.writeLine(%x / 2 SPC %y / 2 - %y SPC %z * -0.5);
+
+	%file.writeLine("UV COORDS:");
+	%file.writeLine((11 - ((11 / %y) * 2)) / 512 SPC (11 - ((11 / %z) * 5)) / 512);
+	%file.writeLine((-((11 - ((11 / %y) * 2)) / 512) + 1) SPC (11 - ((11 / %z) * 5)) / 512);
+	%file.writeLine((-((11 - ((11 / %y) * 2)) / 512) + 1) SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %y) * 2)) / 512 SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+
+	%file.writeLine("NORMALS:");
+	%file.writeLine("1 0 0");
+	%file.writeLine("1 0 0");
+	%file.writeLine("1 0 0");
+	%file.writeLine("1 0 0");
+
+	for(%i = 0; %i < %eQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %eQuad[%i];
+		%port.writeBLBData(%file, 1);
+	}
+
+	//South quad
+	%file.writeLine("----------------south quads:");
+	%file.writeLine(1+(%sQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:SIDE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(%x / 2 SPC %y / 2 - %y SPC %z * 0.5);
+	%file.writeLine(%x / 2 SPC %y / 2 - %y SPC %z * -0.5);
+	%file.writeLine(%x / 2 - %x SPC %y / 2 - %y SPC %z * -0.5);
+	%file.writeLine(%x / 2 - %x SPC %y / 2 - %y SPC %z * 0.5);
+
+	%file.writeLine("UV COORDS:");
+	%file.writeLine((-((11 - ((11 / %x) * 2)) / 512) + 1) SPC (11 - ((11 / %z) * 5)) / 512);
+	%file.writeLine((-((11 - ((11 / %x) * 2)) / 512) + 1) SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %x) * 2)) / 512 SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %x) * 2)) / 512 SPC (11 - ((11 / %z) * 5)) / 512);
+
+	%file.writeLine("NORMALS:");
+	%file.writeLine("0 -1 0");
+	%file.writeLine("0 -1 0");
+	%file.writeLine("0 -1 0");
+	%file.writeLine("0 -1 0");
+
+	for(%i = 0; %i < %sQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %sQuad[%i];
+		%port.writeBLBData(%file, 2);
+	}
+
+	//West quad
+	%file.writeLine("----------------west quads:");
+	%file.writeLine(1+(%wQuads*5));
+
+	%file.writeLine("");
+	%file.writeLine("TEX:SIDE");
+	%file.writeLine("POSITION:");
+	%file.writeLine(%x / 2 - %x SPC %y / 2 - %y SPC %z * -0.5);
+	%file.writeLine(-0.5 * %x SPC %y / 2 SPC %z * -0.5); //-0.5 0.5
+	%file.writeLine(-0.5 * %x SPC %y / 2 SPC %z * 0.5); //-0.5 0.5
+	%file.writeLine(%x / 2 - %x SPC %y / 2 - %y SPC %z * 0.5);
+
+	%file.writeLine("UV COORDS:");
+	%file.writeLine((-((11 - ((11 / %y) * 2)) / 512) + 1) SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %y) * 2)) / 512 SPC (-((11 - ((11 / %z) * 5)) / 512) + 1));
+	%file.writeLine((11 - ((11 / %y) * 2)) / 512 SPC (11 - ((11 / %z) * 5)) / 512);
+	%file.writeLine((-((11 - ((11 / %y) * 2)) / 512) + 1) SPC (11 - ((11 / %z) * 5)) / 512);
+
+	%file.writeLine("NORMALS:");
+	%file.writeLine("-1 0 0");
+	%file.writeLine("-1 0 0");
+	%file.writeLine("-1 0 0");
+	%file.writeLine("-1 0 0");
+
+	for(%i = 0; %i < %wQuads; %i++)
+	{
+		%file.writeLine("");
+		%port = %wQuad[%i];
+		%port.writeBLBData(%file, 3);
+	}
+
+	//Omni quads
+	%file.writeLine("----------------omni quads:");
+	%file.writeLine("0");
+	%file.close();
+	%file.delete();
 }
 
 package Illogic_GateMaker
