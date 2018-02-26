@@ -3,7 +3,7 @@ datablock fxDTSBrickData(Logic1x1fBridgeRightData)
 	category = "Logic Bricks";
 	subCategory = "Special";
 	uiName = "Bridge Right";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/ForwardRight";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/bridge_right.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -42,7 +42,7 @@ datablock fxDTSBrickData(Logic1x1fBridgeLeftData)
 	category = "Logic Bricks";
 	subCategory = "Special";
 	uiName = "Bridge Left";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/ForwardLeft";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/bridge_left.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
