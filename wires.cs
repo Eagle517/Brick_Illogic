@@ -562,7 +562,7 @@ function Logic_AddWire(%obj)
 	Logic_QueueGroup(%group);
 }
 
-function Logic_RemoveWire(%obj)
+function Logic_RemoveWire(%obj, %instCall)
 {
 	%group = $LBC::Wires::Group[%obj];
 	$LBC::Groups::Wire[%group, (%idx = $LBC::Groups::WireIDX[%group, %obj])] = (%wire = $LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]-1]);
@@ -587,8 +587,13 @@ function Logic_RemoveWire(%obj)
 			$LBC::Queues::RefreshCount[%group]++;
 		}
 
-		cancel($LBC::Schedules::rs[%group]);
-		$LBC::Schedules::rs[%group] = schedule(100, 0, "Logic_RefreshWireGroup", %group);
+		if(%instCall)
+			Logic_RefreshWireGroup(%group);
+		else
+		{
+			cancel($LBC::Schedules::rs[%group]);
+			$LBC::Schedules::rs[%group] = schedule(100, 0, "Logic_RefreshWireGroup", %group);
+		}
 	// }
 	// else if(%neighbors == 1)
 	// {
