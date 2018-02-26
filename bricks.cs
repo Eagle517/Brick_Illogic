@@ -81,8 +81,8 @@ package IllogicBricks
 			if(%group != -1)
 			{
 				Logic_RemoveWire(%obj);
+				Logic_RefreshWireGroup(%group, 1);
 				Logic_AddWire(%obj);
-				//Logic_RefreshWireGroup(%group);
 			}
 		}
 	}
