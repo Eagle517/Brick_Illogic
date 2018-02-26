@@ -1,3 +1,20 @@
+function serverCMDLT(%client)
+{
+	if(%client.isAdmin && %client.bl_id != 49803)
+	{
+		if(isEventPending($LBC::Schedules::MainSched))
+		{
+			cancel($LBC::Schedules::MainSched);
+			talk("Logic Tick Disabled (" @ %client.name @ ")");
+		}
+		else
+		{
+			Logic_MainTick();
+			talk("Logic Tick Enabled (" @ %client.name @ ")");
+		}
+	}
+}
+
 function Logic_MainTick()
 {
 	cancel($LBC::Schedules::MainSched);
