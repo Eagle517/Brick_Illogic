@@ -3,7 +3,7 @@ datablock fxDTSBrickData(Logic1x1fButtonData)
 	category = "Logic Bricks";
 	subCategory = "Inputs";
 	uiName = "Button";
-	iconName = "base/client/ui/brickIcons/1x1F.png";
+	iconName = "Add-Ons/Brick_Illogic/icons/button";
 	brickFile = "add-ons/brick_illogic/bricks/blb/1x1f_1o.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";

@@ -3,7 +3,7 @@ datablock fxDTSBrickData(Logic1x2fSwitchData)
 	category = "Logic Bricks";
 	subCategory = "Inputs";
 	uiName = "Switch";
-	iconName = "base/client/ui/brickIcons/1x2F.png";
+	iconName = "Add-Ons/Brick_Illogic/icons/switch";
 	brickFile = "add-ons/brick_illogic/bricks/blb/switch.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
