@@ -1,5 +1,6 @@
 datablock fxDTSBrickData(Logic1x2fDFlipFlop : Logic1x2fORData)
 {
+	subCategory = "Memory";
 	uiName = "D Flip Flop";
 	iconName = "";
 
