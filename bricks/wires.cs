@@ -42,7 +42,7 @@ datablock fxDTSBrickData(LogicWire1x5fData : LogicWire1x4fData)
 {
 	uiName = "Wire 1x5f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x5f.blb";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x5F";
 };
 
 datablock fxDTSBrickData(LogicWire1x6fData : brick1x6fData)
@@ -59,6 +59,7 @@ datablock fxDTSBrickData(LogicWire1x7fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x7f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x7f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x7F";
 };
 
 datablock fxDTSBrickData(LogicWire1x8fData : brick1x8fData)
@@ -75,6 +76,7 @@ datablock fxDTSBrickData(LogicWire1x9fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x9f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x9f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x9F";
 };
 
 datablock fxDTSBrickData(LogicWire1x10fData : brick1x10fData)
@@ -91,6 +93,7 @@ datablock fxDTSBrickData(LogicWire1x11fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x11f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x11f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x11F";
 };
 
 datablock fxDTSBrickData(LogicWire1x12fData : brick1x12fData)
@@ -107,18 +110,21 @@ datablock fxDTSBrickData(LogicWire1x13fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x13f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x13f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x13F";
 };
 
 datablock fxDTSBrickData(LogicWire1x14fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x14f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x14f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x14F";
 };
 
 datablock fxDTSBrickData(LogicWire1x15fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x15f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x15f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x15F";
 };
 
 datablock fxDTSBrickData(LogicWire1x16fData : brick1x16fData)
@@ -135,64 +141,56 @@ datablock fxDTSBrickData(LogicWire1x32fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x32f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x32f.blb";
+	iconName = "Add-Ons/Brick_Illogic/icons/wires/1x32F";
 };
 
 datablock fxDTSBrickData(LogicWire1x64fData : LogicWire1x5fData)
 {
 	uiName = "Wire 1x64f";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x64f.blb";
+	iconName = "";
 };
 
-datablock fxDTSBrickData(LogicWire1x1x2Data)
+datablock fxDTSBrickData(LogicWire1x1x2Data : LogicWire1x64fData)
 {
-	category = "Logic Bricks";
-	subCategory = "Wires";
-	uiName = "Wire 1x1x2f";
+	uiName = "Wire 1x1x2";
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x2.blb";
+};
+
+datablock fxDTSBrickData(LogicWire1x1x3Data : brick1x1Data)
+{
+	category = "Logic Bricks";
+	subCategory = "Wires";
+	uiName = "Wire 1x1x3"; //CHANGE - Wire 1x1
 
 	isLogic = true;
 	isLogicWire = true;
 };
 
-datablock fxDTSBrickData(LogicWire1x1Data : brick1x1Data)
+datablock fxDTSBrickData(LogicWire1x1x9Data : LogicWire1x64fData)
 {
-	category = "Logic Bricks";
-	subCategory = "Wires";
-	uiName = "Wire 1x1";
-
-	isLogic = true;
-	isLogicWire = true;
-};
-
-datablock fxDTSBrickData(LogicWire1x1x9Data)
-{
-	category = "Logic Bricks";
-	subCategory = "Wires";
-	uiName = "Wire 1x1x3";
+	uiName = "Wire 1x1x9"; //CHANGE - Wire 1x1x3
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x9.blb";
-
-	isLogic = true;
-	isLogicWire = true;
 };
 
-datablock fxDTSBrickData(LogicWire1x1x5Data : brick1x1x5Data)
+datablock fxDTSBrickData(LogicWire1x1x15Data : Brick1x1x5Data)
 {
 	category = "Logic Bricks";
 	subCategory = "Wires";
-	uiName = "Wire 1x1x5";
+	uiName = "Wire 1x1x15"; //CHANGE - Wire 1x1x5
 
 	isLogic = true;
 	isLogicWire = true;
 };
 
-datablock fxDTSBrickData(LogicWire1x1x17Data : LogicWire1x5fData)
+datablock fxDTSBrickData(LogicWire1x1x17Data : LogicWire1x64fData)
 {
-	uiName = "Wire 1x1x17f";
+	uiName = "Wire 1x1x17"; //CHANGE - Wire 1x1x17f
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x17.blb";
 };
 
-datablock fxDTSBrickData(LogicWire1x2x5Data : LogicWire1x5fData)
+datablock fxDTSBrickData(LogicWire1x2x5Data : LogicWire1x64fData)
 {
-	uiName = "Wire 1x2x5f";
+	uiName = "Wire 1x2x5"; //CHANGE - Wire 1x2x5f
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x2x5.blb";
 };
