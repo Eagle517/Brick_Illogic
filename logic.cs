@@ -89,8 +89,8 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						if($LBC::Wires::isVisual[%group, %a])
-							$LBC::Groups::Wire[%group, %a].setColorFX(3);
+						if($LBC::Wires::isVisual[%wire = $LBC::Groups::Wire[%group, %a]])
+							%wire.setColorFX(3);
 					}
 				}
 				else
@@ -184,8 +184,8 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						if($LBC::Wires::isVisual[%group, %a])
-							$LBC::Groups::Wire[%group, %a].setColorFX(3);
+						if($LBC::Wires::isVisual[%wire = $LBC::Groups::Wire[%group, %a]])
+							%wire.setColorFX(3);
 					}
 				}
 				else
