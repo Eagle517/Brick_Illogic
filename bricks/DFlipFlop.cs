@@ -2,7 +2,7 @@ datablock fxDTSBrickData(Logic1x2fDFlipFlop : Logic1x2fORData)
 {
 	subCategory = "Memory";
 	uiName = "D Flip Flop";
-	iconName = "";
+	iconName = "Add-Ons/Brick_Illogic/icons/chips/DFlipFlop";
 
 	logicUIName = "D Flip Flop";
 	logicUIDesc = "Q becomes D when C is on, otherwise it holds its state";

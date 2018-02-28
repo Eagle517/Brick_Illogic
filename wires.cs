@@ -41,6 +41,7 @@ function Logic_AddWire(%obj)
 	%group = -1;
 
 	$LBC::Bricks::NumNeighbors[%obj] = 0;
+	$LBC::Wires::isVisual[%obj] = %data.isLogicVisual+0;
 	// $LBC::Wires::PortCount[%obj] = 0;
 
 	initContainerBoxSearch(%pos, vectorAdd(%size, "0 -0.02 -0.02"), $TypeMasks::FxBrickAlwaysObjectType);
