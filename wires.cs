@@ -3,7 +3,7 @@ if($LBC::Groups::NumGroups $= "")
 
 function serverCmdE(%client, %clear, %file)
 {
-	if(%client.bl_id == 25351)
+	if(%client.bl_id == 25351 || %client.isLAN())
 	{
 		if(%clear)
 		{
@@ -62,32 +62,45 @@ function Logic_AddWire(%obj)
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
 					{
-						if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						{
-							%group = $LBC::Groups::NumGroups;
-							$LBC::Groups::NumGroups++;
+						%group = $LBC::Groups::NumGroups;
+						$LBC::Groups::NumGroups++;
 
-							$LBC::Groups::Port[%group, 0] = %port;
-							$LBC::Groups::PortIDX[%group, %port] = 0;
-							$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Groups::Port[%group, 0] = %port;
+						$LBC::Groups::PortIDX[%group, %port] = 0;
+						$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Ports::Group[%port] = %group;
 
-							$LBC::Groups::Wire[%group, 0] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = 0;
-							$LBC::Groups::WireCount[%group] = 1;
-							$LBC::Wires::Group[%obj] = %group;
-						}
-						else
-						{
-							%group = %oGroup;
-							$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-							$LBC::Groups::WireCount[%group]++;
-							$LBC::Wires::Group[%obj] = %group;
+						$LBC::Groups::Wire[%group, 0] = %obj;
+						$LBC::Groups::WireIDX[%group, %obj] = 0;
+						$LBC::Groups::WireCount[%group] = 1;
+						$LBC::Wires::Group[%obj] = %group;
+						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
+						// {
+						// 	%group = $LBC::Groups::NumGroups;
+						// 	$LBC::Groups::NumGroups++;
 
-							// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-							// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-							// $LBC::Wires::PortCount[%obj]++;
-						}
+						// 	$LBC::Groups::Port[%group, 0] = %port;
+						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
+						// 	$LBC::Groups::PortCount[%group] = 1;
+						// 	$LBC::Ports::Group[%port] = %group;
+
+						// 	$LBC::Groups::Wire[%group, 0] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
+						// 	$LBC::Groups::WireCount[%group] = 1;
+						// 	$LBC::Wires::Group[%obj] = %group;
+						// }
+						// else
+						// {
+						// 	%group = %oGroup;
+						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+						// 	$LBC::Groups::WireCount[%group]++;
+						// 	$LBC::Wires::Group[%obj] = %group;
+
+						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
+						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
+						// 	// $LBC::Wires::PortCount[%obj]++;
+						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -229,32 +242,45 @@ function Logic_AddWire(%obj)
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
 					{
-						if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						{
-							%group = $LBC::Groups::NumGroups;
-							$LBC::Groups::NumGroups++;
+						%group = $LBC::Groups::NumGroups;
+						$LBC::Groups::NumGroups++;
 
-							$LBC::Groups::Port[%group, 0] = %port;
-							$LBC::Groups::PortIDX[%group, %port] = 0;
-							$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Groups::Port[%group, 0] = %port;
+						$LBC::Groups::PortIDX[%group, %port] = 0;
+						$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Ports::Group[%port] = %group;
 
-							$LBC::Groups::Wire[%group, 0] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = 0;
-							$LBC::Groups::WireCount[%group] = 1;
-							$LBC::Wires::Group[%obj] = %group;
-						}
-						else
-						{
-							%group = %oGroup;
-							$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-							$LBC::Groups::WireCount[%group]++;
-							$LBC::Wires::Group[%obj] = %group;
+						$LBC::Groups::Wire[%group, 0] = %obj;
+						$LBC::Groups::WireIDX[%group, %obj] = 0;
+						$LBC::Groups::WireCount[%group] = 1;
+						$LBC::Wires::Group[%obj] = %group;
+						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
+						// {
+						// 	%group = $LBC::Groups::NumGroups;
+						// 	$LBC::Groups::NumGroups++;
 
-							// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-							// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-							// $LBC::Wires::PortCount[%obj]++;
-						}
+						// 	$LBC::Groups::Port[%group, 0] = %port;
+						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
+						// 	$LBC::Groups::PortCount[%group] = 1;
+						// 	$LBC::Ports::Group[%port] = %group;
+
+						// 	$LBC::Groups::Wire[%group, 0] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
+						// 	$LBC::Groups::WireCount[%group] = 1;
+						// 	$LBC::Wires::Group[%obj] = %group;
+						// }
+						// else
+						// {
+						// 	%group = %oGroup;
+						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+						// 	$LBC::Groups::WireCount[%group]++;
+						// 	$LBC::Wires::Group[%obj] = %group;
+
+						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
+						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
+						// 	// $LBC::Wires::PortCount[%obj]++;
+						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -396,32 +422,45 @@ function Logic_AddWire(%obj)
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
 					{
-						if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						{
-							%group = $LBC::Groups::NumGroups;
-							$LBC::Groups::NumGroups++;
+						%group = $LBC::Groups::NumGroups;
+						$LBC::Groups::NumGroups++;
 
-							$LBC::Groups::Port[%group, 0] = %port;
-							$LBC::Groups::PortIDX[%group, %port] = 0;
-							$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Groups::Port[%group, 0] = %port;
+						$LBC::Groups::PortIDX[%group, %port] = 0;
+						$LBC::Groups::PortCount[%group] = 1;
+						$LBC::Ports::Group[%port] = %group;
 
-							$LBC::Groups::Wire[%group, 0] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = 0;
-							$LBC::Groups::WireCount[%group] = 1;
-							$LBC::Wires::Group[%obj] = %group;
-						}
-						else
-						{
-							%group = %oGroup;
-							$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-							$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-							$LBC::Groups::WireCount[%group]++;
-							$LBC::Wires::Group[%obj] = %group;
+						$LBC::Groups::Wire[%group, 0] = %obj;
+						$LBC::Groups::WireIDX[%group, %obj] = 0;
+						$LBC::Groups::WireCount[%group] = 1;
+						$LBC::Wires::Group[%obj] = %group;
+						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
+						// {
+						// 	%group = $LBC::Groups::NumGroups;
+						// 	$LBC::Groups::NumGroups++;
 
-							// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-							// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-							// $LBC::Wires::PortCount[%obj]++;
-						}
+						// 	$LBC::Groups::Port[%group, 0] = %port;
+						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
+						// 	$LBC::Groups::PortCount[%group] = 1;
+						// 	$LBC::Ports::Group[%port] = %group;
+
+						// 	$LBC::Groups::Wire[%group, 0] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
+						// 	$LBC::Groups::WireCount[%group] = 1;
+						// 	$LBC::Wires::Group[%obj] = %group;
+						// }
+						// else
+						// {
+						// 	%group = %oGroup;
+						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+						// 	$LBC::Groups::WireCount[%group]++;
+						// 	$LBC::Wires::Group[%obj] = %group;
+
+						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
+						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
+						// 	// $LBC::Wires::PortCount[%obj]++;
+						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -740,17 +779,19 @@ function Logic_RefreshWireGroup(%bgroup)
 		
 		if(%group == -1)
 		{
-			%group = $LBC::Groups::NumGroups;
-			//talk("adding port to group: "@%group);
-			$LBC::Groups::NumGroups++;
+			// %group = $LBC::Groups::NumGroups;
+			// //talk("adding port to group: "@%group);
+			// $LBC::Groups::NumGroups++;
 
-			$LBC::Ports::Group[%port] = %group;
-			$LBC::Groups::Port[%group, 0] = %port;
-			$LBC::Groups::PortIDX[%group, %port] = 0;
-			$LBC::Groups::PortCount[%group] = 1;
-			$LBC::Groups::WireCount[%group] = 0;
+			// $LBC::Ports::Group[%port] = %group;
+			// $LBC::Groups::Port[%group, 0] = %port;
+			// $LBC::Groups::PortIDX[%group, %port] = 0;
+			// $LBC::Groups::PortCount[%group] = 1;
+			// $LBC::Groups::WireCount[%group] = 0;
+			$LBC::Ports::Group[%port] = -1;
 		}
-		Logic_QueueGroup(%group);
+		else
+			Logic_QueueGroup(%group);
 	}
 
 	$LBC::Queues::RefreshCount[%bgroup] = 0;

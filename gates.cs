@@ -189,16 +189,18 @@ function Logic_AddGate(%obj, %dontCall)
 
 		if(%group == -1)
 		{
-			%group = $LBC::Groups::NumGroups;
-			$LBC::Groups::NumGroups++;
+			// %group = $LBC::Groups::NumGroups;
+			// $LBC::Groups::NumGroups++;
 
-			$LBC::Ports::Group[%portID] = %group;
-			$LBC::Groups::Port[%group, 0] = %portID;
-			$LBC::Groups::PortIDX[%group, %portID] = 0;
-			$LBC::Groups::PortCount[%group] = 1;
-			$LBC::Groups::WireCount[%group] = 0;
+			// $LBC::Ports::Group[%portID] = %group;
+			// $LBC::Groups::Port[%group, 0] = %portID;
+			// $LBC::Groups::PortIDX[%group, %portID] = 0;
+			// $LBC::Groups::PortCount[%group] = 1;
+			// $LBC::Groups::WireCount[%group] = 0;
+			$LBC::Ports::Group[%portID] = -1;
 		}
-		Logic_QueueGroup(%group);
+		else
+			Logic_QueueGroup(%group);
 	}
 
 	$LBC::Bricks::isGate[%obj] = true;
