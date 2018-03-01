@@ -134,6 +134,14 @@ function serverCmdlSaveGate(%client)
 {
 	if(isObject(%gate = %client.LGM_gate))
 	{
+		if(%gate.gateName $= "")
+			messageClient(%client, '', '\c6You must set the gate name before saving. \c3/lSetGateName name');
+		else
+		{
+			%file = "config/server/IllogicGateMaker/"@%client.getBLID()@"_"@%gate.gateName@".blb";
+			%client.Logic_SaveBLB(%file);
+			messageClient(%client, '', '\c6Your gate was saved to \c3%1', %file);
+		}
 	}
 }
 
@@ -400,10 +408,11 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 	%dir = %port.portDir;
 	%pos = %port.portPos;
 
+	%fname = expandFileName("./gatemaker/" @ (%type ? "input.blb":"output.blb"));
 	%file = new FileObject();
-	%file.openForRead("./gatemaker/" @ (%type ? "input.blb":"output.blb"));
+	%file.openForRead(%fname);
 
-	while(%file.isEOF())
+	while(!%file.isEOF())
 	{
 		%line = %file.readLine();
 		
@@ -426,6 +435,9 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 		if(strpos(%line, "POSITION:") != -1 && %write)
 			%isPos = true;
 	}
+
+	%file.close();
+	%file.delete();
 }
 
 function GameConnection::Logic_SaveBLB(%this, %filename)
@@ -436,9 +448,9 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 
 	%filename = expandFileName(%filename);
 
-	%x = %this.width;
-	%y = %this.length;
-	%z = %this.height;
+	%x = %gate.width;
+	%y = %gate.length;
+	%z = %gate.height;
 
 	%nQuads = 0;
 	%eQuads = 0;
@@ -450,7 +462,7 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	%ports = %gate.portCount;
 	for(%i = 0; %i < %ports; %i++)
 	{
-		%port = %this.ports[%i];
+		%port = %gate.ports[%i];
 		%dir = %port.portDir;
 		switch(%dir)
 		{
@@ -567,7 +579,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %tQuad[%i];
-		%port.writeBLBData(%file, 0);
+		//%port.writeBLBData(%file, 0);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//Bottom quads
@@ -674,7 +687,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %bQuad[%i];
-		%port.writeBLBData(%file, 0);
+		//%port.writeBLBData(%file, 0);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//North quad
@@ -736,7 +750,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %eQuad[%i];
-		%port.writeBLBData(%file, 1);
+		//%port.writeBLBData(%file, 1);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//South quad
@@ -767,7 +782,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %sQuad[%i];
-		%port.writeBLBData(%file, 2);
+		//%port.writeBLBData(%file, 2);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//West quad
@@ -798,7 +814,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %wQuad[%i];
-		%port.writeBLBData(%file, 3);
+		//%port.writeBLBData(%file, 3);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//Omni quads
