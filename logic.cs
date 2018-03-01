@@ -240,6 +240,11 @@ function fxDTSBrick::Logic_SetOutput(%this, %port, %state)
 
 package IllogicLogic
 {
+	// function Armor::onTrigger(%this, %obj, %slot, %trigger)
+	// {
+	// 	parent::onTrigger(%this, %obj, %slot, %trigger);
+		
+	// }
 	function Player::activateStuff(%this, %a, %b)
 	{
 		parent::activateStuff(%this, %a, %b);
