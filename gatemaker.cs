@@ -1,31 +1,31 @@
 datablock StaticShapeData(Illogic_BrickData)
 {
-	shapeFile = "./cube.dts";
+	shapeFile = "./gatemaker/cube.dts";
 };
 
 datablock StaticShapeData(Illogic_BrickInputData)
 {
-	shapeFile = "./input.dts";
+	shapeFile = "./gatemaker/input.dts";
 };
 
 datablock StaticShapeData(Illogic_BrickInputVertData)
 {
-	shapeFile = "./input_vert.dts";
+	shapeFile = "./gatemaker/input_vert.dts";
 };
 
 datablock StaticShapeData(Illogic_BrickOutputData)
 {
-	shapeFile = "./output.dts";
+	shapeFile = "./gatemaker/output.dts";
 };
 
 datablock StaticShapeData(Illogic_BrickOutputVertData)
 {
-	shapeFile = "./output_vert.dts";
+	shapeFile = "./gatemaker/output_vert.dts";
 };
 
 datablock StaticShapeData(Illogic_BrickAxisData)
 {
-	shapeFile = "./axis2.dts";
+	shapeFile = "./gatemaker/axis2.dts";
 };
 
 //pos, offset x,y,z from origin, round to x,y,z
@@ -134,20 +134,34 @@ function serverCmdlSaveGate(%client)
 {
 	if(isObject(%gate = %client.LGM_gate))
 	{
-		if(%gate.gateName $= "")
-			messageClient(%client, '', '\c6You must set the gate name before saving. \c3/lSetGateName name');
-		else
-		{
-			%file = "config/server/IllogicGateMaker/"@%client.getBLID()@"_"@%gate.gateName@".blb";
+		// if(%gate.gateName $= "")
+		// 	messageClient(%client, '', '\c6You must set the gate name before saving. \c3/lSetGateName name');
+		// else
+		// {
+			//%file = "config/server/IllogicGateMaker/"@%client.getBLID()@"_"@%gate.gateName@".blb";
+			%file = "config/server/IllogicGateMaker/25351_reee.blb";
 			%client.Logic_SaveBLB(%file);
 			messageClient(%client, '', '\c6Your gate was saved to \c3%1', %file);
-		}
+		//}
 	}
 }
 
 function serverCmdlDeleteGate(%client)
 {
 	%client.Logic_DeleteGate();
+}
+
+function serverCmdlCheckGate(%client)
+{
+	if(isObject(%gate = %client.LGM_gate))
+	{
+		talk(%gate SPC %gate.portCount);
+		for(%i = 0; %i < %gate.portCount; %i++)
+		{
+			%port = %gate.ports[%i];
+			talk(%port.portPos @" | "@ %port.portDir);
+		}
+	}
 }
 
 function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
@@ -312,57 +326,56 @@ function GameConnection::Logic_MoveGatePort(%this)
 	%end = vectorAdd(%eye, vectorScale(%vec, 5*getWord(%control.getScale(), 2)));
 	%ray = containerRayCast(%eye, %end, $TypeMasks::StaticObjectType, %port);
 	if(isObject(%hit = firstWord(%ray)) && %hit == %gate)
-	{
-		%pos = mFloor(getWord(%ray, 1)*2)/2 SPC mFloor(getWord(%ray, 2)*2)/2 SPC (mFloor(getWord(%ray, 3)*5)/5)+0.1;
-		%norm = getWords(%ray, 4, 6);
-		if(mAbs(%x = getWord(%norm, 0)) == 1)
+	{	
+		%norm = ((stripos(%nx = getWord(%ray, 4), "e") != -1) ? 0:%nx) SPC ((stripos(%ny = getWord(%ray, 5), "e") != -1) ? 0:%ny) SPC ((stripos(%nz = getWord(%ray, 6), "e") != -1) ? 0:%nz);
+		%pos = vectorSub(getWords(%ray, 1, 3), vectorScale(%norm, "0.0001"));
+		%pos = mFloor(getWord(%pos, 0)*2)/2+0.25 SPC mFloor(getWord(%pos, 1)*2)/2+0.25 SPC (mFloor(getWord(%pos, 2)*5)/5)+0.1;
+
+		if(mAbs(%nx) == 1)
 		{
 			if(%port.portType == 0)
 				%data = "Illogic_BrickOutputData";
 			else if(%port.portType == 1)
 				%data = "Illogic_BrickInputData";
 
-			%offset = "0 " @ 0.25 @ " 0";
-			%euler = "0 0" SPC -90*%x-90;
-			%newNorm = %x SPC "0 0";
+			//%offset = "0 " @ 0.25 @ " 0";
+			%euler = "0 0" SPC -90*%nx;
 		}
-		else if(mAbs(%y = getWord(%norm, 1)) == 1)
+		else if(mAbs(%ny) == 1)
 		{
 			if(%port.portType == 0)
 				%data = "Illogic_BrickOutputData";
 			else if(%port.portType == 1)
 				%data = "Illogic_BrickInputData";
 
-			%euler = "0 0" SPC -90*%y;
-			%offset = 0.25 SPC "0 0";
-			%newNorm = "0" SPC %y SPC "0";
+			%euler = "0 0" SPC 90*%ny-90;
+			//%offset = 0.25 SPC "0 0";
 		}
-		else if(mAbs(%z = getWord(%norm, 2)) == 1)
+		else if(mAbs(%nz) == 1)
 		{
 			if(%port.portType == 0)
 				%data = "Illogic_BrickOutputVertData";
 			else if(%port.portType == 1)
 				%data = "Illogic_BrickInputVertData";
 
-			%euler = 180-(90*(%z+1)) SPC "0 0";
-			%offset = "0.25 0.25 -0.1";
-			%newNorm = "0 0" SPC %z;
+			%euler = 180-(90*(%nz+1)) SPC "0 0";
+			//%offset = "0.25 0.25" SPC -0.2*%nz;
 		}
 
 		%pos = vectorAdd(%pos, %offset);
 		%rot = getWords(MatrixCreateFromEuler(vectorScale(%euler, $pi/180)), 3, 6);
-		if(%pos !$= %port.getPosition() || %newNorm !$= %port.lastNorm)
+		if(%pos !$= %port.getPosition() || %norm !$= %port.lastNorm)
 		{
 			for(%i = 0; %i < %gate.portCount; %i++)
 			{
 				%gport = %gate.ports[%i];
-				if(vectorSub(%pos, %gate.getPosition()) $= %gport.portPos && %newNorm $= %gport.lastNorm)
+				if(vectorSub(%pos, %gate.getPosition()) $= %gport.portPos && %norm $= %gport.lastNorm)
 					return;
 			}
 
 			if(%port.getDatablock() != nameToID(%data))
 				%port.setDatablock(%data);
-			%port.lastNorm = %newNorm;
+			%port.lastNorm = %norm;
 			%port.setTransform(%pos SPC %rot);
 		}
 	}
@@ -406,7 +419,7 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 	
 	%type = %port.portType;
 	%dir = %port.portDir;
-	%pos = %port.portPos;
+	%pos = vectorScale(%port.portPos, 2);
 
 	%fname = expandFileName("./gatemaker/" @ (%type ? "input.blb":"output.blb"));
 	%file = new FileObject();
@@ -416,24 +429,24 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 	{
 		%line = %file.readLine();
 		
-		if(strpos(%line, "//end") != -1 && %write)
-			%write = false;
-
-		if(strpos(%line, "UV COORDS:") != -1 && %isPos)
-			%isPos = false;
+		if(%write && strpos(%line, "//end") != -1)
+			break;
 
 		if(%write)
 		{
+			if(strpos(%line, "UV COORDS:") != -1 && %isPos)
+				%isPos = false;
+
 			if(%isPos)
 				%line = vectorAdd(%line, %pos);
 			%ofile.writeLine(%line);
+
+			if(strpos(%line, "POSITION:") != -1)
+				%isPos = true;
 		}
 
 		if(strpos(%line, "//DIR " @ %dir) != -1)
 			%write = true;
-
-		if(strpos(%line, "POSITION:") != -1 && %write)
-			%isPos = true;
 	}
 
 	%file.close();
@@ -443,7 +456,7 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 function GameConnection::Logic_SaveBLB(%this, %filename)
 {
 	%gate = %this.LGM_gate;
-	if(!isObject(%gate) || %gate.portCount < 1)
+	if(!isObject(%gate))// || %gate.portCount < 1)
 		return;
 
 	%filename = expandFileName(%filename);
@@ -719,7 +732,8 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %nQuad[%i];
-		%port.writeBLBData(%file, 0);
+		//%port.writeBLBData(%file, 0);
+		%this.Logic_WritePort(%port, %file);
 	}
 
 	//East quad

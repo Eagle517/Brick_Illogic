@@ -22,3 +22,10 @@ function Logic1x2fANDLData::doLogic(%this, %obj)
 {
 	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]);
 }
+
+// datablock fxDTSBrickData(Logic1x2fANDLData : Logic1x2fANDData)
+// {
+// 	brickFile = "config/server/IllogicGateMaker/25351_reee.blb";
+// 	uiName = "Test Gate";
+// 	//logicPortPos[2] = "0 1 0";
+// };
