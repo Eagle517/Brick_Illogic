@@ -18,7 +18,7 @@ datablock fxDTSBrickData(Logic1x1fBridgeLeftData)
 
 	logicPortType[0] = 1;
 	logicPortPos[0] = "0 0 0";
-	logicPortDir[0] = "2";
+	logicPortDir[0] = "0";
 	logicPortUIName[0] = "Input A";
 
 	logicPortType[1] = 1;
@@ -33,7 +33,7 @@ datablock fxDTSBrickData(Logic1x1fBridgeLeftData)
 
 	logicPortType[3] = 0;
 	logicPortPos[3] = "0 0 0";
-	logicPortDir[3] = "0";
+	logicPortDir[3] = "2";
 	logicPortUIName[3] = "Output A";
 };
 
@@ -57,7 +57,7 @@ datablock fxDTSBrickData(Logic1x1fBridgeRightData)
 
 	logicPortType[0] = 1;
 	logicPortPos[0] = "0 0 0";
-	logicPortDir[0] = "2";
+	logicPortDir[0] = "0";
 	logicPortUIName[0] = "Input A";
 
 	logicPortType[1] = 1;
@@ -67,13 +67,29 @@ datablock fxDTSBrickData(Logic1x1fBridgeRightData)
 
 	logicPortType[2] = 0;
 	logicPortPos[2] = "0 0 0";
-	logicPortDir[2] = "0";
+	logicPortDir[2] = "2";
 	logicPortUIName[2] = "Output A";
 
 	logicPortType[3] = 0;
 	logicPortPos[3] = "0 0 0";
 	logicPortDir[3] = "3";
 	logicPortUIName[3] = "Output B";
+};
+
+datablock fxDTSBrickData(Logic1x1fBridgePerpLeftData : Logic1x1fBridgeLeftData)
+{
+	logicUIName = "Bridge Left Perp";
+	logicUIDesc = "Allows wires to run through each other perpendicularly";
+	logicPortUIName[2] = "Output A";
+	logicPortUIName[3] = "Output B";
+};
+
+datablock fxDTSBrickData(Logic1x1fBridgePerpRightData : Logic1x1fBridgeRightData)
+{
+	logicUIName = "Bridge Right Perp";
+	logicUIDesc = "Allows wires to run through each other perpendicularly";
+	logicPortUIName[2] = "Output B";
+	logicPortUIName[3] = "Output A";
 };
 
 
@@ -87,4 +103,16 @@ function Logic1x1fBridgeRightData::doLogic(%this, %obj)
 {
 	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0]);
 	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 1]);
+}
+
+function Logic1x1fBridgePerpLeftData::doLogic(%this, %obj)
+{
+	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0]);
+	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 1]);
+}
+
+function Logic1x1fBridgePerpRightData::doLogic(%this, %obj)
+{
+	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0]);
+	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 1]);
 }

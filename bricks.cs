@@ -1,7 +1,44 @@
-// registerInputEvent("fxDTSBrick", "onPowerChange", "Self fxDTSBrick" TAB "Client GameConnection" TAB "Player Player", 0);
-// registerInputEvent("fxDTSBrick", "onPowerOn", "Self fxDTSBrick" TAB "Client GameConnection" TAB "Player Player", 0);
-// registerInputEvent("fxDTSBrick", "onPowerOff", "Self fxDTSBrick" TAB "Client GameConnection" TAB "Player Player", 0);
+registerInputEvent("fxDTSBrick", "onPowerChange", "Self fxDTSBrick", 0);
+registerInputEvent("fxDTSBrick", "onPowerOn", "Self fxDTSBrick", 0);
+registerInputEvent("fxDTSBrick", "onPowerOff", "Self fxDTSBrick", 0);
 // registerOutputEvent(fxDTSBrick, "setPower", "string 30 50", 1);
+registerOutputEvent("fxDTSBrick", "setInputState", "bool 0");
+
+function fxDTSBrick::onPowerChange(%this)
+{
+	$InputTarget_["Self"] = %this;
+	%this.processInputEvent("onPowerChange");
+}
+
+function fxDTSBrick::onPowerOn(%this)
+{
+	$InputTarget_["Self"] = %this;
+	%this.processInputEvent("onPowerOn");
+}
+
+function fxDTSBrick::onPowerOff(%this)
+{
+	$InputTarget_["Self"] = %this;
+	%this.processInputEvent("onPowerOff");
+}
+
+function fxDTSBrick::setInputState(%this, %state, %client)
+{
+	if(%this.getDatablock().isLogicInput)
+	{
+		%ports = $LBC::Bricks::PortCount[%this];
+		for(%i = 0; %i < %ports; %i++)
+		{
+			if($LBC::Ports::Type[$LBC::Bricks::Port[%this, %i]] == 0)
+				%this.Logic_SetOutput(%i, %state);
+		}
+
+		if(%state)
+			%this.setColorFX(3);
+		else
+			%this.setColorFX(0);
+	}
+}
 
 package IllogicBricks
 {
@@ -93,6 +130,7 @@ activatePackage("IllogicBricks");
 exec("./bricks/wires.cs");
 
 //Gates
+exec("./bricks/diode.cs");
 exec("./bricks/NOT.cs");
 exec("./bricks/OR.cs");
 exec("./bricks/AND.cs");
@@ -100,14 +138,15 @@ exec("./bricks/NOR.cs");
 exec("./bricks/NAND.cs");
 exec("./bricks/XOR.cs");
 exec("./bricks/XNOR.cs");
-exec("./bricks/diode.cs");
 
 //Inputs
 exec("./bricks/switch.cs");
 exec("./bricks/button.cs");
+exec("./bricks/eventgate.cs");
 
 //Memory
 exec("./bricks/DFlipFlop.cs");
 
 //Special
 exec("./bricks/bridge.cs");
+exec("./bricks/special/pixel.cs");

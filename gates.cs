@@ -1,7 +1,7 @@
 if($LBC::Ports::NumPorts $= "")
 	$LBC::Ports::NumPorts = 0;
 
-function Logic_AddGate(%obj, %dontCall)
+function Logic_AddGate(%obj)
 {
 	%data = %obj.getDatablock();
 	%box = %obj.getWorldBox();
@@ -26,9 +26,9 @@ function Logic_AddGate(%obj, %dontCall)
 	}
 
 	%rot = %obj.angleID;
-	%rotDir[0] = "1 0 0";
+	%rotDir[0] = "-1 0 0";
 	%rotDir[1] = "0 1 0";
-	%rotDir[2] = "-1 0 0";
+	%rotDir[2] = "1 0 0";
 	%rotDir[3] = "0 -1 0";
 	%rotDir[4] = "0 0 1";
 	%rotDir[5] = "0 0 -1";
@@ -41,21 +41,19 @@ function Logic_AddGate(%obj, %dontCall)
 		%portID = $LBC::Ports::NumPorts;
 		$LBC::Ports::NumPorts++;
 
-		//%type = %data.logicPortType[%i];
 		%ppos = %data.logicPortPos[%i];
 		%dir = %data.logicPortDir[%i];
 		if(%dir < 4)
-			%dir = (%dir-%rot) % 4;
+			%dir = (%dir+%rot) % 4;
 
 		$LBC::Bricks::Port[%obj, %i] = %portID;
+		$LBC::Ports::State[%portID] = 0;
+		$LBC::Ports::BrickState[%obj, %i] = 0;
 
 		$LBC::Ports::Brick[%portID] = %obj;
 		$LBC::Ports::Type[%portID] = %data.logicPortType[%i];
 		$LBC::Ports::Dir[%portID] = %dir;
 		$LBC::Ports::BrickIDX[%portID] = %i;
-
-		////talk(%dir @ " | " @ %rot @ " | " @ (%dir+%rot) % 4);
-		//$LBCbd[%obj, atoi[%dir]] = true;
 
 		%x = getWord(%ppos, 0);
 		%y = getWord(%ppos, 1);
@@ -76,13 +74,9 @@ function Logic_AddGate(%obj, %dontCall)
 
 		%sx = %px+(%x*0.25);
 		%sy = %py+(%y*0.25);
-		%sz = %pz+(%z*0.1);
+		%sz = %pz+(%z*0.2);
+		//talk(%x*0.25 SPC %y*0.25 SPC %z*0.2);
 		%start = %sx SPC %sy SPC %sz;
-
-		// $LBC::Ports::PortPos[%portID] = %x SPC %y SPC %z;
-		// $LBC::Ports::PortPos[%portID, 0] = %x;
-		// $LBC::Ports::PortPos[%portID, 1] = %y;
-		// $LBC::Ports::PortPos[%portID, 2] = %z;
 
 		$LBC::Ports::WorldPos[%portID] = %start;
 		$LBC::Ports::WorldPos[%portID, 0] = %sx;
@@ -95,13 +89,12 @@ function Logic_AddGate(%obj, %dontCall)
 		$LBC::Ports::ConnPos[%portID, 1] = getWord(%end, 1);
 		$LBC::Ports::ConnPos[%portID, 2] = getWord(%end, 2);
 
-		// %cube = DevCube(vectorAdd(vectorAdd(%start, vectorScale(%rotDir[%dir], 0.3)), "0 0 0.2"), "0.25 0.25 1");
+		// %cube = DevCube(vectorAdd(vectorAdd(%start, vectorScale(%rotDir[%dir], 0.3)), "0 0 0"), "0.25 0.25 1");
 		// %cube.setNodeColor("ALL", getColorIDTable(%i*2));
 		// %cube.setShapeName(%i);
 
 		if(%doRay)
 		{
-			////talk(%dir @"|||"@ %start @"|||"@ %end);
 			%ray = containerRayCast(%start, %end, $TypeMasks::FxBrickAlwaysObjectType, %obj);
 
 			if($LBC::Bricks::isLogic[%sobj = firstWord(%ray)] && !%sobj.isDead())
@@ -112,7 +105,6 @@ function Logic_AddGate(%obj, %dontCall)
 					if(%group == -1)
 					{
 						%group = $LBC::Groups::NumGroups;
-						//talk("adding port to group: "@%group);
 						$LBC::Groups::NumGroups++;
 
 						$LBC::Ports::Group[%portID] = %group;
@@ -162,7 +154,7 @@ function Logic_AddGate(%obj, %dontCall)
 					%group = $LBC::Ports::Group[%bestPort];
 					if(%group == -1)
 					{
-						%group = $LBC::Groups::NumGroups+0;
+						%group = $LBC::Groups::NumGroups;
 						$LBC::Groups::NumGroups++;
 
 						$LBC::Ports::Group[%portID] = %group;
@@ -188,17 +180,7 @@ function Logic_AddGate(%obj, %dontCall)
 		}
 
 		if(%group == -1)
-		{
-			// %group = $LBC::Groups::NumGroups;
-			// $LBC::Groups::NumGroups++;
-
-			// $LBC::Ports::Group[%portID] = %group;
-			// $LBC::Groups::Port[%group, 0] = %portID;
-			// $LBC::Groups::PortIDX[%group, %portID] = 0;
-			// $LBC::Groups::PortCount[%group] = 1;
-			// $LBC::Groups::WireCount[%group] = 0;
 			$LBC::Ports::Group[%portID] = -1;
-		}
 		else
 			Logic_QueueGroup(%group);
 	}
@@ -206,7 +188,7 @@ function Logic_AddGate(%obj, %dontCall)
 	$LBC::Bricks::isGate[%obj] = true;
 	$LBC::Bricks::isLogic[%obj] = true;
 
-	if(!%dontCall && isFunction(%dataName, "Logic_onGateAdded"))
+	if(isFunction(%dataName, "Logic_onGateAdded"))
 		%data.Logic_onGateAdded(%obj);
 }
 
@@ -217,23 +199,6 @@ function Logic_RemoveGate(%obj)
 	{
 		%port = $LBC::Bricks::Port[%obj, %i];
 		%group = $LBC::Ports::Group[%port];
-		if(%group == -1)
-		{
-			//deleteVariables("$LBC::Ports::State"@%port);
-			//deleteVariables("$LBC::Ports::BrickState"@%obj@"_"@%i);
-			//deleteVariables("$LBC::Ports::Wire"@%port);
-			//deleteVariables("$LBC::Ports::Group"@%port);
-			//deleteVariables("$LBC::Ports::ConnPos"@%port@"*");
-			//deleteVariables("$LBC::Ports::WorldPos"@%port@"*");
-			//deleteVariables("$LBC::Ports::PortPos"@%port@"*");
-			//deleteVariables("$LBC::Ports::Brick"@%port);
-			//deleteVariables("$LBC::Ports::Type"@%port);
-			//deleteVariables("$LBC::Ports::Dir"@%port);
-			//deleteVariables("$LBC::Ports::BrickIDX"@%port);
-			continue;
-		}
-		//echo("--Removing port " @ %port);
-		//Logic_DebugWireGroup(%group);
 
 		// if((%wire = $LBC::Ports::Wire[%port]))
 		// {
@@ -245,30 +210,40 @@ function Logic_RemoveGate(%obj)
 		$LBC::Ports::State[%port] = false;
 		$LBC::Ports::BrickState[%obj, %i] = false;
 
-		$LBC::Groups::Port[%group, (%idx = $LBC::Groups::PortIDX[%group, %port])] = (%gport = $LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]-1]);
-		$LBC::Groups::PortIDX[%group, %gport] = %idx;
-		$LBC::Groups::PortCount[%group]--;
+		if(%group != -1)
+		{
+			if($LBC::Groups::PortCount[%group] == 2 && $LBC::Groups::WireCount[%group] == 0)
+			{
+				%gports = $LBC::Groups::PortCount[%group];
+				for(%a = 0; %a < %gports; %a++)
+				{
+					%gport = $LBC::Groups::Port[%group, %a];
+					if(%gport != %gport)
+					{
+						%brick = $LBC::Ports::Brick[%gport];
+						$LBC::Ports::State[%gport] = 0;
+						$LBC::Ports::BrickState[%brick, $LBC::Ports::BrickIDX[%gport]] = 0;
+						$LBC::Bricks::Datablock[%brick].doLogic(%brick);
+					}
 
-		//Logic_DebugWireGroup(%group);
-		//echo("-------");
+					$LBC::Ports::Group[%gport] = -1;
+				}
+			}
+			else
+			{
+				$LBC::Groups::Port[%group, (%idx = $LBC::Groups::PortIDX[%group, %port])] = (%gport = $LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]-1]);
+				$LBC::Groups::PortIDX[%group, %gport] = %idx;
+				$LBC::Groups::PortCount[%group]--;
+
+				$LBC::Ports::Group[%port] = -1;
+			}
+			Logic_QueueGroup(%group);
+		}
 
 		$LBC::Ports::Group[%port] = -1;
 		$LBC::Ports::Brick[%port] = -1;
-
-		Logic_QueueGroup(%group);
-
-		//deleteVariables("$LBC::Ports::State"@%port);
-		//deleteVariables("$LBC::Ports::BrickState"@%obj@"_"@%i);
-		//deleteVariables("$LBC::Ports::Wire"@%port);
-		//deleteVariables("$LBC::Ports::Group"@%port);
-		//deleteVariables("$LBC::Ports::ConnPos"@%port);
-		//deleteVariables("$LBC::Ports::ConnPos"@%port@"*");
-		//deleteVariables("$LBC::Ports::WorldPos"@%port);
-		//deleteVariables("$LBC::Ports::WorldPos"@%port@"*");
-		//deleteVariables("$LBC::Ports::PortPos"@%port@"*");
-		//deleteVariables("$LBC::Ports::Brick"@%port);
-		//deleteVariables("$LBC::Ports::Type"@%port);
-		//deleteVariables("$LBC::Ports::Dir"@%port);
-		//deleteVariables("$LBC::Ports::BrickIDX"@%port);
 	}
+
+	$LBC::Bricks::isLogic[%obj] = false;
+	$LBC::Bricks::isGate[%obj] = false;
 }

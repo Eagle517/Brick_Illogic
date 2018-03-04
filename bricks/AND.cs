@@ -26,6 +26,7 @@ function Logic1x2fANDLData::doLogic(%this, %obj)
 // datablock fxDTSBrickData(Logic1x2fANDLData : Logic1x2fANDData)
 // {
 // 	brickFile = "config/server/IllogicGateMaker/25351_reee.blb";
+// 	//brickFile = "add-ons/brick_illogic/gatemaker/input2.blb";
 // 	uiName = "Test Gate";
 // 	//logicPortPos[2] = "0 1 0";
 // };

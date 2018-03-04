@@ -1,29 +1,3 @@
-function serverCMDLT(%client)
-{
-	if(%client.isAdmin && %client.bl_id != 49803)
-	{
-		if(isEventPending($LBC::Schedules::MainSched))
-		{
-			cancel($LBC::Schedules::MainSched);
-			talk("Logic Tick Disabled (" @ %client.name @ ")");
-		}
-		else
-		{
-			Logic_MainTick();
-			talk("Logic Tick Enabled (" @ %client.name @ ")");
-		}
-	}
-}
-
-function serverCmdLToggleFX(%client)
-{
-	if(%client.isAdmin)
-	{
-		$LBC::Opts::NoFX = !$LBC::Opts::NoFX;
-		talk("Logic FX " @ ($LBC::Opts::NoFX ? "Disabled":"Enabled") @ " (" @ %client.name @")");
-	}
-}
-
 function Logic_MainTick()
 {
 	cancel($LBC::Schedules::MainSched);
@@ -39,6 +13,7 @@ function Logic_MainTick()
 		for(%i = 0; %i < $LBC::Groups::UpdateQueueCount; %i++)
 		{
 			%group = $LBC::Groups::UpdateQueue[%i];
+			$LBC::Groups::OnQueue[%group] = false;
 
 			%newState = 0;
 			%state = $LBC::Groups::State[%group];
@@ -67,7 +42,6 @@ function Logic_MainTick()
 				$LBC::Groups::State[%group] = %newState;
 				%state = %newState;
 			}
-			$LBC::Groups::OnQueue[%group] = false;
 
 			for(%a = 0; %a < %inPorts; %a++)
 			{
@@ -75,8 +49,6 @@ function Logic_MainTick()
 				if($LBC::Ports::State[%port] != %state)
 				{
 					%obj = $LBC::Ports::Brick[%port];
-					if(!%obj)
-						continue;
 					$LBC::Ports::State[%port] = %state;
 					$LBC::Ports::BrickState[%obj, $LBC::Ports::BrickIDX[%port]] = %state;
 					$LBC::Bricks::Datablock[%obj].doLogic(%obj);
@@ -89,14 +61,29 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						if($LBC::Wires::isVisual[%wire = $LBC::Groups::Wire[%group, %a]])
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOn();
+						}
+
+						if($LBC::Wires::isVisual[%wire])
 							%wire.setColorFX(3);
 					}
 				}
 				else
 				{
 					for(%a = 0; %a < %wires; %a++)
-						$LBC::Groups::Wire[%group, %a].setColorFX(0);
+					{
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOff();
+						}
+						%wire.setColorFX(0);
+					}
 				}
 			}
 			else
@@ -105,24 +92,26 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						// if(!isObject($LBC::Groups::Wire[%group, %a]) && !%bw[%group])
-						// {
-						// 	%bw[%group] = true;
-						// 	echo("bad wire in group " @ %group);
-						// }
-						$LBC::Groups::Wire[%group, %a].setColorFX(3);
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOn();
+						}
+						%wire.setColorFX(3);
 					}
 				}
 				else
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						// if(!isObject($LBC::Groups::Wire[%group, %a]) && !%bw[%group])
-						// {
-						// 	%bw[%group] = true;
-						// 	echo("bad wire in group " @ %group);
-						// }
-						$LBC::Groups::Wire[%group, %a].setColorFX(0);
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOff();
+						}
+						%wire.setColorFX(0);
 					}
 				}
 			}
@@ -134,6 +123,7 @@ function Logic_MainTick()
 		for(%i = 0; %i < $LBC::Groups::NUpdateQueueCount; %i++)
 		{
 			%group = $LBC::Groups::NUpdateQueue[%i];
+			$LBC::Groups::OnNQueue[%group] = false;
 
 			%newState = 0;
 			%state = $LBC::Groups::State[%group];
@@ -162,7 +152,6 @@ function Logic_MainTick()
 				$LBC::Groups::State[%group] = %newState;
 				%state = %newState;
 			}
-			$LBC::Groups::OnNQueue[%group] = false;
 
 			for(%a = 0; %a < %inPorts; %a++)
 			{
@@ -170,8 +159,6 @@ function Logic_MainTick()
 				if($LBC::Ports::State[%port] != %state)
 				{
 					%obj = $LBC::Ports::Brick[%port];
-					if(!%obj)
-						continue;
 					$LBC::Ports::State[%port] = %state;
 					$LBC::Ports::BrickState[%obj, $LBC::Ports::BrickIDX[%port]] = %state;
 					$LBC::Bricks::Datablock[%obj].doLogic(%obj);
@@ -184,6 +171,13 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOn();
+						}
+
 						if($LBC::Wires::isVisual[%wire = $LBC::Groups::Wire[%group, %a]])
 							%wire.setColorFX(3);
 					}
@@ -191,7 +185,15 @@ function Logic_MainTick()
 				else
 				{
 					for(%a = 0; %a < %wires; %a++)
-						$LBC::Groups::Wire[%group, %a].setColorFX(0);
+					{
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOff();
+						}
+						%wire.setColorFX(0);
+					}
 				}
 			}
 			else
@@ -200,24 +202,26 @@ function Logic_MainTick()
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						// if(!isObject($LBC::Groups::Wire[%group, %a]) && !%bw[%group])
-						// {
-						// 	%bw[%group] = true;
-						// 	echo("bad wire in group " @ %group);
-						// }
-						$LBC::Groups::Wire[%group, %a].setColorFX(3);
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOn();
+						}
+						%wire.setColorFX(3);
 					}
 				}
 				else
 				{
 					for(%a = 0; %a < %wires; %a++)
 					{
-						// if(!isObject($LBC::Groups::Wire[%group, %a]) && !%bw[%group])
-						// {
-						// 	%bw[%group] = true;
-						// 	echo("bad wire in group " @ %group);
-						// }
-						$LBC::Groups::Wire[%group, %a].setColorFX(0);
+						%wire = $LBC::Groups::Wire[%group, %a];
+						if($LBC::Wires::doEvents[%wire])
+						{
+							%wire.onPowerChange();
+							%wire.onPowerOff();
+						}
+						%wire.setColorFX(0);
 					}
 				}
 			}
@@ -227,6 +231,25 @@ function Logic_MainTick()
 }
 Logic_MainTick();
 
+function Logic_QueueGroup(%group)
+{
+	%group = %group | 0;
+	if(!$LBC::Groups::Tick && !$LBC::Groups::OnQueue[%group])
+	{
+		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
+		$LBC::Groups::OnQueue[%group] = true;
+		$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
+		$LBC::Groups::UpdateQueueCount++;
+	}
+	else if($LBC::Groups::Tick && !$LBC::Groups::OnNQueue[%group])
+	{
+		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
+		$LBC::Groups::OnNQueue[%group] = true;
+		$LBC::Groups::NUpdateQueue[$LBC::Groups::NUpdateQueueCount+0] = %group;
+		$LBC::Groups::NUpdateQueueCount++;
+	}
+}
+
 function fxDTSBrick::Logic_SetOutput(%this, %port, %state)
 {
 	%portID = $LBC::Bricks::Port[%this, %port];
@@ -234,17 +257,25 @@ function fxDTSBrick::Logic_SetOutput(%this, %port, %state)
 	{
 		$LBC::Ports::State[%portID] = %state;
 		$LBC::Ports::BrickState[%this, %port] = %state;
-		Logic_QueueGroup($LBC::Ports::Group[%portID]);
+		
+		%group = $LBC::Ports::Group[%portID];
+		if(!$LBC::Groups::Tick && !$LBC::Groups::OnQueue[%group])
+		{
+			$LBC::Groups::OnQueue[%group] = true;
+			$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
+			$LBC::Groups::UpdateQueueCount++;
+		}
+		else if($LBC::Groups::Tick && !$LBC::Groups::OnNQueue[%group])
+		{
+			$LBC::Groups::OnNQueue[%group] = true;
+			$LBC::Groups::NUpdateQueue[$LBC::Groups::NUpdateQueueCount+0] = %group;
+			$LBC::Groups::NUpdateQueueCount++;
+		}
 	}
 }
 
 package IllogicLogic
 {
-	// function Armor::onTrigger(%this, %obj, %slot, %trigger)
-	// {
-	// 	parent::onTrigger(%this, %obj, %slot, %trigger);
-		
-	// }
 	function Player::activateStuff(%this, %a, %b)
 	{
 		parent::activateStuff(%this, %a, %b);
@@ -301,9 +332,9 @@ package IllogicLogic
 							%hitNorm = %nx SPC %ny SPC %nz;
 							//talk(%hitNorm);
 
-							%rotDir[0] = "1 0 0";
+							%rotDir[0] = "-1 0 0";
 							%rotDir[1] = "0 1 0";
-							%rotDir[2] = "-1 0 0";
+							%rotDir[2] = "1 0 0";
 							%rotDir[3] = "0 -1 0";
 							%rotDir[4] = "0 0 1";
 							%rotDir[5] = "0 0 -1";

@@ -31,23 +31,17 @@ function Logic_AddWire(%obj)
 	%pos = %obj.getPosition();
 	%colorID = %obj.getColorID();
 
-	%rotDir[0] = "1 0 0";
-	%rotDir[1] = "0 1 0";
-	%rotDir[2] = "-1 0 0";
-	%rotDir[3] = "0 -1 0";
-	%rotDir[4] = "0 0 1";
-	%rotDir[5] = "0 0 -1";
-
 	%group = -1;
 
 	$LBC::Bricks::NumNeighbors[%obj] = 0;
 	$LBC::Wires::isVisual[%obj] = %data.isLogicVisual+0;
+	$LBC::Wires::doEvents[%obj] = %data.doLogicEvents+0;
 	// $LBC::Wires::PortCount[%obj] = 0;
 
 	initContainerBoxSearch(%pos, vectorAdd(%size, "0 -0.02 -0.02"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
-		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead() || ($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() != %colorID))
+		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
 			continue;
 
 		if($LBC::Bricks::isGate[%sobj])
@@ -74,33 +68,6 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::WireIDX[%group, %obj] = 0;
 						$LBC::Groups::WireCount[%group] = 1;
 						$LBC::Wires::Group[%obj] = %group;
-						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						// {
-						// 	%group = $LBC::Groups::NumGroups;
-						// 	$LBC::Groups::NumGroups++;
-
-						// 	$LBC::Groups::Port[%group, 0] = %port;
-						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
-						// 	$LBC::Groups::PortCount[%group] = 1;
-						// 	$LBC::Ports::Group[%port] = %group;
-
-						// 	$LBC::Groups::Wire[%group, 0] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
-						// 	$LBC::Groups::WireCount[%group] = 1;
-						// 	$LBC::Wires::Group[%obj] = %group;
-						// }
-						// else
-						// {
-						// 	%group = %oGroup;
-						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-						// 	$LBC::Groups::WireCount[%group]++;
-						// 	$LBC::Wires::Group[%obj] = %group;
-
-						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-						// 	// $LBC::Wires::PortCount[%obj]++;
-						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -111,115 +78,79 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
 						$LBC::Groups::PortCount[%oGroup] = 0;
-
-						//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::State"@%oGroup);
-						//deleteVariables("$LBC::Groups::Update"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
 					}
 				}
 			}
-			continue;
 		}
-
-		$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
-		$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
-		$LBC::Bricks::NumNeighbors[%obj]++;
-		
-		$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
-		$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
-		$LBC::Bricks::NumNeighbors[%sobj]++;
-
-		%oGroup = $LBC::Wires::Group[%sobj];
-		if(%group == -1)
+		else if($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() == %colorID)
 		{
-			%group = %oGroup;
-			$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-			$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-			$LBC::Groups::WireCount[%group]++;
-			$LBC::Wires::Group[%obj] = %group;
-		}
-		else if(%group == %oGroup)
-			continue;
-		else
-		{
-			%tSize = $LBC::Groups::WireCount[%group];
-			%oSize = $LBC::Groups::WireCount[%oGroup];
+			$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
+			$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
+			$LBC::Bricks::NumNeighbors[%obj]++;
+			
+			$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
+			$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
+			$LBC::Bricks::NumNeighbors[%sobj]++;
 
-			%tpSize = $LBC::Groups::PortCount[%group];
-			%opSize = $LBC::Groups::PortCount[%oGroup];
-
-			if(%tSize+%tpSize > %oSize+%opSize)
+			%oGroup = $LBC::Wires::Group[%sobj];
+			if(%group == -1)
 			{
-				for(%i = 0; %i < %oSize; %i++)
-				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
-					$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
-				}
-				for(%i = 0; %i < %opSize; %i++)
-				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
-					$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
-				}
-				
-				$LBC::Groups::WireCount[%oGroup] = 0;
-				$LBC::Groups::PortCount[%oGroup] = 0;
-
-				$LBC::Groups::WireCount[%group] += %oSize;
-				$LBC::Groups::PortCount[%group] += %opSize;
-				// ////echo("MERGA A");
-				// Logic_DebugWireGroup(%group);
-
-				//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::State"@%oGroup);
-				//deleteVariables("$LBC::Groups::Update"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
+				%group = %oGroup;
+				$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+				$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+				$LBC::Groups::WireCount[%group]++;
+				$LBC::Wires::Group[%obj] = %group;
 			}
+			else if(%group == %oGroup)
+				continue;
 			else
 			{
-				for(%i = 0; %i < %tSize; %i++)
+				%tSize = $LBC::Groups::WireCount[%group];
+				%oSize = $LBC::Groups::WireCount[%oGroup];
+
+				%tpSize = $LBC::Groups::PortCount[%group];
+				%opSize = $LBC::Groups::PortCount[%oGroup];
+
+				if(%tSize+%tpSize > %oSize+%opSize)
 				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
-					$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					for(%i = 0; %i < %oSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
+						$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
+					}
+					for(%i = 0; %i < %opSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
+						$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%oGroup] = 0;
+					$LBC::Groups::PortCount[%oGroup] = 0;
+
+					$LBC::Groups::WireCount[%group] += %oSize;
+					$LBC::Groups::PortCount[%group] += %opSize;
 				}
-				for(%i = 0; %i < %tpSize; %i++)
+				else
 				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
-					$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					for(%i = 0; %i < %tSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
+						$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					}
+					for(%i = 0; %i < %tpSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
+						$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%group] = 0;
+					$LBC::Groups::PortCount[%group] = 0;
+
+					$LBC::Groups::WireCount[%oGroup] += %tSize;
+					$LBC::Groups::PortCount[%oGroup] += %tpSize;
+
+					%group = %oGroup;
 				}
-				
-				$LBC::Groups::WireCount[%group] = 0;
-				$LBC::Groups::PortCount[%group] = 0;
-
-				$LBC::Groups::WireCount[%oGroup] += %tSize;
-				$LBC::Groups::PortCount[%oGroup] += %tpSize;
-
-				//deleteVariables("$LBC::Groups::WireCount"@%group);
-				//deleteVariables("$LBC::Groups::Wire"@%group@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%group);
-				//deleteVariables("$LBC::Groups::Port"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::State"@%group);
-				//deleteVariables("$LBC::Groups::Update"@%group);
-				//deleteVariables("$LBC::Groups::OnQueue"@%group);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%group);
-
-				%group = %oGroup;
-				// ////echo("MERGE B");
-				// Logic_DebugWireGroup(%group);
 			}
 		}
 	}
@@ -227,7 +158,7 @@ function Logic_AddWire(%obj)
 	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.02 0 -0.02"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
-		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead() || ($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() != %colorID))
+		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
 			continue;
 
 		if($LBC::Bricks::isGate[%sobj])
@@ -254,33 +185,6 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::WireIDX[%group, %obj] = 0;
 						$LBC::Groups::WireCount[%group] = 1;
 						$LBC::Wires::Group[%obj] = %group;
-						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						// {
-						// 	%group = $LBC::Groups::NumGroups;
-						// 	$LBC::Groups::NumGroups++;
-
-						// 	$LBC::Groups::Port[%group, 0] = %port;
-						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
-						// 	$LBC::Groups::PortCount[%group] = 1;
-						// 	$LBC::Ports::Group[%port] = %group;
-
-						// 	$LBC::Groups::Wire[%group, 0] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
-						// 	$LBC::Groups::WireCount[%group] = 1;
-						// 	$LBC::Wires::Group[%obj] = %group;
-						// }
-						// else
-						// {
-						// 	%group = %oGroup;
-						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-						// 	$LBC::Groups::WireCount[%group]++;
-						// 	$LBC::Wires::Group[%obj] = %group;
-
-						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-						// 	// $LBC::Wires::PortCount[%obj]++;
-						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -291,115 +195,80 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
 						$LBC::Groups::PortCount[%oGroup] = 0;
-
-						//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::State"@%oGroup);
-						//deleteVariables("$LBC::Groups::Update"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
 					}
 				}
 			}
 			continue;
 		}
-
-		$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
-		$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
-		$LBC::Bricks::NumNeighbors[%obj]++;
-		
-		$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
-		$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
-		$LBC::Bricks::NumNeighbors[%sobj]++;
-
-		%oGroup = $LBC::Wires::Group[%sobj];
-		if(%group == -1)
+		else if($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() == %colorID)
 		{
-			%group = %oGroup;
-			$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-			$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-			$LBC::Groups::WireCount[%group]++;
-			$LBC::Wires::Group[%obj] = %group;
-		}
-		else if(%group == %oGroup)
-			continue;
-		else
-		{
-			%tSize = $LBC::Groups::WireCount[%group];
-			%oSize = $LBC::Groups::WireCount[%oGroup];
+			$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
+			$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
+			$LBC::Bricks::NumNeighbors[%obj]++;
+			
+			$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
+			$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
+			$LBC::Bricks::NumNeighbors[%sobj]++;
 
-			%tpSize = $LBC::Groups::PortCount[%group];
-			%opSize = $LBC::Groups::PortCount[%oGroup];
-
-			if(%tSize+%tpSize > %oSize+%opSize)
+			%oGroup = $LBC::Wires::Group[%sobj];
+			if(%group == -1)
 			{
-				for(%i = 0; %i < %oSize; %i++)
-				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
-					$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
-				}
-				for(%i = 0; %i < %opSize; %i++)
-				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
-					$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
-				}
-				
-				$LBC::Groups::WireCount[%oGroup] = 0;
-				$LBC::Groups::PortCount[%oGroup] = 0;
-
-				$LBC::Groups::WireCount[%group] += %oSize;
-				$LBC::Groups::PortCount[%group] += %opSize;
-				// ////echo("MERGA A");
-				// Logic_DebugWireGroup(%group);
-
-				//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::State"@%oGroup);
-				//deleteVariables("$LBC::Groups::Update"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
+				%group = %oGroup;
+				$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+				$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+				$LBC::Groups::WireCount[%group]++;
+				$LBC::Wires::Group[%obj] = %group;
 			}
+			else if(%group == %oGroup)
+				continue;
 			else
 			{
-				for(%i = 0; %i < %tSize; %i++)
+				%tSize = $LBC::Groups::WireCount[%group];
+				%oSize = $LBC::Groups::WireCount[%oGroup];
+
+				%tpSize = $LBC::Groups::PortCount[%group];
+				%opSize = $LBC::Groups::PortCount[%oGroup];
+
+				if(%tSize+%tpSize > %oSize+%opSize)
 				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
-					$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					for(%i = 0; %i < %oSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
+						$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
+					}
+					for(%i = 0; %i < %opSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
+						$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%oGroup] = 0;
+					$LBC::Groups::PortCount[%oGroup] = 0;
+
+					$LBC::Groups::WireCount[%group] += %oSize;
+					$LBC::Groups::PortCount[%group] += %opSize;
 				}
-				for(%i = 0; %i < %tpSize; %i++)
+				else
 				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
-					$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					for(%i = 0; %i < %tSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
+						$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					}
+					for(%i = 0; %i < %tpSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
+						$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%group] = 0;
+					$LBC::Groups::PortCount[%group] = 0;
+
+					$LBC::Groups::WireCount[%oGroup] += %tSize;
+					$LBC::Groups::PortCount[%oGroup] += %tpSize;
+
+					%group = %oGroup;
 				}
-				
-				$LBC::Groups::WireCount[%group] = 0;
-				$LBC::Groups::PortCount[%group] = 0;
-
-				$LBC::Groups::WireCount[%oGroup] += %tSize;
-				$LBC::Groups::PortCount[%oGroup] += %tpSize;
-
-				//deleteVariables("$LBC::Groups::WireCount"@%group);
-				//deleteVariables("$LBC::Groups::Wire"@%group@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%group);
-				//deleteVariables("$LBC::Groups::Port"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::State"@%group);
-				//deleteVariables("$LBC::Groups::Update"@%group);
-				//deleteVariables("$LBC::Groups::OnQueue"@%group);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%group);
-
-				%group = %oGroup;
-				// ////echo("MERGE B");
-				// Logic_DebugWireGroup(%group);
 			}
 		}
 	}
@@ -407,7 +276,7 @@ function Logic_AddWire(%obj)
 	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.02 -0.02 0.02"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
-		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead() || ($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() != %colorID))
+		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
 			continue;
 
 		if($LBC::Bricks::isGate[%sobj])
@@ -434,33 +303,6 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::WireIDX[%group, %obj] = 0;
 						$LBC::Groups::WireCount[%group] = 1;
 						$LBC::Wires::Group[%obj] = %group;
-						// if(%oGroup == -1 || $LBC::Groups::PortCount[%oGroup] < 1)
-						// {
-						// 	%group = $LBC::Groups::NumGroups;
-						// 	$LBC::Groups::NumGroups++;
-
-						// 	$LBC::Groups::Port[%group, 0] = %port;
-						// 	$LBC::Groups::PortIDX[%group, %port] = 0;
-						// 	$LBC::Groups::PortCount[%group] = 1;
-						// 	$LBC::Ports::Group[%port] = %group;
-
-						// 	$LBC::Groups::Wire[%group, 0] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = 0;
-						// 	$LBC::Groups::WireCount[%group] = 1;
-						// 	$LBC::Wires::Group[%obj] = %group;
-						// }
-						// else
-						// {
-						// 	%group = %oGroup;
-						// 	$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-						// 	$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-						// 	$LBC::Groups::WireCount[%group]++;
-						// 	$LBC::Wires::Group[%obj] = %group;
-
-						// 	// $LBC::Wires::Port[%obj, $LBC::Wires::PortCount[%obj]] = %port;
-						// 	// $LBC::Wires::PortIDX[%obj, %portID] = $LBC::Wires::PortCount[%obj];
-						// 	// $LBC::Wires::PortCount[%obj]++;
-						// }
 					}
 					else if(%group == %oGroup)
 						continue;
@@ -471,115 +313,80 @@ function Logic_AddWire(%obj)
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
 						$LBC::Groups::PortCount[%oGroup] = 0;
-
-						//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-						//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-						//deleteVariables("$LBC::Groups::State"@%oGroup);
-						//deleteVariables("$LBC::Groups::Update"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-						//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
 					}
 				}
 			}
 			continue;
 		}
-
-		$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
-		$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
-		$LBC::Bricks::NumNeighbors[%obj]++;
-		
-		$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
-		$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
-		$LBC::Bricks::NumNeighbors[%sobj]++;
-
-		%oGroup = $LBC::Wires::Group[%sobj];
-		if(%group == -1)
+		else if($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() == %colorID)
 		{
-			%group = %oGroup;
-			$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
-			$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
-			$LBC::Groups::WireCount[%group]++;
-			$LBC::Wires::Group[%obj] = %group;
-		}
-		else if(%group == %oGroup)
-			continue;
-		else
-		{
-			%tSize = $LBC::Groups::WireCount[%group];
-			%oSize = $LBC::Groups::WireCount[%oGroup];
+			$LBC::Bricks::Neighbor[%obj, $LBC::Bricks::NumNeighbors[%obj]] = %sobj;
+			$LBC::Bricks::NeighborIDX[%obj, %sobj] = $LBC::Bricks::NumNeighbors[%obj];
+			$LBC::Bricks::NumNeighbors[%obj]++;
+			
+			$LBC::Bricks::Neighbor[%sobj, $LBC::Bricks::NumNeighbors[%sobj]] = %obj;
+			$LBC::Bricks::NeighborIDX[%sobj, %obj] = $LBC::Bricks::NumNeighbors[%sobj];
+			$LBC::Bricks::NumNeighbors[%sobj]++;
 
-			%tpSize = $LBC::Groups::PortCount[%group];
-			%opSize = $LBC::Groups::PortCount[%oGroup];
-
-			if(%tSize+%tpSize > %oSize+%opSize)
+			%oGroup = $LBC::Wires::Group[%sobj];
+			if(%group == -1)
 			{
-				for(%i = 0; %i < %oSize; %i++)
-				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
-					$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
-				}
-				for(%i = 0; %i < %opSize; %i++)
-				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
-					$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
-				}
-				
-				$LBC::Groups::WireCount[%oGroup] = 0;
-				$LBC::Groups::PortCount[%oGroup] = 0;
-
-				$LBC::Groups::WireCount[%group] += %oSize;
-				$LBC::Groups::PortCount[%group] += %opSize;
-				// ////echo("MERGA A");
-				// Logic_DebugWireGroup(%group);
-
-				//deleteVariables("$LBC::Groups::WireCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Wire"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%oGroup);
-				//deleteVariables("$LBC::Groups::Port"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%oGroup@"*");
-				//deleteVariables("$LBC::Groups::State"@%oGroup);
-				//deleteVariables("$LBC::Groups::Update"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnQueue"@%oGroup);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%oGroup);
+				%group = %oGroup;
+				$LBC::Groups::Wire[%group, $LBC::Groups::WireCount[%group]] = %obj;
+				$LBC::Groups::WireIDX[%group, %obj] = $LBC::Groups::WireCount[%group];
+				$LBC::Groups::WireCount[%group]++;
+				$LBC::Wires::Group[%obj] = %group;
 			}
+			else if(%group == %oGroup)
+				continue;
 			else
 			{
-				for(%i = 0; %i < %tSize; %i++)
+				%tSize = $LBC::Groups::WireCount[%group];
+				%oSize = $LBC::Groups::WireCount[%oGroup];
+
+				%tpSize = $LBC::Groups::PortCount[%group];
+				%opSize = $LBC::Groups::PortCount[%oGroup];
+
+				if(%tSize+%tpSize > %oSize+%opSize)
 				{
-					$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
-					$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					for(%i = 0; %i < %oSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%group, %tSize+%i] = $LBC::Groups::Wire[%oGroup, %i]] = %group;
+						$LBC::Groups::WireIDX[%group, $LBC::Groups::Wire[%oGroup, %i]] = %tSize+%i;
+					}
+					for(%i = 0; %i < %opSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize+%i] = $LBC::Groups::Port[%oGroup, %i]] = %group;
+						$LBC::Groups::PortIDX[%group, $LBC::Groups::Port[%oGroup, %i]] = %tpSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%oGroup] = 0;
+					$LBC::Groups::PortCount[%oGroup] = 0;
+
+					$LBC::Groups::WireCount[%group] += %oSize;
+					$LBC::Groups::PortCount[%group] += %opSize;
 				}
-				for(%i = 0; %i < %tpSize; %i++)
+				else
 				{
-					$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
-					$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					for(%i = 0; %i < %tSize; %i++)
+					{
+						$LBC::Wires::Group[$LBC::Groups::Wire[%oGroup, %oSize+%i] = $LBC::Groups::Wire[%group, %i]] = %oGroup;
+						$LBC::Groups::WireIDX[%oGroup, $LBC::Groups::Wire[%group, %i]] = %oSize+%i;
+					}
+					for(%i = 0; %i < %tpSize; %i++)
+					{
+						$LBC::Ports::Group[$LBC::Groups::Port[%oGroup, %opSize+%i] = $LBC::Groups::Port[%group, %i]] = %oGroup;
+						$LBC::Groups::PortIDX[%oGroup, $LBC::Groups::Port[%group, %i]] = %opSize+%i;
+					}
+					
+					$LBC::Groups::WireCount[%group] = 0;
+					$LBC::Groups::PortCount[%group] = 0;
+
+					$LBC::Groups::WireCount[%oGroup] += %tSize;
+					$LBC::Groups::PortCount[%oGroup] += %tpSize;
+
+					%group = %oGroup;
 				}
-				
-				$LBC::Groups::WireCount[%group] = 0;
-				$LBC::Groups::PortCount[%group] = 0;
-
-				$LBC::Groups::WireCount[%oGroup] += %tSize;
-				$LBC::Groups::PortCount[%oGroup] += %tpSize;
-
-				//deleteVariables("$LBC::Groups::WireCount"@%group);
-				//deleteVariables("$LBC::Groups::Wire"@%group@"*");
-				//deleteVariables("$LBC::Groups::WireIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortCount"@%group);
-				//deleteVariables("$LBC::Groups::Port"@%group@"*");
-				//deleteVariables("$LBC::Groups::PortIDX"@%group@"*");
-				//deleteVariables("$LBC::Groups::State"@%group);
-				//deleteVariables("$LBC::Groups::Update"@%group);
-				//deleteVariables("$LBC::Groups::OnQueue"@%group);
-				//deleteVariables("$LBC::Groups::OnNQueue"@%group);
-
-				%group = %oGroup;
-				// ////echo("MERGE B");
-				// Logic_DebugWireGroup(%group);
 			}
 		}
 	}
@@ -628,7 +435,10 @@ function Logic_RemoveWire(%obj, %instCall)
 		}
 
 		if(%instCall)
+		{
+			cancel($LBC::Schedules::rs[%group]);
 			Logic_RefreshWireGroup(%group);
+		}
 		else
 		{
 			cancel($LBC::Schedules::rs[%group]);
@@ -814,25 +624,6 @@ function Logic_SetState(%group, %state)
 	%group = %group | 0;
 	$LBC::Groups::State[%group] = %state;
 	$LBC::Groups::Update[%group] = true;
-}
-
-function Logic_QueueGroup(%group)
-{
-	%group = %group | 0;
-	if(!$LBC::Groups::Tick && !$LBC::Groups::OnQueue[%group])
-	{
-		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
-		$LBC::Groups::OnQueue[%group] = true;
-		$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
-		$LBC::Groups::UpdateQueueCount++;
-	}
-	else if($LBC::Groups::Tick && !$LBC::Groups::OnNQueue[%group])
-	{
-		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
-		$LBC::Groups::OnNQueue[%group] = true;
-		$LBC::Groups::NUpdateQueue[$LBC::Groups::NUpdateQueueCount+0] = %group;
-		$LBC::Groups::NUpdateQueueCount++;
-	}
 }
 
 function Logic_ShowWireConn(%group, %obj)

@@ -17,13 +17,13 @@ datablock fxDTSBrickData(Logic1x1fDiodeData)
 
 	logicPortType[0] = 1;
 	logicPortPos[0] = "0 0 0";
-	logicPortDir[0] = "2";
+	logicPortDir[0] = "0";
 	logicPortUIName[0] = "A";
 	logicPortUIDesc[0] = "";
 
 	logicPortType[1] = 0;
 	logicPortPos[1] = "0 0 0";
-	logicPortDir[1] = "0";
+	logicPortDir[1] = "2";
 	logicPortUIName[1] = "B";
 	logicPortUIDesc[1] = "";
 };

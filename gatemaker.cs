@@ -44,6 +44,9 @@ function Logic_RoundToBrickPos(%pos, %ox, %oy, %oz, %xr, %yr, %zr)
 
 function serverCmdlMakeGate(%client, %x, %y, %z)
 {
+	if(!%client.isAdmin && !%client.isSuperAdmin)
+		return;
+
 	if(isObject(%player = %client.player))
 	{
 		%eye = %player.getEyePoint();
@@ -93,28 +96,16 @@ function serverCmdlSetGateDesc(%client, %a0, %a1, %a2, %a3, %a4, %a5, %a6, %a7, 
 	}
 }
 
-function serverCmdlAddPort(%client, %type)
+function serverCmdlAddPorts(%client, %type)
 {
-	if(isObject(%gate = %client.LGM_gate) && !isObject(%client.LGM_port) && !isEventPending(%client.LGM_moveSched))
+	if(isObject(%gate = %client.LGM_gate) && !isEventPending(%client.LGM_moveSched))
 	{
-		if(%type == 1 || %type $= "in" || %type $= "input")
-			%type = 1;
-		else if(%type $= "0" || %type $= "out" || %type $= "output")
-			%type = 0;
+		%client.LGM_placing = !%client.LGM_placing;
+		if(%client.LGM_placing)
+			messageClient(%client, '', '\c6Click to place a port. Click it again to change port type or delete. \c3/lAddPorts\c6 to stop.');
 		else
-		{
-			messageClient(%client, '', '\c6Invalid port type. \c3/lAddPort in/out');
-			return;
-		}
-
-		%client.Logic_AddGatePort(%type);
+			messageClient(%client, '', '\c6You are no longer placing ports.');
 	}
-}
-
-function serverCmdlCancel(%client)
-{
-	if(isObject(%port = %client.LGM_port))
-		%port.delete();
 }
 
 function serverCmdlSetPortName(%client, %p, %a0, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10, %a11, %a12, %a13, %a14, %a15, %a16, %a17, %a18)
@@ -130,19 +121,25 @@ function serverCmdlSetPortName(%client, %p, %a0, %a1, %a2, %a3, %a4, %a5, %a6, %
 	}
 }
 
-function serverCmdlSaveGate(%client)
+function serverCmdlSaveGate(%client, %overwrite)
 {
 	if(isObject(%gate = %client.LGM_gate))
 	{
-		// if(%gate.gateName $= "")
-		// 	messageClient(%client, '', '\c6You must set the gate name before saving. \c3/lSetGateName name');
-		// else
-		// {
-			//%file = "config/server/IllogicGateMaker/"@%client.getBLID()@"_"@%gate.gateName@".blb";
-			%file = "config/server/IllogicGateMaker/25351_reee.blb";
-			%client.Logic_SaveBLB(%file);
+		if(%gate.gateName $= "")
+			messageClient(%client, '', '\c6You must set the gate name before saving. \c3/lSetGateName name');
+		else
+		{
+			%file = "config/server/IllogicGateMaker/"@%client.getBLID()@"_"@%gate.gateName@".blb";
+			%file = "config/server/IllogicGateMaker/"@strReplace(%gate.gateName, " ", "");
+			if(isFile(%file@".blb") && !%overwrite)
+			{
+				messageClient(%client, '', '\c6A gate with the name of \c3%1\c6 already exists. Use \c3/lSaveGate 1\c6 to overwrite it.', %gate.gateName);
+				return;
+			}
+			%client.Logic_SaveBLB(%file@".blb");
+			%client.Logic_SaveData(%file@".cs", %file@".blb");
 			messageClient(%client, '', '\c6Your gate was saved to \c3%1', %file);
-		//}
+		}
 	}
 }
 
@@ -164,22 +161,38 @@ function serverCmdlCheckGate(%client)
 	}
 }
 
+function serverCmdLLoadGates(%client)
+{
+	if(!%client.isAdmin && !%client.isSuperAdmin)
+		return;
+	%search = "config/server/IllogicGateMaker/*.cs";
+	%file = findFirstFile(%search);
+	while(%file !$= "")
+	{
+		exec(%file);
+		%file = findNextFile(%search);
+	}
+	transmitDatablocks();
+	createUINameTable();
+	commandToAll('BSD_LoadBricks');
+
+	messageAll('', '\c3%1\c6 has loaded gates.', %client.name);
+}
+
 function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 {
-	if(!%this.isAdmin)
-		return;
 	if(isObject(%this.LGM_gate))
 	{
-		%this.centerPrint("You must delete/save your first gate in order to make another one.", 3);
+		%this.centerPrint("You must delete your first gate in order to make another one.", 3);
 		return;
 	}
 
-	if(%wid > %len)
-	{
-		%a = %len;
-		%len = %wid;
-		%wid = %a;
-	}
+	// if(%wid > %len)
+	// {
+	// 	%a = %len;
+	// 	%len = %wid;
+	// 	%wid = %a;
+	// }
 
 	%wid = mClamp(%wid, 1, 64);
 	%len = mClamp(%len, 1, 64);
@@ -218,11 +231,11 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 
 	%this.LGM_gate = %shape;
 	%this.centerPrint("Gate created!", 1);
-	messageClient(%this, '', '\c3/lMoveGate\c6 - toggles moving the logic gate in world space');
+	messageClient(%this, '', '\c3/lMoveGate\c6 - lets you move the gate');
 	messageClient(%this, '', '\c3/lSetGateName\c6 - sets the name of the gate');
 	messageClient(%this, '', '\c3/lSetGateDesc\c6 - sets the description of the gate');
-	messageClient(%this, '', '\c3/lAddPort\c6 - adds a port to the gate');
-	messageClient(%this, '', '\c3/lSaveGate\c6 - saves a .blb and .cs to config/server/logicgates/[blid]/');
+	messageClient(%this, '', '\c3/lAddPorts\c6 - add ports to the gate');
+	messageClient(%this, '', '\c3/lSaveGate\c6 - saves a .blb and .cs to config/server/logicgates/');
 	messageClient(%this, '', '\c3/lDeleteGate\c6 - deletes the gate being worked on');
 }
 
@@ -288,38 +301,11 @@ function GameConnection::Logic_MoveGate(%this)
 
 function GameConnection::Logic_AddGatePort(%this, %type)
 {
-	if(isObject(%this.LGM_port))
-		%this.LGM_port.delete();
-
-	%shape = new StaticShape()
-	{
-		datablock = %type ? "Illogic_BrickInputData":"Illogic_BrickOutputData";
-		position = "0 0 0";
-		portType = %type;
-	};
-	missionCleanup.add(%shape);
-	%this.LGM_port = %shape;
-	%this.Logic_MoveGatePort();
-	messageClient(%this, '', '\c6Click to place the port.');
-	messageClient(%this, '', '\c3/lCancel\c6 to delete the port.');
-}
-
-function GameConnection::Logic_MoveGatePort(%this)
-{
-	cancel(%this.LGM_movePortSched);
 	%gate = %this.LGM_gate;
-	%port = %this.LGM_port;
+	if(!isObject(%gate))
+		return;
+
 	%control = %this.getControlObject();
-
-	if(!isObject(%port))
-		return;
-	if(!isObject(%gate) || !isObject(%control) || ((%class = %control.getClassName()) !$= "Camera" && %class !$= "Player"))
-	{
-		%port.delete();
-		return;
-	}
-
-	%this.LGM_movePortSched = %this.schedule(1, "Logic_MoveGatePort");
 
 	%eye = %control.getEyePoint();
 	%vec = %control.getEyeVector();
@@ -328,88 +314,123 @@ function GameConnection::Logic_MoveGatePort(%this)
 	if(isObject(%hit = firstWord(%ray)) && %hit == %gate)
 	{	
 		%norm = ((stripos(%nx = getWord(%ray, 4), "e") != -1) ? 0:%nx) SPC ((stripos(%ny = getWord(%ray, 5), "e") != -1) ? 0:%ny) SPC ((stripos(%nz = getWord(%ray, 6), "e") != -1) ? 0:%nz);
-		%pos = vectorSub(getWords(%ray, 1, 3), vectorScale(%norm, "0.0001"));
+		%pos = vectorSub(getWords(%ray, 1, 3), vectorScale(%norm, "0.01"));
 		%pos = mFloor(getWord(%pos, 0)*2)/2+0.25 SPC mFloor(getWord(%pos, 1)*2)/2+0.25 SPC (mFloor(getWord(%pos, 2)*5)/5)+0.1;
+		%data = "Illogic_BrickInputData";
+
+		%portPos = vectorSub(%pos, %gate.getPosition());
+		%ports = %gate.portCount;
+		for(%i = 0; %i < %ports; %i++)
+		{
+			%port = %gate.ports[%i];
+			if(%port.portPos $= %portPos && %port.portNorm $= %norm)
+			{
+				%data = %port.getDatablock();
+				%port.state++;
+				if(%port.state == 1)
+				{
+					if(%port.isVert)
+						%port.setDatablock("Illogic_BrickOutputVertData");
+					else
+						%port.setDatablock("Illogic_BrickOutputData");
+					%port.portType = 0;
+				}
+				else if(%port.state == 2)
+				{
+					for(%a = %i; %a < %ports-1; %a++)
+						%gate.ports[%a] = %gate.ports[%a+1];
+					%gate.portCount--;
+					%port.delete();
+				}
+				return;
+			}
+		}
 
 		if(mAbs(%nx) == 1)
-		{
-			if(%port.portType == 0)
-				%data = "Illogic_BrickOutputData";
-			else if(%port.portType == 1)
-				%data = "Illogic_BrickInputData";
-
-			//%offset = "0 " @ 0.25 @ " 0";
 			%euler = "0 0" SPC -90*%nx;
-		}
 		else if(mAbs(%ny) == 1)
-		{
-			if(%port.portType == 0)
-				%data = "Illogic_BrickOutputData";
-			else if(%port.portType == 1)
-				%data = "Illogic_BrickInputData";
-
 			%euler = "0 0" SPC 90*%ny-90;
-			//%offset = 0.25 SPC "0 0";
-		}
 		else if(mAbs(%nz) == 1)
 		{
-			if(%port.portType == 0)
-				%data = "Illogic_BrickOutputVertData";
-			else if(%port.portType == 1)
-				%data = "Illogic_BrickInputVertData";
-
 			%euler = 180-(90*(%nz+1)) SPC "0 0";
-			//%offset = "0.25 0.25" SPC -0.2*%nz;
+			%isVert = true;
+			%data = "Illogic_BrickInputVertData";
 		}
 
-		%pos = vectorAdd(%pos, %offset);
+		%rotDir["-1 0 0"] = 0;
+		%rotDir["0 1 0"] = 1;
+		%rotDir["1 0 0"] = 2;
+		%rotDir["0 -1 0"] = 3;
+		%rotDir["0 0 1"] = 4;
+		%rotDir["0 0 -1"] = 5;
+
 		%rot = getWords(MatrixCreateFromEuler(vectorScale(%euler, $pi/180)), 3, 6);
-		if(%pos !$= %port.getPosition() || %norm !$= %port.lastNorm)
+		%shape = new StaticShape()
 		{
-			for(%i = 0; %i < %gate.portCount; %i++)
-			{
-				%gport = %gate.ports[%i];
-				if(vectorSub(%pos, %gate.getPosition()) $= %gport.portPos && %norm $= %gport.lastNorm)
-					return;
-			}
-
-			if(%port.getDatablock() != nameToID(%data))
-				%port.setDatablock(%data);
-			%port.lastNorm = %norm;
-			%port.setTransform(%pos SPC %rot);
-		}
+			datablock = %data;
+			portType = 1;
+			portNorm = %norm;
+			portPos = %portPos;
+			portDir = %rotDir[%norm];
+			isVert = %isVert;
+			state = 0;
+		};
+		%shape.setTransform(%pos SPC %rot);
+		missionCleanup.add(%shape);
+		%gate.ports[%gate.portCount] = %shape;
+		%gate.portCount++;
 	}
 }
 
-function GameConnection::Logic_FinalizePort(%this)
+function GameConnection::Logic_SaveData(%this, %filename, %blbFile)
 {
-	cancel(%this.LGM_movePortSched);
-
 	%gate = %this.LGM_gate;
-	%port = %this.LGM_port;
-
-	if(!isObject(%gate) || !isObject(%port))
+	if(!isObject(%gate))
 		return;
 
-	if(%port.getPosition() $= "0 0 0")
+	%file = new FileObject();
+	%file.openForWrite(%filename);
+
+	%dataName = "LogicGate_"@getSafeVariableName(strReplace(%gate.gateName, " ", ""))@"_Data";
+	%file.writeLine("datablock fxDTSBrickData("@%dataName@")");
+	%file.writeLine("{");
+	%file.writeLine("\tbrickFile = \""@%blbFile@"\";");
+	%file.writeLine("\tcategory = \"Logic Bricks\";");
+	%file.writeLine("\tsubCategory = \""@ (%gate.subCat $= "" ? "Gatemaker":%gate.subCat) @ "\";");
+	%file.writeLine("\tuiName = \""@%gate.gateName@"\";");
+	%file.writeLine("\ticonName = \"\";");
+	%file.writeLine("\thasPrint = 1;");
+	%file.writeLine("\tprintAspectRatio = \"Logic\";");
+	%file.writeLine("\torientationFix = 3;\n");
+	%file.writeLine("\tisLogic = true;");
+	%file.writeLine("\tisLogicGate = true;");
+	%file.writeLine("\tisLogicInput = false;\n");
+	%file.writeLine("\tlogicUIName = \""@%gate.gateName@"\";");
+	%file.writeLine("\tlogicUIDesc = \""@%gate.gateDesc@"\";\n");
+	%file.writeLine("\tnumLogicPorts = "@%gate.portCount@";\n");
+
+	for(%i = 0; %i < %gate.portCount; %i++)
 	{
-		%port.delete();
-		return;
+		%port = %gate.ports[%i];
+		%pos = %port.portPos;
+		%pos = getWord(%pos, 0)*4 SPC getWord(%pos, 1)*4 SPC getWord(%pos, 2)*5;
+
+		%file.writeLine("\tlogicPortType["@%i@"] = "@%port.portType@";");
+		%file.writeLine("\tlogicPortPos["@%i@"] = \""@%pos@"\";");
+		%file.writeLine("\tlogicPortDir["@%i@"] = "@%port.portDir@";");
+		%file.writeLine("\tlogicPortUIName["@%i@"] = \""@%port.portName@"\";");
+		if(%i+1 != %gate.portCount)
+			%file.writeLine("");
 	}
-	
-	%rotDir["-1 0 0"] = 0;
-	%rotDir["0 1 0"] = 1;
-	%rotDir["1 0 0"] = 2;
-	%rotDir["0 -1 0"] = 3;
-	%rotDir["0 0 1"] = 4;
-	%rotDir["0 0 -1"] = 5;
 
-	%port.portDir = %rotDir[%port.lastNorm];
-	%port.portPos = vectorSub(%port.getPosition(), %gate.getPosition());
+	%file.writeLine("};\n");
 
-	%gate.ports[%gate.portCount] = %port;
-	%gate.portCount++;
-	%this.LGM_port = 0;
+	%file.writeLine("function "@%dataName@"::doLogic(%this, %obj)\n{\n\t\n}\n");
+	%file.writeLine("function "@%dataName@"::Logic_onGateAdded(%this, %obj)\n{\n\t\n}\n");
+	%file.writeLine("function "@%dataName@"::Logic_onInput(%this, %obj, %pos, %norm)\n{\n\t\n}");
+
+	%file.close();
+	%file.delete();
 }
 
 function GameConnection::Logic_WritePort(%this, %port, %ofile)
@@ -420,8 +441,9 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 	%type = %port.portType;
 	%dir = %port.portDir;
 	%pos = vectorScale(%port.portPos, 2);
+	%pos = getWord(%port.portPos, 0)*2 SPC getWord(%port.portPos, 1)*2 SPC getWord(%port.portPos, 2)*5;
 
-	%fname = expandFileName("./gatemaker/" @ (%type ? "input.blb":"output.blb"));
+	%fname = expandFileName("./gatemaker/" @ (%type ? "input2.blb":"output2.blb"));
 	%file = new FileObject();
 	%file.openForRead(%fname);
 
@@ -577,10 +599,14 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	// %file.writeLine("0 0");
 	// %file.writeLine(%x SPC "0");
 	// %file.writeLine(%x SPC %y);
-	%file.writeLine("0 1");
-	%file.writeLine("0 0");
+	// %file.writeLine("0 1");
+	// %file.writeLine("0 0");
+	// %file.writeLine("1 0");
+	// %file.writeLine("1 1");
 	%file.writeLine("1 0");
 	%file.writeLine("1 1");
+	%file.writeLine("0 1");
+	%file.writeLine("0 0");
 
 	%file.writeLine("NORMALS:");
 	%file.writeLine("0 0 1");
@@ -622,7 +648,7 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 		%file.writeLine("0 0 -1");
 	}
 	else
-		%file.writeLine(4*(%bQuads*5));
+		%file.writeLine(4+(%bQuads*5));
 
 	%file.writeLine("");
 	%file.writeLine("TEX:BOTTOMEDGE");
@@ -848,14 +874,14 @@ package Illogic_GateMaker
 		{
 			if(isObject(%client = %obj.client))
 			{
-				if(isObject(%client.LGM_port))
-				{
-					%client.Logic_FinalizePort();
-					return;
-				}
-
 				if(isEventPending(%client.LGM_moveSched))
 					cancel(%client.LGM_moveSched);
+
+				if(%client.LGM_placing)
+				{
+					%client.Logic_AddGatePort();
+					return;
+				}
 
 				%eye = %obj.getEyePoint();
 				%vec = %obj.getEyeVector();
@@ -901,7 +927,7 @@ package Illogic_GateMaker
 						for(%i = 0; %i < %ports; %i++)
 						{
 							%port = %hit.ports[%i];
-							%client.bottomPrint(%nx SPC %hitNorm @" | "@ %rotDir[%port.portDir], 5);
+							//%client.bottomPrint(%nx SPC %hitNorm @" | "@ %rotDir[%port.portDir], 5);
 
 							if(%rotDir[%port.portDir] $= %hitNorm)
 							{
@@ -913,7 +939,7 @@ package Illogic_GateMaker
 								%vdistSqr = %zz*%zz;
 								%distSqr = %hdistSqr + %vdistSqr;
 								//%client.bottomPrint(%hitNorm NL %hdistSqr @ " | " @ %vdistSqr @ " | "  @ %distSqr, 5);
-								if((%vdistSqr < 0.01 && %hdistSqr < 0.0649) && (%distSqr < %bestDist || %bestDist == -1))
+								if((%vdistSqr < 0.01 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
 								{
 									%bestDist = %distSqr;
 									%bestPort = %port;
@@ -937,7 +963,8 @@ package Illogic_GateMaker
 						else
 							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name;
 
-						%text = %text NL "\c3/lSetPortName # name\c6 - Set the port name";
+						if(%client.LGM_gate == %hit)
+							%text = %text NL "\c3/lSetPortName # name\c6 - Set the port name";
 						%client.centerPrint("<font:consolas:20>"@%text, 3);
 					}
 				}
@@ -952,14 +979,14 @@ package Illogic_GateMaker
 		{
 			if(isObject(%client = %obj.getControllingClient()))
 			{
-				if(isObject(%client.LGM_port))
-				{
-					%client.Logic_FinalizePort();
-					return;
-				}
-
 				if(isEventPending(%client.LGM_moveSched))
 					cancel(%client.LGM_moveSched);
+
+				if(%client.LGM_placing)
+				{
+					%client.Logic_AddGatePort();
+					return;
+				}
 
 				%eye = %obj.getEyePoint();
 				%vec = %obj.getEyeVector();
@@ -973,7 +1000,77 @@ package Illogic_GateMaker
 					{
 						%gateName = %hit.gateName;
 						%gateDesc = %hit.gateDesc;
-						%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "\c6"@%gateDesc, 3);
+
+						%hitPos = getWords(%ray, 1, 3);
+						%hx = getWord(%hitPos, 0);
+						%hy = getWord(%hitPos, 1);
+						%hz = getWord(%hitPos, 2);
+
+						%hitNorm = vectorNormalize(getWords(%ray, 4, 6));
+						%nx = getWord(%hitNorm, 0);
+						if(stripos(%nx, "e") != -1)
+							%nx = 0;
+						%ny = getWord(%hitNorm, 1);
+						if(stripos(%ny, "e") != -1)
+							%ny = 0;
+						%nz = getWord(%hitNorm, 2);
+						if(stripos(%nz, "e") != -1)
+							%nz = 0;
+
+						%hitNorm = %nx SPC %ny SPC %nz;
+						//talk(%hitNorm);
+
+						%rotDir[0] = "-1 0 0";
+						%rotDir[1] = "0 1 0";
+						%rotDir[2] = "1 0 0";
+						%rotDir[3] = "0 -1 0";
+						%rotDir[4] = "0 0 1";
+						%rotDir[5] = "0 0 -1";
+
+						%bestDist = -1;
+						%ports = %hit.portCount;
+						for(%i = 0; %i < %ports; %i++)
+						{
+							%port = %hit.ports[%i];
+							//%client.bottomPrint(%nx SPC %hitNorm @" | "@ %rotDir[%port.portDir], 5);
+
+							if(%rotDir[%port.portDir] $= %hitNorm)
+							{
+								%ppos = %port.getPosition();
+								%xx = %hx-getWord(%ppos, 0);
+								%yy = %hy-getWord(%ppos, 1);
+								%zz = %hz-getWord(%ppos, 2);
+								%hdistSqr = (%xx*%xx)+(%yy*%yy);
+								%vdistSqr = %zz*%zz;
+								%distSqr = %hdistSqr + %vdistSqr;
+								//%client.bottomPrint(%hitNorm NL %hdistSqr @ " | " @ %vdistSqr @ " | "  @ %distSqr, 5);
+								if((%vdistSqr < 0.01 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
+								{
+									%bestDist = %distSqr;
+									%bestPort = %port;
+									%bestIdx = %i;
+								}
+							}
+						}
+
+						if(%bestDist == -1)
+						{
+							%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "\c6"@%gateDesc, 3);
+							return;
+						}
+						
+						%type = $LBC::Ports::Type[%bestPort];
+						%name = (%bestPort.portName $= "") ? "Port " @ %bestIdx : %bestPort.portName;
+						%desc = %bestPort.portDesc;
+
+						if(trim(%desc) !$= "")
+							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name NL "\c6"@%desc;
+						else
+							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name;
+
+						if(%client.LGM_gate == %hit)
+							%text = %text NL "\c3/lSetPortName # name\c6 - Set the port name";
+						%client.centerPrint("<font:consolas:20>"@%text, 3);
 					}
 				}
 			}

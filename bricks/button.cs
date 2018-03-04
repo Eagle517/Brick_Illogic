@@ -16,17 +16,12 @@ datablock fxDTSBrickData(Logic1x1fButtonData)
 
 	logicPortType[0] = 0;
 	logicPortPos[0] = "0 0 0";
-	logicPortDir[0] = "0";
+	logicPortDir[0] = "2";
 };
 
 function Logic1x1fButtonData::Logic_onInput(%this, %obj, %pos, %norm)
 {
-	//talk("O" SPC !$LBC::Ports::BrickState[%obj, 0]);
-	%obj.Logic_SetOutput(0, 1);
-	%obj.schedule(100, "Logic_SetOutput", 0, 0);
 
-	%obj.setColorFX(3);
-	%obj.schedule(100, "setColorFX", 0);
 }
 
 
@@ -36,4 +31,11 @@ function Logic1x1fButtonData::Logic_onGateAdded(%this, %obj)
 		%obj.setColorFX(3);
 	else
 		%obj.setColorFX(0);
+}
+
+function Logic1x1fButtonData::onPlant(%this, %obj)
+{
+	%obj.addEvent(true, 0, "onActivate", "Self", "setInputState", true);
+	%obj.addEvent(true, 100, "onActivate", "Self", "setInputState", false);
+	parent::onPlant(%this, %obj);
 }

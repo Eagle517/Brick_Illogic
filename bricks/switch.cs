@@ -7,7 +7,7 @@ datablock fxDTSBrickData(Logic1x2fSwitchData)
 	brickFile = "add-ons/brick_illogic/bricks/blb/switch.blb";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
-	orientationFix = 1;
+	orientationFix = 3;
 
 	isLogic = 1;
 	isLogicGate = 1;
