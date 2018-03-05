@@ -150,3 +150,4 @@ exec("./bricks/DFlipFlop.cs");
 //Special
 exec("./bricks/bridge.cs");
 exec("./bricks/special/pixel.cs");
+exec("./bricks/special/TextBrick.cs");
