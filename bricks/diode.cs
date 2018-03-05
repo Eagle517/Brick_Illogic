@@ -36,5 +36,20 @@ function Logic1x1fDiodeData::doLogic(%this, %obj)
 function Logic1x1fDiodeData::onPlant(%this, %obj)
 {
 	%obj.setColor(3);
+
+	if(!$LBC::Prints::LessThan)
+	{
+		%count = getNumPrintTextures();
+		for(%i = 0; %i < %count; %i++)
+		{
+			if(getPrintTexture(%i) $= "Add-Ons/Print_Letters_Default/prints/-less_than.png")
+			{
+				$LBC::Prints::LessThan = %i;
+				break;
+			}
+		}
+	}
+
+	%obj.setPrint($LBC::Prints::LessThan);
 	parent::onPlant(%this, %obj);
 }

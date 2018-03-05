@@ -41,5 +41,20 @@ function Logic1x1fNOTData::Logic_onGateAdded(%this, %obj)
 function Logic1x1fNOTData::onPlant(%this, %obj)
 {
 	%obj.setColor(0);
+
+	if(!$LBC::Prints::LessThan)
+	{
+		%count = getNumPrintTextures();
+		for(%i = 0; %i < %count; %i++)
+		{
+			if(getPrintTexture(%i) $= "Add-Ons/Print_Letters_Default/prints/-less_than.png")
+			{
+				$LBC::Prints::LessThan = %i;
+				break;
+			}
+		}
+	}
+	%obj.setPrint($LBC::Prints::LessThan);
+
 	parent::onPlant(%this, %obj);
 }
