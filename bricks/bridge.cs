@@ -76,21 +76,22 @@ datablock fxDTSBrickData(Logic1x1fBridgeRightData)
 	logicPortUIName[3] = "Output B";
 };
 
-datablock fxDTSBrickData(Logic1x1fBridgePerpLeftData : Logic1x1fBridgeLeftData)
+datablock fxDTSBrickData(Logic1x1fBridgePerpData : Logic1x1fBridgeLeftData)
 {
-	logicUIName = "Bridge Left Perp";
+	uiName = "Bridge Perp";
+	logicUIName = "Bridge Perp";
 	logicUIDesc = "Allows wires to run through each other perpendicularly";
 	logicPortUIName[2] = "Output A";
 	logicPortUIName[3] = "Output B";
 };
 
-datablock fxDTSBrickData(Logic1x1fBridgePerpRightData : Logic1x1fBridgeRightData)
-{
-	logicUIName = "Bridge Right Perp";
-	logicUIDesc = "Allows wires to run through each other perpendicularly";
-	logicPortUIName[2] = "Output B";
-	logicPortUIName[3] = "Output A";
-};
+// datablock fxDTSBrickData(Logic1x1fBridgePerpRightData : Logic1x1fBridgeRightData)
+// {
+// 	logicUIName = "Bridge Right Perp";
+// 	logicUIDesc = "Allows wires to run through each other perpendicularly";
+// 	logicPortUIName[2] = "Output B";
+// 	logicPortUIName[3] = "Output A";
+// };
 
 
 function Logic1x1fBridgeLeftData::doLogic(%this, %obj)
@@ -105,14 +106,14 @@ function Logic1x1fBridgeRightData::doLogic(%this, %obj)
 	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 1]);
 }
 
-function Logic1x1fBridgePerpLeftData::doLogic(%this, %obj)
+function Logic1x1fBridgePerpData::doLogic(%this, %obj)
 {
 	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0]);
 	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 1]);
 }
 
-function Logic1x1fBridgePerpRightData::doLogic(%this, %obj)
-{
-	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0]);
-	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 1]);
-}
+// function Logic1x1fBridgePerpRightData::doLogic(%this, %obj)
+// {
+// 	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0]);
+// 	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 1]);
+// }
