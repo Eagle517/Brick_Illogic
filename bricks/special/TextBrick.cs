@@ -7,38 +7,48 @@ datablock fxDTSBrickData(LogicGate_TextBrick_Data)
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
-	orientationFix = 3;
+	orientationFix = 1;
 
 	isLogic = true;
 	isLogicGate = true;
 	isLogicInput = false;
 
 	logicUIName = "Text Brick";
-	logicUIDesc = "Increments between prints on pulse";
+	logicUIDesc = "Steps up or down between prints on pulse";
 
-	numLogicPorts = 2;
+	numLogicPorts = 3;
 
 	logicPortType[0] = 1;
-	logicPortPos[0] = "0 0 -1";
+	logicPortPos[0] = "0 0 0";
 	logicPortDir[0] = 3;
-	logicPortUIName[0] = "Clear";
+	logicPortUIName[0] = "Decrement";
 
 	logicPortType[1] = 1;
-	logicPortPos[1] = "0 0 0";
+	logicPortPos[1] = "0 0 -1";
 	logicPortDir[1] = 3;
-	logicPortUIName[1] = "Write";
+	logicPortUIName[1] = "Reset";
+
+	logicPortType[2] = 1;
+	logicPortPos[2] = "0 0 1";
+	logicPortDir[2] = 3;
+	logicPortUIName[2] = "Increment";
 };
 
-//space, a-z, 0-9, punc
 function LogicGate_TextBrick_Data::doLogic(%this, %obj)
 {
-	if($LBC::Ports::BrickState[%obj, 1])
+	if($LBC::Ports::BrickState[%obj, 0])
+	{
+		%obj.LBC_print = (%obj.LBC_print-1) % 53;
+		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
+	}
+
+	if($LBC::Ports::BrickState[%obj, 2])
 	{
 		%obj.LBC_print = (%obj.LBC_print+1) % 53;
 		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
 	}
 	
-	if($LBC::Ports::BrickState[%obj, 0])
+	if($LBC::Ports::BrickState[%obj, 1])
 	{
 		%obj.LBC_print = 0;
 		%obj.setPrint($LBC::TextBrick::Print[0]);
@@ -79,44 +89,3 @@ function LogicGate_TextBrick_Data::Logic_onGateAdded(%this, %obj)
 	%obj.LBC_print = 0;
 	%obj.setPrint($LBC::TextBrick::Print[0]);
 }
-
-// function getprints()
-// {
-// 	deleteVariables("$LBC::TextBrick::Print*");
-// 	%count = getNumPrintTextures();
-// 	%start = 1;
-// 	%id = 0;
-// 	for(%i = 0; %i < %count; %i++)
-// 	{
-// 		%print = getPrintTexture(%i);
-// 		if(stripos(%print, "print_letters_default") != -1)
-// 		{
-// 			//echo(%id);
-// 			if(stripos(%print, "-space") != -1)
-// 				$LBC::TextBrick::Print[0] = %i;
-// 			else
-// 			{
-// 				if(%id <= 25)
-// 				{
-// 					//echo(%print);
-// 					echo(27-(%start+%id), " --- ", %i);
-// 					$LBC::TextBrick::Print[27-(%start+%id)] = %i;
-// 				}
-// 				else if(%id <= 35)
-// 				{
-// 					echo(35-(%start+%id), " --- ", %i);
-// 					$LBC::TextBrick::Print[63-(%start+%id)] = %i;
-// 				}
-// 				else
-// 				{
-// 					echo(90-(%start+%id), " --- ", %i);
-// 					$LBC::TextBrick::Print[90-(%start+%id)] = %i;
-// 				}
-// 			}
-
-// 			%id++;
-// 		}
-// 	}
-
-// 	$LBC::TextBrick::PrintCount = %id;
-// }
