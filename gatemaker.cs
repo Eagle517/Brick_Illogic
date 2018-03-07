@@ -413,7 +413,7 @@ function GameConnection::Logic_SaveData(%this, %filename, %blbFile)
 	{
 		%port = %gate.ports[%i];
 		%pos = %port.portPos;
-		%pos = getWord(%pos, 0)*4 SPC getWord(%pos, 1)*4 SPC getWord(%pos, 2)*5;
+		%pos = mFloatLength(getWord(%pos, 0)*4, 0) SPC mFloatLength(getWord(%pos, 1)*4, 0) SPC mFloatLength(getWord(%pos, 2)*5, 0);
 
 		%file.writeLine("\tlogicPortType["@%i@"] = "@%port.portType@";");
 		%file.writeLine("\tlogicPortPos["@%i@"] = \""@%pos@"\";");
