@@ -7,7 +7,7 @@ datablock fxDTSBrickData(LogicGate_TextBrick_Data)
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
-	orientationFix = 3;
+	orientationFix = 1;
 
 	isLogic = true;
 	isLogicGate = true;
