@@ -145,7 +145,7 @@ exec("./bricks/button.cs");
 exec("./bricks/eventgate.cs");
 
 //Math
-exec("./bricks/math/4bitComparator")
+exec("./bricks/math/4bitComparator.cs");
 
 //Memory
 exec("./bricks/DFlipFlop.cs");

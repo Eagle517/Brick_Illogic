@@ -7,7 +7,7 @@ datablock fxDTSBrickData(LogicGate__4bitComparator_Data)
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
-	orientationFix = 3;
+	orientationFix = 1;
 
 	isLogic = true;
 	isLogicGate = true;
@@ -91,15 +91,36 @@ datablock fxDTSBrickData(LogicGate__4bitComparator_Data)
 
 function LogicGate__4bitComparator_Data::doLogic(%this, %obj)
 {
-	
-}
+	%a =
+		($LBC::Ports::BrickState[%obj,0]*1)+
+		($LBC::Ports::BrickState[%obj,1]*2)+
+		($LBC::Ports::BrickState[%obj,2]*4)+
+		($LBC::Ports::BrickState[%obj,3]*8);
 
-function LogicGate__4bitComparator_Data::Logic_onGateAdded(%this, %obj)
-{
-	
-}
+	%b =
+		($LBC::Ports::BrickState[%obj,4]*1)+
+		($LBC::Ports::BrickState[%obj,5]*2)+
+		($LBC::Ports::BrickState[%obj,6]*4)+
+		($LBC::Ports::BrickState[%obj,7]*8);
 
-function LogicGate__4bitComparator_Data::Logic_onInput(%this, %obj, %pos, %norm)
-{
-	
+	if(%a < %b)
+	{
+		%obj.Logic_SetOutput(11, 1);
+		%obj.Logic_SetOutput(12, 0);
+		%obj.Logic_SetOutput(13, 0);
+	}
+	if(%a == %b)
+	{
+		%obj.Logic_SetOutput(11, 0);
+		%obj.Logic_SetOutput(12, 1);
+		%obj.Logic_SetOutput(13, 0);
+	}
+	if(%a > %b)
+	{
+		%obj.Logic_SetOutput(11, 0);
+		%obj.Logic_SetOutput(12, 0);
+		%obj.Logic_SetOutput(13, 1);
+	}
+
+	talk(%a SPC %b);
 }
