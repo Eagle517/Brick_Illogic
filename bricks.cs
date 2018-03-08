@@ -146,6 +146,8 @@ exec("./bricks/eventgate.cs");
 
 //Math
 exec("./bricks/4bitComparator.cs");
+exec("./bricks/8bitMultiplier.cs");
+exec("./bricks/8bitDivisor.cs");
 
 //Memory
 exec("./bricks/DFlipFlop.cs");
