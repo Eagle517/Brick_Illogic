@@ -172,9 +172,9 @@ function serverCmdLLoadGates(%client)
 		exec(%file);
 		%file = findNextFile(%search);
 	}
-	transmitDatablocks();
 	createUINameTable();
-	commandToAll('BSD_LoadBricks');
+	transmitDatablocks();
+	schedule(500, 0, "commandToAll", 'BSD_LoadBricks');
 
 	messageAll('', '\c3%1\c6 has loaded gates.', %client.name);
 }
