@@ -145,10 +145,11 @@ exec("./bricks/button.cs");
 exec("./bricks/eventgate.cs");
 
 //Math
-exec("./bricks/math/4bitComparator.cs");
+exec("./bricks/4bitComparator.cs");
 
 //Memory
 exec("./bricks/DFlipFlop.cs");
+exec("./bricks/256ByteRAM.cs");
 
 //Special
 exec("./bricks/bridge.cs");

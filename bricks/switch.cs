@@ -43,12 +43,3 @@ function Logic1x2fSwitchData::Logic_onGateAdded(%this, %obj)
 	else
 		%obj.setColorFX(0);
 }
-
-
-//function Logic1x1fButtonData::onPlant(%this, %obj)
-//{
-//	%brick.AddEvent( 1, "0", "onActivate", "Self", "toggleEventEnabled", "1 2");
-//	%obj.addEvent(true, 0, "onActivate", "Self", "setInputState", true);
-//	%obj.addEvent(false, 0, "onActivate", "Self", "setInputState", false);
-//	parent::onPlant(%this, %obj);
-//}

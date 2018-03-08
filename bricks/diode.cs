@@ -49,7 +49,7 @@ function Logic1x1fDiodeData::onPlant(%this, %obj)
 			}
 		}
 	}
+
 	%obj.setPrint($LBC::Prints::LessThan);
-	
 	parent::onPlant(%this, %obj);
 }
