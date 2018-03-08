@@ -16,7 +16,7 @@ datablock fxDTSBrickData(LogicGate_TextBrick_Data)
 	logicUIName = "Text Brick";
 	logicUIDesc = "Steps up or down between prints on pulse";
 
-	numLogicPorts = 2;
+	numLogicPorts = 3;
 
 	logicPortType[0] = 1;
 	logicPortPos[0] = "0 0 -1";
