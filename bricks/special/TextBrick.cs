@@ -39,13 +39,16 @@ function LogicGate_TextBrick_Data::doLogic(%this, %obj)
 {
 	if($LBC::Ports::BrickState[%obj, 1])
 	{
-		%obj.LBC_print = (%obj.LBC_print-1) % 53;
+		%obj.LBC_print--;
+		if(%obj.LBC_print < 0)
+			%obj.LBC_print = 71;
+
 		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
 	}
 
 	if($LBC::Ports::BrickState[%obj, 2])
 	{
-		%obj.LBC_print = (%obj.LBC_print+1) % 53;
+		%obj.LBC_print = (%obj.LBC_print+1) % 72;
 		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
 	}
 	
@@ -66,7 +69,7 @@ function LogicGate_TextBrick_Data::Logic_onGateAdded(%this, %obj)
 		for(%i = 0; %i < %count; %i++)
 		{
 			%print = getPrintTexture(%i);
-			if(stripos(%print, "print_letters_default") != -1)
+			if(stripos(%print, "print_letters_default") != -1 || stripos(%print, "print_letters_extra") != -1)
 			{
 				if(stripos(%print, "-space") != -1)
 					$LBC::TextBrick::Print[0] = %i;
@@ -77,7 +80,7 @@ function LogicGate_TextBrick_Data::Logic_onGateAdded(%this, %obj)
 					else if(%id <= 35)
 						$LBC::TextBrick::Print[63-(%start+%id)] = %i;
 					else
-						$LBC::TextBrick::Print[90-(%start+%id)] = %i;
+						$LBC::TextBrick::Print[109-(%start+%id)] = %i;
 				}
 				%id++;
 			}
@@ -100,7 +103,7 @@ function LogicGate_TextBrick_Data::Logic_onGateAdded(%this, %obj)
 // 	for(%i = 0; %i < %count; %i++)
 // 	{
 // 		%print = getPrintTexture(%i);
-// 		if(stripos(%print, "print_letters_default") != -1)
+// 		if(stripos(%print, "print_letters_default") != -1 || stripos(%print, "print_letters_extra") != -1)
 // 		{
 // 			//echo(%id);
 // 			if(stripos(%print, "-space") != -1)
@@ -110,18 +113,18 @@ function LogicGate_TextBrick_Data::Logic_onGateAdded(%this, %obj)
 // 				if(%id <= 25)
 // 				{
 // 					//echo(%print);
-// 					echo(27-(%start+%id), " --- ", %i);
+// 					echo(27-(%start+%id), " --- ", %i, " --- ", %print);
 // 					$LBC::TextBrick::Print[27-(%start+%id)] = %i;
 // 				}
 // 				else if(%id <= 35)
 // 				{
-// 					echo(35-(%start+%id), " --- ", %i);
+// 					echo(63-(%start+%id), " --- ", %i, " --- ", %print);
 // 					$LBC::TextBrick::Print[63-(%start+%id)] = %i;
 // 				}
 // 				else
 // 				{
-// 					echo(90-(%start+%id), " --- ", %i);
-// 					$LBC::TextBrick::Print[90-(%start+%id)] = %i;
+// 					echo(109-(%start+%id), " --- ", %i, " --- ", %print);
+// 					$LBC::TextBrick::Print[109-(%start+%id)] = %i;
 // 				}
 // 			}
 
