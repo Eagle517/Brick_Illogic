@@ -122,5 +122,5 @@ function LogicGate__4bitComparator_Data::doLogic(%this, %obj)
 		%obj.Logic_SetOutput(13, 1);
 	}
 
-	talk(%a SPC %b);
+	//talk(%a SPC %b);
 }
