@@ -42,20 +42,20 @@ datablock fxDTSBrickData(LogicGate_Pixel101_Data : LogicGate_Pixel001_Data) { br
 datablock fxDTSBrickData(LogicGate_Pixel110_Data : LogicGate_Pixel001_Data) { brickFile = "Add-Ons/Brick_Illogic/bricks/blb/pixels/Pixel110.blb"; uiName = "Pixel 110"; };
 datablock fxDTSBrickData(LogicGate_Pixel111_Data : LogicGate_Pixel001_Data) { brickFile = "Add-Ons/Brick_Illogic/bricks/blb/pixels/Pixel111.blb"; uiName = "Pixel 111"; };
 
-function LogicGate_Pixel000_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel001_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel010_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel011_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel100_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel101_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel110_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel111_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
+function LogicGate_Pixel000_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel001_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel010_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel011_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel100_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel101_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel110_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel111_Data::doLogic(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
 
-function LogicGate_Pixel000_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel001_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel010_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel011_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel100_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel101_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel110_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
-function LogicGate_Pixel111_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0] @ $LBC::Ports::BrickState[%obj, 1] @ $LBC::Ports::BrickState[%obj, 2]@"_Data"); }
+function LogicGate_Pixel000_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel001_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel010_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel011_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel100_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel101_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel110_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
+function LogicGate_Pixel111_Data::Logic_onGateAdded(%this, %obj) { %obj.setDatablock("LogicGate_Pixel"@$LBC::Ports::BrickState[%obj, 0]+0 @ $LBC::Ports::BrickState[%obj, 1]+0 @ $LBC::Ports::BrickState[%obj, 2]+0@"_Data"); }
