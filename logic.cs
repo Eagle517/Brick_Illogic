@@ -3,10 +3,6 @@ function Logic_MainTick()
 	cancel($LBC::Schedules::MainSched);
 	$LBC::Schedules::MainSched = schedule(1, 0, "Logic_MainTick");
 
-	//%time = getRealTime();
-	//bottomPrintAll("logic tick: "@%time-$LBC::Schedules::LastUpdate@"ms", 1, 1);
-	//$LBC::Schedules::LastUpdate = %time;
-
 	$LBC::Groups::Tick = !$LBC::Groups::Tick;
 	if($LBC::Groups::Tick)
 	{
@@ -236,14 +232,12 @@ function Logic_QueueGroup(%group)
 	%group = %group | 0;
 	if(!$LBC::Groups::Tick && !$LBC::Groups::OnQueue[%group])
 	{
-		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
 		$LBC::Groups::OnQueue[%group] = true;
 		$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
 		$LBC::Groups::UpdateQueueCount++;
 	}
 	else if($LBC::Groups::Tick && !$LBC::Groups::OnNQueue[%group])
 	{
-		//echo("adding to queue on tick " @ (!$LBC::Groups::Tick ? "a":"b"));
 		$LBC::Groups::OnNQueue[%group] = true;
 		$LBC::Groups::NUpdateQueue[$LBC::Groups::NUpdateQueueCount+0] = %group;
 		$LBC::Groups::NUpdateQueueCount++;
@@ -330,7 +324,6 @@ package IllogicLogic
 								%nz = 0;
 
 							%hitNorm = %nx SPC %ny SPC %nz;
-							//talk(%hitNorm);
 
 							%rotDir[0] = "-1 0 0";
 							%rotDir[1] = "0 1 0";

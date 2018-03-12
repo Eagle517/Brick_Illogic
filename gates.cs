@@ -75,7 +75,6 @@ function Logic_AddGate(%obj)
 		%sx = %px+(%x*0.25);
 		%sy = %py+(%y*0.25);
 		%sz = %pz+(%z*0.2);
-		//talk(%x*0.25 SPC %y*0.25 SPC %z*0.2);
 		%start = %sx SPC %sy SPC %sz;
 
 		$LBC::Ports::WorldPos[%portID] = %start;
@@ -88,10 +87,6 @@ function Logic_AddGate(%obj)
 		$LBC::Ports::ConnPos[%portID, 0] = getWord(%end, 0);
 		$LBC::Ports::ConnPos[%portID, 1] = getWord(%end, 1);
 		$LBC::Ports::ConnPos[%portID, 2] = getWord(%end, 2);
-
-		// %cube = DevCube(vectorAdd(vectorAdd(%start, vectorScale(%rotDir[%dir], 0.3)), "0 0 0"), "0.25 0.25 1");
-		// %cube.setNodeColor("ALL", getColorIDTable(%i*2));
-		// %cube.setShapeName(%i);
 
 		if(%doRay)
 		{
@@ -119,13 +114,9 @@ function Logic_AddGate(%obj)
 					else
 					{
 						$LBC::Ports::Group[%portID] = %group;
-						//$LBC::Ports::Wire[%portID] = %sobj;
 						$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
 						$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
 						$LBC::Groups::PortCount[%group]++;
-						// $LBC::Wires::Port[%sobj, $LBC::Wires::PortCount[%sobj]+0] = %portID;
-						// $LBC::Wires::PortIDX[%sobj, %portID] = $LBC::Wires::PortCount[%sobj]+0;
-						// $LBC::Wires::PortCount[%sobj]++;
 					}
 				}
 				else if($LBC::Bricks::isGate[%sobj])
@@ -200,13 +191,6 @@ function Logic_RemoveGate(%obj)
 		%port = $LBC::Bricks::Port[%obj, %i];
 		%group = $LBC::Ports::Group[%port];
 
-		// if((%wire = $LBC::Ports::Wire[%port]))
-		// {
-		// 	$LBC::Wires::Port[%wire, (%idx = $LBC::Wires::PortIDX[%wire, %port])] = (%wport = $LBC::Wires::Port[%wire, $LBC::Wires::PortCount[%wire]-1]);
-		// 	$LBC::Wires::PortIDX[%wire, %wport] = %idx;
-		// 	$LBC::Wires::PortCount[%wire]--;
-		// }
-
 		$LBC::Ports::State[%port] = false;
 		$LBC::Ports::BrickState[%obj, %i] = false;
 
@@ -222,8 +206,6 @@ function Logic_RemoveGate(%obj)
 						%brick = $LBC::Ports::Brick[%gport];
 						$LBC::Ports::State[%gport] = 0;
 						$LBC::Ports::BrickState[%brick, $LBC::Ports::BrickIDX[%gport]] = 0;
-						// if(isFunction(%data = $LBC::Bricks::Datablock[%brick], "doLogic"))
-						// 	%data.doLogic(%brick);
 					}
 
 					$LBC::Ports::Group[%gport] = -1;
@@ -235,8 +217,6 @@ function Logic_RemoveGate(%obj)
 				$LBC::Groups::Port[%group, (%idx = $LBC::Groups::PortIDX[%group, %port])] = (%gport = $LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]-1]);
 				$LBC::Groups::PortIDX[%group, %gport] = %idx;
 				$LBC::Groups::PortCount[%group]--;
-
-				//$LBC::Ports::Group[%port] = -1;
 				Logic_QueueGroup(%group);
 			}
 		}

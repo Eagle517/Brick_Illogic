@@ -58,7 +58,6 @@ function serverCmdlMakeGate(%client, %x, %y, %z)
 		else
 			%pos = %end;
 
-		//%pos = mFloor(getWord(%pos, 0)*2+0.5)/2 SPC mFloor(getWord(%pos, 1)*2+0.5)/2 SPC ((%z = (mFloor(getWord(%pos, 2)*2+0.5)/2)+(%height*0.2)/2) < 0.1 ? 0.1:%z);
 		%client.Logic_MakeGate(%pos, %x, %y, %z);
 	}
 }
@@ -148,19 +147,6 @@ function serverCmdlDeleteGate(%client)
 	%client.Logic_DeleteGate();
 }
 
-function serverCmdlCheckGate(%client)
-{
-	if(isObject(%gate = %client.LGM_gate))
-	{
-		talk(%gate SPC %gate.portCount);
-		for(%i = 0; %i < %gate.portCount; %i++)
-		{
-			%port = %gate.ports[%i];
-			talk(%port.portPos @" | "@ %port.portDir);
-		}
-	}
-}
-
 function serverCmdLLoadGates(%client)
 {
 	if(!%client.isAdmin && !%client.isSuperAdmin)
@@ -186,13 +172,6 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 		%this.centerPrint("You must delete your first gate in order to make another one.", 3);
 		return;
 	}
-
-	// if(%wid > %len)
-	// {
-	// 	%a = %len;
-	// 	%len = %wid;
-	// 	%wid = %a;
-	// }
 
 	%wid = mClamp(%wid, 1, 64);
 	%len = mClamp(%len, 1, 64);
@@ -478,7 +457,7 @@ function GameConnection::Logic_WritePort(%this, %port, %ofile)
 function GameConnection::Logic_SaveBLB(%this, %filename)
 {
 	%gate = %this.LGM_gate;
-	if(!isObject(%gate))// || %gate.portCount < 1)
+	if(!isObject(%gate))
 		return;
 
 	%filename = expandFileName(%filename);
@@ -599,10 +578,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	// %file.writeLine("0 0");
 	// %file.writeLine(%x SPC "0");
 	// %file.writeLine(%x SPC %y);
-	// %file.writeLine("0 1");
-	// %file.writeLine("0 0");
-	// %file.writeLine("1 0");
-	// %file.writeLine("1 1");
 	%file.writeLine("1 0");
 	%file.writeLine("1 1");
 	%file.writeLine("0 1");
@@ -618,7 +593,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %tQuad[%i];
-		//%port.writeBLBData(%file, 0);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -726,7 +700,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %bQuad[%i];
-		//%port.writeBLBData(%file, 0);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -758,7 +731,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %nQuad[%i];
-		//%port.writeBLBData(%file, 0);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -790,7 +762,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %eQuad[%i];
-		//%port.writeBLBData(%file, 1);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -822,7 +793,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %sQuad[%i];
-		//%port.writeBLBData(%file, 2);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -854,7 +824,6 @@ function GameConnection::Logic_SaveBLB(%this, %filename)
 	{
 		%file.writeLine("");
 		%port = %wQuad[%i];
-		//%port.writeBLBData(%file, 3);
 		%this.Logic_WritePort(%port, %file);
 	}
 
@@ -913,7 +882,6 @@ package Illogic_GateMaker
 							%nz = 0;
 
 						%hitNorm = %nx SPC %ny SPC %nz;
-						//talk(%hitNorm);
 
 						%rotDir[0] = "-1 0 0";
 						%rotDir[1] = "0 1 0";
@@ -927,8 +895,6 @@ package Illogic_GateMaker
 						for(%i = 0; %i < %ports; %i++)
 						{
 							%port = %hit.ports[%i];
-							//%client.bottomPrint(%nx SPC %hitNorm @" | "@ %rotDir[%port.portDir], 5);
-
 							if(%rotDir[%port.portDir] $= %hitNorm)
 							{
 								%ppos = %port.getPosition();
@@ -938,7 +904,6 @@ package Illogic_GateMaker
 								%hdistSqr = (%xx*%xx)+(%yy*%yy);
 								%vdistSqr = %zz*%zz;
 								%distSqr = %hdistSqr + %vdistSqr;
-								//%client.bottomPrint(%hitNorm NL %hdistSqr @ " | " @ %vdistSqr @ " | "  @ %distSqr, 5);
 								if((%vdistSqr < 0.01 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
 								{
 									%bestDist = %distSqr;
@@ -1018,7 +983,6 @@ package Illogic_GateMaker
 							%nz = 0;
 
 						%hitNorm = %nx SPC %ny SPC %nz;
-						//talk(%hitNorm);
 
 						%rotDir[0] = "-1 0 0";
 						%rotDir[1] = "0 1 0";
@@ -1032,8 +996,6 @@ package Illogic_GateMaker
 						for(%i = 0; %i < %ports; %i++)
 						{
 							%port = %hit.ports[%i];
-							//%client.bottomPrint(%nx SPC %hitNorm @" | "@ %rotDir[%port.portDir], 5);
-
 							if(%rotDir[%port.portDir] $= %hitNorm)
 							{
 								%ppos = %port.getPosition();
@@ -1043,7 +1005,6 @@ package Illogic_GateMaker
 								%hdistSqr = (%xx*%xx)+(%yy*%yy);
 								%vdistSqr = %zz*%zz;
 								%distSqr = %hdistSqr + %vdistSqr;
-								//%client.bottomPrint(%hitNorm NL %hdistSqr @ " | " @ %vdistSqr @ " | "  @ %distSqr, 5);
 								if((%vdistSqr < 0.01 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
 								{
 									%bestDist = %distSqr;
