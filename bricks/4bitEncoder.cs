@@ -131,7 +131,7 @@ function LogicGate__4bitEncoder_Data::doLogic(%this, %obj)
 	else
 	{
 		for(%i=0;%i<15;%i++)
-			%obj.val |= $LBC::Ports::BrickState(%obj,%i) * %i+1;
+			%obj.val |= $LBC::Ports::BrickState[%obj,%i] * %i+1;
 
 		%obj.Logic_SetOutput(16, %obj.val & 1);
 		%obj.Logic_SetOutput(17, %obj.val & 2);
