@@ -29,3 +29,12 @@ function serverCmdLT(%client)
 		}
 	}
 }
+
+function serverCmdlReload(%client)
+{
+	if(%client.isAdmin || %client.isSuperAdmin)
+	{
+		messageAll('', '\c3%1\c6 reloaded Brick_Illogic', %client.name);
+		exec("add-ons/brick_illogic/server.cs");
+	}
+}
