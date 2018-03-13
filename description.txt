@@ -1,3 +1,4 @@
 Title: Illogic Bricks
 Author: Eagle517 (25351), with help from: Entity (49803), Pah1023 (12247), Redo (12878), Klarck (26586)
+https://github.com/Eagle517/Brick_Illogic
 A revised logic bricks mod

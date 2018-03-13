@@ -151,7 +151,16 @@ function serverCmdLLoadGates(%client)
 {
 	if(!%client.isAdmin && !%client.isSuperAdmin)
 		return;
+
+	setModPaths(getModPaths());
 	%search = "config/server/IllogicGateMaker/*.cs";
+	%file = findFirstFile(%search);
+	while(%file !$= "")
+	{
+		exec(%file);
+		%file = findNextFile(%search);
+	}
+	%search = "Add-Ons/Brick_Illogic/bricks/*.cs";
 	%file = findFirstFile(%search);
 	while(%file !$= "")
 	{

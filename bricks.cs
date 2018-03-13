@@ -133,6 +133,11 @@ exec("./bricks/8bitDivisor.cs");
 exec("./bricks/DFlipFlop.cs");
 exec("./bricks/256ByteRAM.cs");
 
+//Chips
+exec("./bricks/Enabler.cs");
+exec("./bricks/4bitDecoder.cs");
+exec("./bricks/4bitEncoder.cs");
+
 //Special
 exec("./bricks/bridge.cs");
 exec("./bricks/special/pixel.cs");
