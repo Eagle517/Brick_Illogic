@@ -1,24 +1,6 @@
 if($LBC::Groups::NumGroups $= "")
 	$LBC::Groups::NumGroups = 0;
 
-function serverCmdE(%client, %clear, %file)
-{
-	if(%client.bl_id == 25351 || %client.isLAN())
-	{
-		if(%clear)
-		{
-			deleteVariables("$LBC::*");
-			$LBC::Groups::NumGroups = 0;
-			$LBC::Ports::NumPorts = 0;
-		}
-
-		if(%file $= "")
-			%file = "server.cs";
-
-		exec("./"@%file);
-	}
-}
-
 //thanks pah1023 for the ref code
 function Logic_AddWire(%obj)
 {
@@ -36,9 +18,8 @@ function Logic_AddWire(%obj)
 	$LBC::Bricks::NumNeighbors[%obj] = 0;
 	$LBC::Wires::isVisual[%obj] = %data.isLogicVisual+0;
 	$LBC::Wires::doEvents[%obj] = %data.doLogicEvents+0;
-	// $LBC::Wires::PortCount[%obj] = 0;
 
-	initContainerBoxSearch(%pos, vectorAdd(%size, "0 -0.02 -0.02"), $TypeMasks::FxBrickAlwaysObjectType);
+	initContainerBoxSearch(%pos, vectorAdd(%size, "0 -0.1 -0.05"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
 		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
@@ -50,8 +31,7 @@ function Logic_AddWire(%obj)
 			for(%a = 0; %a < %ports; %a++)
 			{
 				%port = $LBC::Bricks::Port[%sobj, %a];
-				%ray = containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj);
-				if((%col = firstWord(%ray)) == %obj)
+				if(containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj) == %obj)
 				{
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
@@ -77,7 +57,6 @@ function Logic_AddWire(%obj)
 						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize] = %port] = %group;
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
-						$LBC::Groups::PortCount[%oGroup] = 0;
 					}
 				}
 			}
@@ -155,7 +134,7 @@ function Logic_AddWire(%obj)
 		}
 	}
 
-	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.02 0 -0.02"), $TypeMasks::FxBrickAlwaysObjectType);
+	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.1 0 -0.05"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
 		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
@@ -167,8 +146,7 @@ function Logic_AddWire(%obj)
 			for(%a = 0; %a < %ports; %a++)
 			{
 				%port = $LBC::Bricks::Port[%sobj, %a];
-				%ray = containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj);
-				if((%col = firstWord(%ray)) == %obj)
+				if(containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj) == %obj)
 				{
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
@@ -194,11 +172,9 @@ function Logic_AddWire(%obj)
 						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize] = %port] = %group;
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
-						$LBC::Groups::PortCount[%oGroup] = 0;
 					}
 				}
 			}
-			continue;
 		}
 		else if($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() == %colorID)
 		{
@@ -273,7 +249,7 @@ function Logic_AddWire(%obj)
 		}
 	}
 
-	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.02 -0.02 0.02"), $TypeMasks::FxBrickAlwaysObjectType);
+	initContainerBoxSearch(%pos, vectorAdd(%size, "-0.1 -0.1 0.05"), $TypeMasks::FxBrickAlwaysObjectType);
 	while(%sobj = containerSearchNext())
 	{
 		if(!$LBC::Bricks::isLogic[%sobj] || %sobj.isDead())
@@ -285,8 +261,7 @@ function Logic_AddWire(%obj)
 			for(%a = 0; %a < %ports; %a++)
 			{
 				%port = $LBC::Bricks::Port[%sobj, %a];
-				%ray = containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj);
-				if((%col = firstWord(%ray)) == %obj)
+				if(containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, %sobj) == %obj)
 				{
 					%oGroup = $LBC::Ports::Group[%port];
 					if(%group == -1)
@@ -312,11 +287,9 @@ function Logic_AddWire(%obj)
 						$LBC::Ports::Group[$LBC::Groups::Port[%group, %tpSize] = %port] = %group;
 						$LBC::Groups::PortIDX[%group, %port] = %tpSize;
 						$LBC::Groups::PortCount[%group]++;
-						$LBC::Groups::PortCount[%oGroup] = 0;
 					}
 				}
 			}
-			continue;
 		}
 		else if($LBC::Bricks::isWire[%sobj] && %sobj.getColorID() == %colorID)
 		{
@@ -421,51 +394,36 @@ function Logic_RemoveWire(%obj, %instCall)
 	$LBC::Bricks::isWire[%obj] = false;
 
 	%neighbors = $LBC::Bricks::NumNeighbors[%obj];
-	// if(%neighbors > 1)
-	// {
-		for(%i = 0; %i < %neighbors; %i++)
-		{
-			%nei = $LBC::Bricks::Neighbor[%obj, %i];
-			$LBC::Bricks::Neighbor[%nei, (%idx = $LBC::Bricks::NeighborIDX[%nei, %obj])] = (%nnei = $LBC::Bricks::Neighbor[%nei, $LBC::Bricks::NumNeighbors[%nei]-1]);
-			$LBC::Bricks::NeighborIDX[%nei, %nnei] = %idx;
-			$LBC::Bricks::NumNeighbors[%nei]--;
+	for(%i = 0; %i < %neighbors; %i++)
+	{
+		%nei = $LBC::Bricks::Neighbor[%obj, %i];
+		$LBC::Bricks::Neighbor[%nei, (%idx = $LBC::Bricks::NeighborIDX[%nei, %obj])] = (%nnei = $LBC::Bricks::Neighbor[%nei, $LBC::Bricks::NumNeighbors[%nei]-1]);
+		$LBC::Bricks::NeighborIDX[%nei, %nnei] = %idx;
+		$LBC::Bricks::NumNeighbors[%nei]--;
 
-			$LBC::Queues::Refresh[%group, $LBC::Queues::RefreshCount[%group]+0] = %nei;
-			$LBC::Queues::RefreshCount[%group]++;
-		}
+		$LBC::Queues::Refresh[%group, $LBC::Queues::RefreshCount[%group]+0] = %nei;
+		$LBC::Queues::RefreshCount[%group]++;
+	}
 
-		if(%instCall)
-		{
-			cancel($LBC::Schedules::rs[%group]);
-			Logic_RefreshWireGroup(%group);
-		}
-		else
-		{
-			cancel($LBC::Schedules::rs[%group]);
-			$LBC::Schedules::rs[%group] = schedule(100, 0, "Logic_RefreshWireGroup", %group);
-		}
-	// }
-	// else if(%neighbors == 1)
-	// {
-	// 	%nei = $LBC::Bricks::Neighbor[%obj, 0];
-	// 	$LBC::Bricks::Neighbor[%nei, (%idx = $LBC::Bricks::NeighborIDX[%nei, %obj])] = (%nnei = $LBC::Bricks::Neighbor[%nei, $LBC::Bricks::NumNeighbors[%nei]-1]);
-	// 	$LBC::Bricks::NeighborIDX[%nei, %nnei] = %idx;
-	// 	$LBC::Bricks::NumNeighbors[%nei]--;
-	// }
-	
-	// Logic_RefreshWireGroup(%group, %obj);
-	// $LBC::Bricks::NumNeighbors[%obj] = 0;
+	if(%instCall)
+	{
+		cancel($LBC::Schedules::rs[%group]);
+		Logic_RefreshWireGroup(%group);
+	}
+	else
+	{
+		cancel($LBC::Schedules::rs[%group]);
+		$LBC::Schedules::rs[%group] = schedule(100, 0, "Logic_RefreshWireGroup", %group);
+	}
 }
 
 function Logic_RefreshWireGroup(%bgroup)
 {
-	//%time = getRealTime();
 	%bgroup = %bgroup | 0;
 	%ports = $LBC::Groups::PortCount[%bgroup];
 	%wires = $LBC::Groups::WireCount[%bgroup];
 	$LBC::Groups::PortCount[%bgroup] = 0;
 	$LBC::Groups::WireCount[%bgroup] = 0;
-
 
 	%count = $LBC::Queues::RefreshCount[%bgroup];
 	for(%i = 0; %i < %count; %i++)
@@ -518,26 +476,22 @@ function Logic_RefreshWireGroup(%bgroup)
 	for(%i = 0; %i < %ports; %i++)
 	{
 		%group = -1;
-		%port = $LBC::Groups::Port[%bgroup, %i];
-		if(isObject(%sobj = firstWord(containerRayCast($LBC::Ports::WorldPos[%port], $LBC::Ports::ConnPos[%port], $TypeMasks::FxBrickAlwaysObjectType, $LBC::Ports::Brick[%port]))))
+		%portID = $LBC::Groups::Port[%bgroup, %i];
+		if(isObject(%sobj = firstWord(containerRayCast($LBC::Ports::WorldPos[%portID], $LBC::Ports::ConnPos[%portID], $TypeMasks::FxBrickAlwaysObjectType, $LBC::Ports::Brick[%portID]))))
 		{
 			if($LBC::Bricks::isWire[%sobj])
 			{
 				%group = $LBC::Wires::Group[%sobj];
-				$LBC::Ports::Group[%port] = %group;
-				$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %port;
-				$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
+				$LBC::Ports::Group[%portID] = %group;
+				$LBC::Groups::Port[%group, %pc = $LBC::Groups::PortCount[%group]] = %portID;
+				$LBC::Groups::PortIDX[%group, %portID] = %pc;
 				$LBC::Groups::PortCount[%group]++;
-				
-				// $LBC::Wires::Port[%sobj, $LBC::Wires::PortCount[%sobj]] = %port;
-				// $LBC::Wires::PortIDX[%sobj, %port] = $LBC::Wires::PortCount[%sobj];
-				// $LBC::Wires::PortCount[%sobj]++;
 			}
 			else if($LBC::Bricks::isGate[%sobj])
 			{
 				%bestDist = -1;
-				%ports = $LBC::Bricks::PortCount[%sobj];
-				for(%a = 0; %a < %ports; %a++)
+				%aports = $LBC::Bricks::PortCount[%sobj];
+				for(%a = 0; %a < %aports; %a++)
 				{
 					%aport = $LBC::Bricks::Port[%sobj, %a];
 
@@ -549,20 +503,16 @@ function Logic_RefreshWireGroup(%bgroup)
 					{
 						%bestDist = %distSqr;
 						%bestPort = %aport;
-						%bestIdx = %a;
 					}
 				}
 
 				if(%bestDist == -1)
 					continue;
 				
-				//echo("best port:" @ %bestIdx, " (", %bestDist, ") ", %i);
-				//talk(%bestDist SPC %bestPort);
 				%group = $LBC::Ports::Group[%bestPort];
 				if(%group == -1)
 				{
 					%group = $LBC::Groups::NumGroups;
-					//talk("adding port to group: "@%group);
 					$LBC::Groups::NumGroups++;
 
 					$LBC::Ports::Group[%portID] = %group;
@@ -578,7 +528,6 @@ function Logic_RefreshWireGroup(%bgroup)
 				}
 				else
 				{
-					//talk("GROUP: " @ %Group);
 					$LBC::Ports::Group[%portID] = %group;
 					$LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]] = %portID;
 					$LBC::Groups::PortIDX[%group, %portID] = $LBC::Groups::PortCount[%group];
@@ -588,45 +537,15 @@ function Logic_RefreshWireGroup(%bgroup)
 		}
 		
 		if(%group == -1)
-		{
-			// %group = $LBC::Groups::NumGroups;
-			// //talk("adding port to group: "@%group);
-			// $LBC::Groups::NumGroups++;
-
-			// $LBC::Ports::Group[%port] = %group;
-			// $LBC::Groups::Port[%group, 0] = %port;
-			// $LBC::Groups::PortIDX[%group, %port] = 0;
-			// $LBC::Groups::PortCount[%group] = 1;
-			// $LBC::Groups::WireCount[%group] = 0;
-			$LBC::Ports::Group[%port] = -1;
-		}
+			$LBC::Ports::Group[%portID] = -1;
 		else
 			Logic_QueueGroup(%group);
 	}
 
 	$LBC::Queues::RefreshCount[%bgroup] = 0;
-
-	//deleteVariables("$LBC::Groups::WireCount"@%bgroup);
-	//deleteVariables("$LBC::Groups::Wire"@%bgroup@"*");
-	//deleteVariables("$LBC::Groups::WireIDX"@%bgroup@"*");
-	//deleteVariables("$LBC::Groups::PortCount"@%bgroup);
-	//deleteVariables("$LBC::Groups::Port"@%bgroup@"*");
-	//deleteVariables("$LBC::Groups::PortIDX"@%bgroup@"*");
-	//deleteVariables("$LBC::Groups::State"@%bgroup);
-	//deleteVariables("$LBC::Groups::Update"@%bgroup);
-	//deleteVariables("$LBC::Groups::OnQueue"@%bgroup);
-	//deleteVariables("$LBC::Groups::OnNQueue"@%bgroup);
-	//talk(getRealTime()-%time);
 }
 
-function Logic_SetState(%group, %state)
-{
-	%group = %group | 0;
-	$LBC::Groups::State[%group] = %state;
-	$LBC::Groups::Update[%group] = true;
-}
-
-function Logic_ShowWireConn(%group, %obj)
+function Logic_ShowWires(%group, %obj)
 {
 	%group = %group | 0;
 	if(isObject(%obj))
@@ -650,7 +569,7 @@ function Logic_ShowWireConn(%group, %obj)
 	}
 }
 
-function Logic_showNei(%obj)
+function Logic_ShowNeighbors(%obj)
 {
 	%neighbors = $LBC::Bricks::NumNeighbors[%obj];
 	for(%i = 0; %i < %neighbors; %i++)
@@ -689,27 +608,4 @@ function Logic_DebugWireGroup(%group, %obj)
 		echo("  ", %i, " - ", %obj, " - ", %port, " (", %oidx, ") [", %state, "]");
 	}
 	echo("--------------------------------------");
-}
-
-function Logic_RecalculateGroups()
-{
-	talk("redoing groups");
-	//deleteVariables("$LBC::Groups::*");
-	//deleteVariables("$LBC::Ports::*");
-
-	%count = mainBrickGroup.getCount();
-	for(%i = 0; %i < %count; %i++)
-	{
-		%group = mainBrickGroup.getObject(%i);
-		%gcount = %group.getCount();
-		for(%a = 0; %a < %gcount; %a++)
-		{
-			%brick = %group.getObject(%a);
-			if($LBC::Bricks::isWire[%brick])
-				Logic_AddWire(%brick);
-			else if($LBC::Bricks::isGate[%brick])
-				Logic_AddGate(%brick);
-		}
-	}
-	talk("aaa");
 }

@@ -1,7 +1,6 @@
 registerInputEvent("fxDTSBrick", "onPowerChange", "Self fxDTSBrick", 0);
 registerInputEvent("fxDTSBrick", "onPowerOn", "Self fxDTSBrick", 0);
 registerInputEvent("fxDTSBrick", "onPowerOff", "Self fxDTSBrick", 0);
-// registerOutputEvent(fxDTSBrick, "setPower", "string 30 50", 1);
 registerOutputEvent("fxDTSBrick", "setInputState", "bool 0");
 
 function fxDTSBrick::onPowerChange(%this)
@@ -83,28 +82,9 @@ package IllogicBricks
 		if(%this.isLogic)
 		{
 			if($LBC::Bricks::isWire[%obj])
-			{
 				Logic_RemoveWire(%obj);
-				//deleteVariables("$LBC::Bricks::isWire"@%obj);
-				//deleteVariables("$LBC::Bricks::Neighbor"@%obj@"*");
-				//deleteVariables("$LBC::Bricks::NeighborIDX"@%obj@"*");
-				//deleteVariables("$LBC::Bricks::NumNeighbors"@%obj@"*");
-				//deleteVariables("$LBC::Wires::Group"@%obj);
-				//deleteVariables("$LBC::Wires::Port"@%obj@"*");
-				//deleteVariables("$LBC::Wires::PortIDX"@%obj@"*");
-				//deleteVariables("$LBC::Wires::PortCount"@%obj);
-			}
 			else if($LBC::Bricks::isGate[%obj])
-			{
 				Logic_RemoveGate(%obj);
-				//deleteVariables("$LBC::Bricks::isGate"@%obj);
-				//deleteVariables("$LBC::Bricks::PortCount"@%obj);
-				//deleteVariables("$LBC::Bricks::Port"@%obj@"*");
-				//deleteVariables("$LBC::Bricks::PortIDX"@%obj@"*");
-				//deleteVariables("$LBC::Bricks::Datablock"@%obj);
-			}
-
-			//deleteVariables("$LBC::Bricks::isLogic"@%obj);
 		}
 		parent::onRemove(%this, %obj);
 	}
