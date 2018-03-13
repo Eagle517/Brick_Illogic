@@ -140,5 +140,5 @@ exec("./bricks/4bitEncoder.cs");
 
 //Special
 exec("./bricks/bridge.cs");
-exec("./bricks/special/pixel.cs");
-exec("./bricks/special/TextBrick.cs");
+exec("./bricks/pixel.cs");
+exec("./bricks/TextBrick.cs");
