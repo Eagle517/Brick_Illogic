@@ -140,8 +140,22 @@ function LogicGate__4bitDecoder_Data::doLogic(%this, %obj)
 			($LBC::Ports::BrickState[%obj,2]*4)+
 			($LBC::Ports::BrickState[%obj,3]*8);
 
-		for(%i=20;%i>4;%i--)
-			%obj.Logic_SetOutput(%i, %obj.val == (%i-5));
+		%obj.Logic_SetOutput(20, %obj.val == 0);
+		%obj.Logic_SetOutput(19, %obj.val == 1);
+		%obj.Logic_SetOutput(18, %obj.val == 2);
+		%obj.Logic_SetOutput(17, %obj.val == 3);
+		%obj.Logic_SetOutput(16, %obj.val == 4);
+		%obj.Logic_SetOutput(15, %obj.val == 5);
+		%obj.Logic_SetOutput(14, %obj.val == 6);
+		%obj.Logic_SetOutput(13, %obj.val == 7);
+		%obj.Logic_SetOutput(12, %obj.val == 8);
+		%obj.Logic_SetOutput(11, %obj.val == 9);
+		%obj.Logic_SetOutput(10, %obj.val == 10);
+		%obj.Logic_SetOutput(9, %obj.val == 11);
+		%obj.Logic_SetOutput(8, %obj.val == 12);
+		%obj.Logic_SetOutput(7, %obj.val == 13);
+		%obj.Logic_SetOutput(6, %obj.val == 14);
+		%obj.Logic_SetOutput(5, %obj.val == 15);
 	}	
 }
 
