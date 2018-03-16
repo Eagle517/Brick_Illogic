@@ -5,7 +5,7 @@ datablock fxDTSBrickData(Logic1x2fDLatch : Logic1x2fORData)
 	iconName = "Add-Ons/Brick_Illogic/bricks/blb/DLatch.blb";
 
 	logicUIName = "D Latch";
-	logicUIDesc = "Q becomes D when C is on, otherwise it holds its state";
+	logicUIDesc = "Q becomes D while C is on, otherwise it holds its state";
 
 	logicPortUIName[0] = "C";
 	logicPortUIName[1] = "D";
