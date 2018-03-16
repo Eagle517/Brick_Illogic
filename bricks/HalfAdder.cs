@@ -1,8 +1,8 @@
 datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
 {
-	brickFile = "config/server/IllogicGateMaker/HalfAdder.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/HalfAdder.blb";
 	category = "Logic Bricks";
-	subCategory = "Gatemaker";
+	subCategory = "Math";
 	uiName = "Half Adder";
 	iconName = "";
 	hasPrint = 1;
@@ -14,7 +14,7 @@ datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
 	isLogicInput = false;
 
 	logicUIName = "Half Adder";
-	logicUIDesc = "";
+	logicUIDesc = "Adds A and B";
 
 	numLogicPorts = 4;
 
@@ -41,15 +41,9 @@ datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
 
 function LogicGate_HalfAdder_Data::doLogic(%this, %obj)
 {
-	
-}
+	//Sum
+	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]);
 
-function LogicGate_HalfAdder_Data::Logic_onGateAdded(%this, %obj)
-{
-	
-}
-
-function LogicGate_HalfAdder_Data::Logic_onInput(%this, %obj, %pos, %norm)
-{
-	
+	//Carry
+	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]);
 }

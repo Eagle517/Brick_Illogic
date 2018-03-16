@@ -1,6 +1,6 @@
 datablock fxDTSBrickData(LogicGate_4bitDLatch_Data)
 {
-	brickFile = "Add-Ons/Brick_Illogic/icons/4bitDLatch.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/4bitDLatch.blb";
 	category = "Logic Bricks";
 	subCategory = "Memory";
 	uiName = "Nibble Register";

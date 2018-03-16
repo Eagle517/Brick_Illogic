@@ -133,7 +133,6 @@ function LogicGate__4bitDecoder_Data::doLogic(%this, %obj)
 	}
 	else
 	{
-		
 		%obj.val =
 			($LBC::Ports::BrickState[%obj,0]*1)+
 			($LBC::Ports::BrickState[%obj,1]*2)+
@@ -159,6 +158,7 @@ function LogicGate__4bitDecoder_Data::doLogic(%this, %obj)
 	}	
 }
 
+//Probably not needed but for some reason I felt paranoid
 function LogicGate__4bitDecoder_Data::Logic_onGateAdded(%this, %obj)
 {
 	%obj.val = 0;

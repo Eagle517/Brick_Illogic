@@ -125,9 +125,22 @@ exec("./bricks/button.cs");
 exec("./bricks/eventgate.cs");
 
 //Math
-exec("./bricks/4bitComparator.cs");
+	//Addition
+exec("./bricks/HalfAdder.cs");
+exec("./bricks/FullAdder.cs");
+exec("./bricks/8bitAdder.cs");
+
+	//Subtraction
+
+	//Multiplication
 exec("./bricks/8bitMultiplier.cs");
+
+	//Division
 exec("./bricks/8bitDivisor.cs");
+
+	//Other weird shit
+exec("./bricks/4bitComparator.cs");
+
 
 //Memory
 exec("./bricks/DLatch.cs");
@@ -138,6 +151,7 @@ exec("./bricks/256ByteRAM.cs");
 exec("./bricks/Enabler.cs");
 exec("./bricks/4bitDecoder.cs");
 exec("./bricks/4bitEncoder.cs");
+exec("./bricks/BinarytoBCD.cs");
 
 //Special
 exec("./bricks/bridge.cs");

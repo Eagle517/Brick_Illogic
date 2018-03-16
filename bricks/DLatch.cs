@@ -2,7 +2,7 @@ datablock fxDTSBrickData(Logic1x2fDLatch : Logic1x2fORData)
 {
 	subCategory = "Memory";
 	uiName = "D Latch";
-	iconName = "Add-Ons/Brick_Illogic/icons/DLatch";
+	iconName = "Add-Ons/Brick_Illogic/bricks/blb/DLatch.blb";
 
 	logicUIName = "D Latch";
 	logicUIDesc = "Q becomes D when C is on, otherwise it holds its state";

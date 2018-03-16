@@ -1,8 +1,8 @@
 datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 {
-	brickFile = "config/server/IllogicGateMaker/FullAdder.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/FullAdder.blb";
 	category = "Logic Bricks";
-	subCategory = "Gatemaker";
+	subCategory = "Math";
 	uiName = "Full Adder";
 	iconName = "";
 	hasPrint = 1;
@@ -14,7 +14,7 @@ datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 	isLogicInput = false;
 
 	logicUIName = "Full Adder";
-	logicUIDesc = "";
+	logicUIDesc = "Adds A and B with carry in";
 
 	numLogicPorts = 5;
 
@@ -46,15 +46,9 @@ datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 
 function LogicGate_FullAdder_Data::doLogic(%this, %obj)
 {
-	
-}
+	//Sum
+	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0] ^ ($LBC::Ports::BrickState[%obj, 1] ^ $LBC::Ports::BrickState[%obj, 2]));
 
-function LogicGate_FullAdder_Data::Logic_onGateAdded(%this, %obj)
-{
-	
-}
-
-function LogicGate_FullAdder_Data::Logic_onInput(%this, %obj, %pos, %norm)
-{
-	
+	//Carry
+	%obj.Logic_SetOutput(4, ($LBC::Ports::BrickState[%obj, 1] && ($LBC::Ports::BrickState[%obj, 2]) || ($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 2]) || ($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]));
 }
