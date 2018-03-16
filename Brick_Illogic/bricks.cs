@@ -157,3 +157,4 @@ exec("./bricks/4bitEncoder.cs");
 exec("./bricks/bridge.cs");
 exec("./bricks/pixel.cs");
 exec("./bricks/TextBrick.cs");
+exec("./bricks/Clock.cs");
