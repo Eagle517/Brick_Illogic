@@ -50,5 +50,8 @@ function LogicGate_FullAdder_Data::doLogic(%this, %obj)
 	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0] ^ ($LBC::Ports::BrickState[%obj, 1] ^ $LBC::Ports::BrickState[%obj, 2]));
 
 	//Carry
-	%obj.Logic_SetOutput(4, ($LBC::Ports::BrickState[%obj, 1] && ($LBC::Ports::BrickState[%obj, 2]) || ($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 2]) || ($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]));
+	%obj.Logic_SetOutput(4,
+		($LBC::Ports::BrickState[%obj, 1] && $LBC::Ports::BrickState[%obj, 2]) ||
+		($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 2]) ||
+		($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]));
 }

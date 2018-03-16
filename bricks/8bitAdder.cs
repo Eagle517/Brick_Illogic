@@ -1,8 +1,8 @@
 datablock fxDTSBrickData(LogicGate__8bitAdder_Data)
 {
-	brickFile = "config/server/IllogicGateMaker/8bitAdder.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/8bitAdder.blb";
 	category = "Logic Bricks";
-	subCategory = "Gatemaker";
+	subCategory = "Math";
 	uiName = "8bit Adder";
 	iconName = "";
 	hasPrint = 1;
