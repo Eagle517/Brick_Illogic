@@ -130,7 +130,7 @@ exec("./bricks/8bitMultiplier.cs");
 exec("./bricks/8bitDivisor.cs");
 
 //Memory
-exec("./bricks/DFlipFlop.cs");
+exec("./bricks/DLatch.cs");
 exec("./bricks/4bitDLatch.cs");
 exec("./bricks/256ByteRAM.cs");
 
