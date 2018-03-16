@@ -155,7 +155,7 @@ function LogicGate__8bitAdder_Data::doLogic(%this, %obj)
 		($LBC::Ports::BrickState[%obj,0]*1)+
 		($LBC::Ports::BrickState[%obj,1]*2)+
 		($LBC::Ports::BrickState[%obj,2]*4)+
-		($LBC::Ports::BrickState[%obj,3]*8);
+		($LBC::Ports::BrickState[%obj,3]*8)+
 		($LBC::Ports::BrickState[%obj,4]*16)+
 		($LBC::Ports::BrickState[%obj,5]*32)+
 		($LBC::Ports::BrickState[%obj,6]*64)+
@@ -165,7 +165,7 @@ function LogicGate__8bitAdder_Data::doLogic(%this, %obj)
 		($LBC::Ports::BrickState[%obj,8]*1)+
 		($LBC::Ports::BrickState[%obj,9]*2)+
 		($LBC::Ports::BrickState[%obj,10]*4)+
-		($LBC::Ports::BrickState[%obj,11]*8);
+		($LBC::Ports::BrickState[%obj,11]*8)+
 		($LBC::Ports::BrickState[%obj,12]*16)+
 		($LBC::Ports::BrickState[%obj,13]*32)+
 		($LBC::Ports::BrickState[%obj,14]*64)+
