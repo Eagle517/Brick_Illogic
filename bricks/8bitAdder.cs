@@ -151,15 +151,35 @@ datablock fxDTSBrickData(LogicGate__8bitAdder_Data)
 
 function LogicGate__8bitAdder_Data::doLogic(%this, %obj)
 {
-	
-}
+	%A =
+		($LBC::Ports::BrickState[%obj,0]*1)+
+		($LBC::Ports::BrickState[%obj,1]*2)+
+		($LBC::Ports::BrickState[%obj,2]*4)+
+		($LBC::Ports::BrickState[%obj,3]*8);
+		($LBC::Ports::BrickState[%obj,4]*16)+
+		($LBC::Ports::BrickState[%obj,5]*32)+
+		($LBC::Ports::BrickState[%obj,6]*64)+
+		($LBC::Ports::BrickState[%obj,7]*128);
 
-function LogicGate__8bitAdder_Data::Logic_onGateAdded(%this, %obj)
-{
-	
-}
+	%B =
+		($LBC::Ports::BrickState[%obj,8]*1)+
+		($LBC::Ports::BrickState[%obj,9]*2)+
+		($LBC::Ports::BrickState[%obj,10]*4)+
+		($LBC::Ports::BrickState[%obj,11]*8);
+		($LBC::Ports::BrickState[%obj,12]*16)+
+		($LBC::Ports::BrickState[%obj,13]*32)+
+		($LBC::Ports::BrickState[%obj,14]*64)+
+		($LBC::Ports::BrickState[%obj,15]*128);
 
-function LogicGate__8bitAdder_Data::Logic_onInput(%this, %obj, %pos, %norm)
-{
-	
+	%sum = %A + %B + ($LBC::Ports::BrickState[%obj,16]*1);
+
+	%obj.Logic_SetOutput(17, %sum & 1);
+	%obj.Logic_SetOutput(18, %sum & 2);
+	%obj.Logic_SetOutput(19, %sum & 4);
+	%obj.Logic_SetOutput(20, %sum & 8);
+	%obj.Logic_SetOutput(21, %sum & 16);
+	%obj.Logic_SetOutput(22, %sum & 32);
+	%obj.Logic_SetOutput(23, %sum & 64);
+	%obj.Logic_SetOutput(24, %sum & 128);
+	%obj.Logic_SetOutput(25, %sum & 256);
 }

@@ -1,6 +1,6 @@
 datablock fxDTSBrickData(LogicGate_BinarytoBCD_Data)
 {
-	brickFile = "config/server/IllogicGateMaker/BinarytoBCD.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/BinarytoBCD.blb";
 	category = "Logic Bricks";
 	subCategory = "Gatemaker";
 	uiName = "Binary to BCD";
@@ -81,15 +81,31 @@ datablock fxDTSBrickData(LogicGate_BinarytoBCD_Data)
 
 function LogicGate_BinarytoBCD_Data::doLogic(%this, %obj)
 {
-	
-}
+	%val =
+		($LBC::Ports::BrickState[%obj,0]*1)+
+		($LBC::Ports::BrickState[%obj,1]*2)+
+		($LBC::Ports::BrickState[%obj,2]*4)+
+		($LBC::Ports::BrickState[%obj,3]*8);
 
-function LogicGate_BinarytoBCD_Data::Logic_onGateAdded(%this, %obj)
-{
-	
-}
+	if(%val < 10)
+	{
+		%A = %val;
+		%B = 0;
+	}
+	else
+	{
+		%A = %val - 10;
+		%B = 1;
+	}
 
-function LogicGate_BinarytoBCD_Data::Logic_onInput(%this, %obj, %pos, %norm)
-{
-	
+	%obj.Logic_SetOutput(4, %A & 1);
+	%obj.Logic_SetOutput(5, %A & 2);
+	%obj.Logic_SetOutput(6, %A & 4);
+	%obj.Logic_SetOutput(7, %A & 8);
+
+	%obj.Logic_SetOutput(8, %B & 1);
+	%obj.Logic_SetOutput(9, %B & 2);
+	%obj.Logic_SetOutput(10, %B & 4);
+	%obj.Logic_SetOutput(11, %B & 8);
+	//I know...
 }
