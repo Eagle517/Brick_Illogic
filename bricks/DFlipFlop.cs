@@ -1,10 +1,10 @@
-datablock fxDTSBrickData(Logic1x2fDFlipFlop : Logic1x2fORData)
+datablock fxDTSBrickData(Logic1x2fDLatch : Logic1x2fORData)
 {
 	subCategory = "Memory";
-	uiName = "D Flip Flop";
-	iconName = "Add-Ons/Brick_Illogic/icons/DFlipFlop";
+	uiName = "D Latch";
+	iconName = "Add-Ons/Brick_Illogic/icons/DLatch";
 
-	logicUIName = "D Flip Flop";
+	logicUIName = "D Latch";
 	logicUIDesc = "Q becomes D when C is on, otherwise it holds its state";
 
 	logicPortUIName[0] = "C";
@@ -12,7 +12,7 @@ datablock fxDTSBrickData(Logic1x2fDFlipFlop : Logic1x2fORData)
 	logicPortUIName[2] = "Q";
 };
 
-function Logic1x2fDFlipFlop::doLogic(%this, %obj)
+function Logic1x2fDLatch::doLogic(%this, %obj)
 {
 	if($LBC::Ports::BrickState[%obj, 0])
 		%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 1]);
