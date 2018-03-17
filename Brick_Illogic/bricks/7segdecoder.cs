@@ -105,10 +105,10 @@ function LogicGate__7segdecoder_Data::doLogic(%this, %obj)
 		case 2:
 			%obj.A = 1;
 			%obj.B = 0;
-			%obj.C = 1;
+			%obj.C = 0;
 			%obj.D = 1;
 			%obj.E = 1;
-			%obj.F = 0;
+			%obj.F = 1;
 			%obj.G = 1;
 
 		case 3:
