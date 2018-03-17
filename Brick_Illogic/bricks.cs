@@ -151,6 +151,7 @@ exec("./bricks/256ByteRAM.cs");
 exec("./bricks/Enabler.cs");
 exec("./bricks/4bitDecoder.cs");
 exec("./bricks/4bitEncoder.cs");
+exec("./bricks/7segdecoder.cs");
 //exec("./bricks/BinarytoBCD.cs"); //Debating on implementing BCD stuff
 
 //Special
