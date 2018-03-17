@@ -139,7 +139,7 @@ exec("./bricks/8bitMultiplier.cs");
 exec("./bricks/8bitDivisor.cs");
 
 	//Other weird shit
-exec("./bricks/4bitComparator.cs");
+//exec("./bricks/4bitComparator.cs");
 
 
 //Memory
@@ -149,8 +149,10 @@ exec("./bricks/256ByteRAM.cs");
 
 //Chips
 exec("./bricks/Enabler.cs");
+exec(".bricks/Shifter.cs");
 exec("./bricks/4bitDecoder.cs");
 exec("./bricks/4bitEncoder.cs");
+exec("./bricks/8bitComparator.cs");
 exec("./bricks/7segdecoder.cs");
 //exec("./bricks/BinarytoBCD.cs"); //Debating on implementing BCD stuff
 
