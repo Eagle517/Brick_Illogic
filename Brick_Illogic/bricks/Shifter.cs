@@ -68,6 +68,16 @@ datablock fxDTSBrickData(LogicGate_Shifter_Data)
 	logicPortDir[9] = 0;
 	logicPortUIName[9] = "Overflow";
 
+	logicPortType[8] = 1;
+	logicPortPos[8] = "3 2 0";
+	logicPortDir[8] = 2;
+	logicPortUIName[8] = "Clock-In";
+
+	logicPortType[9] = 0;
+	logicPortPos[9] = "-3 2 0";
+	logicPortDir[9] = 0;
+	logicPortUIName[9] = "Clock-Out";
+
 	logicPortType[10] = 1;
 	logicPortPos[10] = "3 0 0";
 	logicPortDir[10] = 2;
@@ -87,7 +97,29 @@ datablock fxDTSBrickData(LogicGate_Shifter_Data)
 	logicPortPos[13] = "-3 -2 0";
 	logicPortDir[13] = 0;
 	logicPortUIName[13] = "Set-Out";
+
+	logicPortType[14] = 1;
+	logicPortPos[14] = "3 4 0";
+	logicPortDir[14] = 2;
+	logicPortUIName[14] = "Overflow-In";
+
+	logicPortType[15] = 0;
+	logicPortPos[15] = "-3 4 0";
+	logicPortDir[15] = 0;
+	logicPortUIName[15] = "Overflow-Out";
+
+	logicPortType[16] = 1;
+	logicPortPos[16] = "-3 2 0";
+	logicPortDir[16] = 0;
+	logicPortUIName[16] = "Underflow-In";
+
+	logicPortType[17] = 0;
+	logicPortPos[17] = "3 2 0";
+	logicPortDir[17] = 2;
+	logicPortUIName[17] = "Underflow-Out";
 };
+
+//Drunk programming let's go!
 
 function LogicGate_Shifter_Data::doLogic(%this, %obj)
 {
@@ -95,6 +127,25 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 	if($LBC::Ports::BrickState[%obj,8] && !%obj.clockPrevState)
 	{
 		%obj.clockPrevState = 1;
+
+		if($LBC::Ports::BrickState[%obj, 10])
+		{
+			//Negative
+			%obj.Logic_SetOutput(17, %obj.dOut[%obj.addr, 4]);
+			%obj.Logic_SetOutput(4, %obj.dOut[%obj.addr, 5]);
+			%obj.Logic_SetOutput(5, %obj.dOut[%obj.addr, 6]);
+			%obj.Logic_SetOutput(6, %obj.dOut[%obj.addr, 7]);
+			%obj.Logic_SetOutput(7, %obj.dOut[%obj.addr, 16]);
+		}
+		else
+		{
+			//Positive
+			%obj.Logic_SetOutput(15, %obj.dOut[%obj.addr, 7]);
+			%obj.Logic_SetOutput(7, %obj.dOut[%obj.addr, 6]);
+			%obj.Logic_SetOutput(6, %obj.dOut[%obj.addr, 5]);
+			%obj.Logic_SetOutput(5, %obj.dOut[%obj.addr, 4]);
+			%obj.Logic_SetOutput(4, %obj.dOut[%obj.addr, 14]);
+		}
 	}
 	else if(!$LBC::Ports::BrickState[%obj,8] && %obj.clockPrevState)
 	{
@@ -105,11 +156,20 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 	if($LBC::Ports::BrickState[%obj,12] && !%obj.setPrevState)
 	{
 		%obj.setPrevState = 1;
+
+		%obj.Logic_SetOutput(4, %obj.dOut[%obj.addr, 0]);
+		%obj.Logic_SetOutput(5, %obj.dOut[%obj.addr, 1]);
+		%obj.Logic_SetOutput(6, %obj.dOut[%obj.addr, 2]);
+		%obj.Logic_SetOutput(7, %obj.dOut[%obj.addr, 3]);
 	}
 	else if(!$LBC::Ports::BrickState[%obj,12] && %obj.setPrevState)
 	{
 		%obj.setPrevState = 0;
 	}
+
+	%obj.Logic_SetOutput(9, %obj.dOut[%obj.addr, 8]);
+	%obj.Logic_SetOutput(11, %obj.dOut[%obj.addr, 10]);
+	%obj.Logic_SetOutput(13, %obj.dOut[%obj.addr, 12]);
 }
 
 function LogicGate_Shifter_Data::Logic_onGateAdded(%this, %obj)
