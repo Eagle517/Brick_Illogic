@@ -121,7 +121,7 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 		if($LBC::Ports::BrickState[%obj, 10])
 		{
 			//Negative
-			%obj.Logic_SetOutput(17, $LBC::Ports::BrickState[%obj,5]); //Underflow-Out
+			//%obj.Logic_SetOutput(17, $LBC::Ports::BrickState[%obj,5]); //Underflow-Out
 			%obj.Logic_SetOutput(4, $LBC::Ports::BrickState[%obj,5]); //Out0
 			%obj.Logic_SetOutput(5, $LBC::Ports::BrickState[%obj,6]); //Out1
 			%obj.Logic_SetOutput(6, $LBC::Ports::BrickState[%obj,7]); //Out2
@@ -130,7 +130,7 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 		else
 		{
 			//Positive
-			%obj.Logic_SetOutput(15, $LBC::Ports::BrickState[%obj,6]); //Overflow-Out
+			//%obj.Logic_SetOutput(15, $LBC::Ports::BrickState[%obj,6]); //Overflow-Out
 			%obj.Logic_SetOutput(7, $LBC::Ports::BrickState[%obj,6]); //Out3
 			%obj.Logic_SetOutput(6, $LBC::Ports::BrickState[%obj,5]); //Out2
 			%obj.Logic_SetOutput(5, $LBC::Ports::BrickState[%obj,4]); //Out1
@@ -151,8 +151,6 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 		%obj.Logic_SetOutput(5, $LBC::Ports::BrickState[%obj,1]);
 		%obj.Logic_SetOutput(6, $LBC::Ports::BrickState[%obj,2]);
 		%obj.Logic_SetOutput(7, $LBC::Ports::BrickState[%obj,3]);
-		%obj.Logic_SetOutput(17, $LBC::Ports::BrickState[%obj,4]);
-		%obj.Logic_SetOutput(15, $LBC::Ports::BrickState[%obj,7]);
 	}
 	else if(!$LBC::Ports::BrickState[%obj,12] && %obj.setPrevState)
 	{
@@ -162,6 +160,8 @@ function LogicGate_Shifter_Data::doLogic(%this, %obj)
 	%obj.Logic_SetOutput(9, $LBC::Ports::BrickState[%obj,8]);
 	%obj.Logic_SetOutput(11, $LBC::Ports::BrickState[%obj,10]);
 	%obj.Logic_SetOutput(13, $LBC::Ports::BrickState[%obj,12]);
+	%obj.Logic_SetOutput(17, $LBC::Ports::BrickState[%obj,4]);
+	%obj.Logic_SetOutput(15, $LBC::Ports::BrickState[%obj,7]);
 }
 
 function LogicGate_Shifter_Data::Logic_onGateAdded(%this, %obj)
