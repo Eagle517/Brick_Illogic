@@ -149,7 +149,7 @@ exec("./bricks/256ByteRAM.cs");
 
 //Chips
 exec("./bricks/Enabler.cs");
-exec(".bricks/Shifter.cs");
+exec("./bricks/Shifter.cs");
 exec("./bricks/4bitDecoder.cs");
 exec("./bricks/4bitEncoder.cs");
 exec("./bricks/8bitComparator.cs");
