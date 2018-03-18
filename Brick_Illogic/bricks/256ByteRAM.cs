@@ -166,6 +166,7 @@ function LogicGate__256ByteRAM_Data::doLogic(%this, %obj)
 		($LBC::Ports::BrickState[%obj, 14]*64)+
 		($LBC::Ports::BrickState[%obj, 15]*128);
 
+	//On high signal
 	if($LBC::Ports::BrickState[%obj,18] && !%obj.clockPrevState)
 	{
 		%obj.clockPrevState = 1;
