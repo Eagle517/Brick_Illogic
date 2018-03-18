@@ -19,42 +19,42 @@ datablock fxDTSBrickData(LogicGate_Shifter_Data)
 	numLogicPorts = 18;
 
 	logicPortType[0] = 1;
-	logicPortPos[0] = "3 -3 0";
+	logicPortPos[0] = "3 -4 0";
 	logicPortDir[0] = 3;
 	logicPortUIName[0] = "In0";
 
 	logicPortType[1] = 1;
-	logicPortPos[1] = "1 -3 0";
+	logicPortPos[1] = "1 -4 0";
 	logicPortDir[1] = 3;
 	logicPortUIName[1] = "In1";
 
 	logicPortType[2] = 1;
-	logicPortPos[2] = "-1 -3 0";
+	logicPortPos[2] = "-1 -4 0";
 	logicPortDir[2] = 3;
 	logicPortUIName[2] = "In2";
 
 	logicPortType[3] = 1;
-	logicPortPos[3] = "-3 -3 0";
+	logicPortPos[3] = "-3 -4 0";
 	logicPortDir[3] = 3;
 	logicPortUIName[3] = "In3";
 
 	logicPortType[4] = 0;
-	logicPortPos[4] = "3 3 0";
+	logicPortPos[4] = "3 4 0";
 	logicPortDir[4] = 1;
 	logicPortUIName[4] = "Out0";
 
 	logicPortType[5] = 0;
-	logicPortPos[5] = "1 3 0";
+	logicPortPos[5] = "1 4 0";
 	logicPortDir[5] = 1;
 	logicPortUIName[5] = "Out1";
 
 	logicPortType[6] = 0;
-	logicPortPos[6] = "-1 3 0";
+	logicPortPos[6] = "-1 4 0";
 	logicPortDir[6] = 1;
 	logicPortUIName[6] = "Out2";
 
 	logicPortType[7] = 0;
-	logicPortPos[7] = "-3 3 0";
+	logicPortPos[7] = "-3 4 0";
 	logicPortDir[7] = 1;
 	logicPortUIName[7] = "Out3";
 
