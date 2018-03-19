@@ -162,6 +162,7 @@ function LogicGate__4bitDecoder_Data::doLogic(%this, %obj)
 function LogicGate__4bitDecoder_Data::Logic_onGateAdded(%this, %obj)
 {
 	%obj.val = 0;
+	%obj.Logic_SetOutput(20, 1);
 }
 
 
