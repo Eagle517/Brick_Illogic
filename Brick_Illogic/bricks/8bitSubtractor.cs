@@ -1,9 +1,9 @@
-datablock fxDTSBrickData(LogicGate__8bitAdder_Data)
+datablock fxDTSBrickData(LogicGate__8bitSubtractor_Data)
 {
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/8bitAdder.blb";
 	category = "Logic Bricks";
 	subCategory = "Math";
-	uiName = "8bit Adder";
+	uiName = "8bit Subtractor";
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -13,8 +13,8 @@ datablock fxDTSBrickData(LogicGate__8bitAdder_Data)
 	isLogicGate = true;
 	isLogicInput = false;
 
-	logicUIName = "8bit Adder";
-	logicUIDesc = "";
+	logicUIName = "8bit Subtractor";
+	logicUIDesc = "Subtracts B from A";
 
 	numLogicPorts = 26;
 
@@ -101,55 +101,55 @@ datablock fxDTSBrickData(LogicGate__8bitAdder_Data)
 	logicPortType[16] = 1;
 	logicPortPos[16] = "15 -1 0";
 	logicPortDir[16] = 2;
-	logicPortUIName[16] = "Carry In";
+	logicPortUIName[16] = "Borrow In";
 
 	logicPortType[17] = 0;
 	logicPortPos[17] = "15 1 0";
 	logicPortDir[17] = 1;
-	logicPortUIName[17] = "Sum0";
+	logicPortUIName[17] = "Diff0";
 
 	logicPortType[18] = 0;
 	logicPortPos[18] = "13 1 0";
 	logicPortDir[18] = 1;
-	logicPortUIName[18] = "Sum1";
+	logicPortUIName[18] = "Diff1";
 
 	logicPortType[19] = 0;
 	logicPortPos[19] = "11 1 0";
 	logicPortDir[19] = 1;
-	logicPortUIName[19] = "Sum2";
+	logicPortUIName[19] = "Diff2";
 
 	logicPortType[20] = 0;
 	logicPortPos[20] = "9 1 0";
 	logicPortDir[20] = 1;
-	logicPortUIName[20] = "Sum3";
+	logicPortUIName[20] = "Diff3";
 
 	logicPortType[21] = 0;
 	logicPortPos[21] = "7 1 0";
 	logicPortDir[21] = 1;
-	logicPortUIName[21] = "Sum4";
+	logicPortUIName[21] = "Diff4";
 
 	logicPortType[22] = 0;
 	logicPortPos[22] = "5 1 0";
 	logicPortDir[22] = 1;
-	logicPortUIName[22] = "Sum5";
+	logicPortUIName[22] = "Diff5";
 
 	logicPortType[23] = 0;
 	logicPortPos[23] = "3 1 0";
 	logicPortDir[23] = 1;
-	logicPortUIName[23] = "Sum6";
+	logicPortUIName[23] = "Diff6";
 
 	logicPortType[24] = 0;
 	logicPortPos[24] = "1 1 0";
 	logicPortDir[24] = 1;
-	logicPortUIName[24] = "Sum7";
+	logicPortUIName[24] = "Diff7";
 
 	logicPortType[25] = 0;
 	logicPortPos[25] = "-15 -1 0";
 	logicPortDir[25] = 0;
-	logicPortUIName[25] = "Carry Out";
+	logicPortUIName[25] = "Borrow Out";
 };
 
-function LogicGate__8bitAdder_Data::doLogic(%this, %obj)
+function LogicGate__8bitSubtractor_Data::doLogic(%this, %obj)
 {
 	%A =
 		($LBC::Ports::BrickState[%obj,0]*1)+
@@ -171,15 +171,15 @@ function LogicGate__8bitAdder_Data::doLogic(%this, %obj)
 		($LBC::Ports::BrickState[%obj,14]*64)+
 		($LBC::Ports::BrickState[%obj,15]*128);
 
-	%sum = %A + %B + ($LBC::Ports::BrickState[%obj,16]*1);
+	%difference = %A - %B - ($LBC::Ports::BrickState[%obj,16]*1);
 
-	%obj.Logic_SetOutput(17, %sum & 1);
-	%obj.Logic_SetOutput(18, %sum & 2);
-	%obj.Logic_SetOutput(19, %sum & 4);
-	%obj.Logic_SetOutput(20, %sum & 8);
-	%obj.Logic_SetOutput(21, %sum & 16);
-	%obj.Logic_SetOutput(22, %sum & 32);
-	%obj.Logic_SetOutput(23, %sum & 64);
-	%obj.Logic_SetOutput(24, %sum & 128);
-	%obj.Logic_SetOutput(25, %sum & 256);
+	%obj.Logic_SetOutput(17, %difference & 1);
+	%obj.Logic_SetOutput(18, %difference & 2);
+	%obj.Logic_SetOutput(19, %difference & 4);
+	%obj.Logic_SetOutput(20, %difference & 8);
+	%obj.Logic_SetOutput(21, %difference & 16);
+	%obj.Logic_SetOutput(22, %difference & 32);
+	%obj.Logic_SetOutput(23, %difference & 64);
+	%obj.Logic_SetOutput(24, %difference & 128);
+	%obj.Logic_SetOutput(25, %difference & 256);
 }
