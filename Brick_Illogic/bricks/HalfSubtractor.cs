@@ -1,9 +1,9 @@
-datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
+datablock fxDTSBrickData(LogicGate_HalfSubtractor_Data)
 {
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/HalfAdder.blb";
 	category = "Logic Bricks";
 	subCategory = "Math";
-	uiName = "Half Adder";
+	uiName = "Half Subtractor";
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -13,8 +13,8 @@ datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
 	isLogicGate = true;
 	isLogicInput = false;
 
-	logicUIName = "Half Adder";
-	logicUIDesc = "Adds A and B";
+	logicUIName = "Half Subtractor";
+	logicUIDesc = "Subtracts B from A";
 
 	numLogicPorts = 4;
 
@@ -31,19 +31,19 @@ datablock fxDTSBrickData(LogicGate_HalfAdder_Data)
 	logicPortType[2] = 0;
 	logicPortPos[2] = "-1 0 0";
 	logicPortDir[2] = 1;
-	logicPortUIName[2] = "Sum";
+	logicPortUIName[2] = "Difference";
 
 	logicPortType[3] = 0;
 	logicPortPos[3] = "-1 0 0";
 	logicPortDir[3] = 0;
-	logicPortUIName[3] = "Carry";
+	logicPortUIName[3] = "Borrow";
 };
 
-function LogicGate_HalfAdder_Data::doLogic(%this, %obj)
+function LogicGate_HalfSubtractor_Data::doLogic(%this, %obj)
 {
-	//Sum
+	//Difference
 	%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]);
 
-	//Carry
-	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]);
+	//Borrow
+	%obj.Logic_SetOutput(3, !$LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]);
 }
