@@ -199,9 +199,9 @@ function Logic_RemoveGate(%obj)
 			if($LBC::Groups::PortCount[%group] == 2 && $LBC::Groups::WireCount[%group] == 0)
 			{
 				%gport = $LBC::Groups::Port[%group, 0];
-				$LBC::Ports::Group[%gport] = -1;
 				if(%gport != %port)
 				{
+					$LBC::Ports::Group[%gport] = -1;
 					if($LBC::Ports::Type[%gport] == 1)
 					{
 						%brick = $LBC::Ports::Brick[%gport];
