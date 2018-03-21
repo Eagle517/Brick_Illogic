@@ -198,18 +198,31 @@ function Logic_RemoveGate(%obj)
 		{
 			if($LBC::Groups::PortCount[%group] == 2 && $LBC::Groups::WireCount[%group] == 0)
 			{
-				for(%a = 0; %a < 2; %a++)
+				%gport = $LBC::Groups::Port[%group, 0];
+				$LBC::Ports::Group[%gport] = -1;
+				if(%gport != %port)
 				{
-					%gport = $LBC::Groups::Port[%group, %a];
-					if(%gport != %port)
+					if($LBC::Ports::Type[%gport] == 1)
 					{
 						%brick = $LBC::Ports::Brick[%gport];
 						$LBC::Ports::State[%gport] = 0;
 						$LBC::Ports::BrickState[%brick, $LBC::Ports::BrickIDX[%gport]] = 0;
+						$LBC::Bricks::Datablock[%brick].doLogic(%brick);
 					}
-
-					$LBC::Ports::Group[%gport] = -1;
 				}
+				else
+				{
+					%gport = $LBC::Groups::Port[%group, 1];
+					$LBC::Ports::Group[%gport] = -1;
+					if($LBC::Ports::Type[%gport] == 1)
+					{
+						%brick = $LBC::Ports::Brick[%gport];
+						$LBC::Ports::State[%gport] = 0;
+						$LBC::Ports::BrickState[%brick, $LBC::Ports::BrickIDX[%gport]] = 0;
+						$LBC::Bricks::Datablock[%brick].doLogic(%brick);
+					}
+				}
+
 				$LBC::Groups::PortCount[%group] = 0;
 			}
 			else
@@ -219,9 +232,8 @@ function Logic_RemoveGate(%obj)
 				$LBC::Groups::PortCount[%group]--;
 				Logic_QueueGroup(%group);
 			}
+			$LBC::Ports::Group[%port] = -1;
 		}
-
-		$LBC::Ports::Group[%port] = -1;
 		$LBC::Ports::Brick[%port] = -1;
 	}
 
