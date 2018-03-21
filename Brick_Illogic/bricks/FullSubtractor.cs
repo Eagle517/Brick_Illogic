@@ -13,7 +13,7 @@ datablock fxDTSBrickData(LogicGate_FullSubtractor_Data)
 	isLogicGate = true;
 	isLogicInput = false;
 
-	logicUIName = "Full Adder";
+	logicUIName = "Full Subtractor";
 	logicUIDesc = "Subtracts B from A with borrow in";
 
 	numLogicPorts = 5;
@@ -36,7 +36,7 @@ datablock fxDTSBrickData(LogicGate_FullSubtractor_Data)
 	logicPortType[3] = 0;
 	logicPortPos[3] = "-1 0 0";
 	logicPortDir[3] = 1;
-	logicPortUIName[3] = "Sum";
+	logicPortUIName[3] = "Difference";
 
 	logicPortType[4] = 0;
 	logicPortPos[4] = "-1 0 0";
@@ -47,8 +47,8 @@ datablock fxDTSBrickData(LogicGate_FullSubtractor_Data)
 function LogicGate_FullSubtractor_Data::doLogic(%this, %obj)
 {
 	//Difference
-	%obj.Logic_SetOutput(3, !$LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1] || !($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) && $LBC::Ports::BrickState[%obj, 2]);
+	%obj.Logic_SetOutput(3, ($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) ^ $LBC::Ports::BrickState[%obj, 2]);
 
 	//Borrow
-	%obj.Logic_SetOutput(4, ($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) ^ $LBC::Ports::BrickState[%obj, 2]);
+	%obj.Logic_SetOutput(4, !$LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1] || !($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) && $LBC::Ports::BrickState[%obj, 2]);
 }
