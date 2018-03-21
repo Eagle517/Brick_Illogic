@@ -131,6 +131,8 @@ exec("./bricks/FullAdder.cs");
 exec("./bricks/8bitAdder.cs");
 
 	//Subtraction
+exec("./bricks/HalfSubtractor.cs");
+exec("./bricks/FullSubtractor.cs");
 
 	//Multiplication
 exec("./bricks/8bitMultiplier.cs");
