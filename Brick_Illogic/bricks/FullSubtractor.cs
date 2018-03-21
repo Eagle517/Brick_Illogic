@@ -1,9 +1,9 @@
-datablock fxDTSBrickData(LogicGate_FullAdder_Data)
+datablock fxDTSBrickData(LogicGate_FullSubtractor_Data)
 {
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/FullAdder.blb";
 	category = "Logic Bricks";
 	subCategory = "Math";
-	uiName = "Full Adder";
+	uiName = "Full Subtractor";
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -14,7 +14,7 @@ datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 	isLogicInput = false;
 
 	logicUIName = "Full Adder";
-	logicUIDesc = "Adds A and B with carry in";
+	logicUIDesc = "Subtracts B from A with borrow in";
 
 	numLogicPorts = 5;
 
@@ -31,7 +31,7 @@ datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 	logicPortType[2] = 1;
 	logicPortPos[2] = "1 0 0";
 	logicPortDir[2] = 2;
-	logicPortUIName[2] = "Carry In";
+	logicPortUIName[2] = "Borrow In";
 
 	logicPortType[3] = 0;
 	logicPortPos[3] = "-1 0 0";
@@ -41,17 +41,14 @@ datablock fxDTSBrickData(LogicGate_FullAdder_Data)
 	logicPortType[4] = 0;
 	logicPortPos[4] = "-1 0 0";
 	logicPortDir[4] = 0;
-	logicPortUIName[4] = "Carry Out";
+	logicPortUIName[4] = "Borrow Out";
 };
 
-function LogicGate_FullAdder_Data::doLogic(%this, %obj)
+function LogicGate_FullSubtractor_Data::doLogic(%this, %obj)
 {
-	//Sum
-	%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0] ^ ($LBC::Ports::BrickState[%obj, 1] ^ $LBC::Ports::BrickState[%obj, 2]));
+	//Difference
+	%obj.Logic_SetOutput(3, !$LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1] || !($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) && $LBC::Ports::BrickState[%obj, 2]);
 
-	//Carry
-	%obj.Logic_SetOutput(4,
-		($LBC::Ports::BrickState[%obj, 1] && $LBC::Ports::BrickState[%obj, 2]) ||
-		($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 2]) ||
-		($LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1]));
+	//Borrow
+	%obj.Logic_SetOutput(4, ($LBC::Ports::BrickState[%obj, 0] ^ $LBC::Ports::BrickState[%obj, 1]) ^ $LBC::Ports::BrickState[%obj, 2]);
 }
