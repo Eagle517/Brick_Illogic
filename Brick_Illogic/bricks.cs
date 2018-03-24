@@ -144,11 +144,12 @@ exec("./bricks/8bitDivisor.cs");
 	//Other weird shit
 //exec("./bricks/4bitComparator.cs");
 
-
 //Memory
+exec("./bricks/256ByteRAM.cs");
 exec("./bricks/DLatch.cs");
 exec("./bricks/4bitDLatch.cs");
-exec("./bricks/256ByteRAM.cs");
+exec("./ShiftRegisterDFlip-FlopRight.cs");
+exec("./ShiftRegisterDFlip-FlopLeft.cs");
 
 //Chips
 exec("./bricks/Enabler.cs");
