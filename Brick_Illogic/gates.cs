@@ -178,8 +178,8 @@ function Logic_AddGate(%obj)
 
 		if(%group == -1)
 			$LBC::Ports::Group[%portID] = -1;
-		// else
-		// 	Logic_QueueGroup(%group);
+		else
+			Logic_QueueGroup(%group);
 	}
 
 	$LBC::Bricks::isGate[%obj] = true;
