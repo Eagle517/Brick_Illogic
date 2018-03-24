@@ -148,6 +148,7 @@ exec("./bricks/8bitDivisor.cs");
 exec("./bricks/256ByteRAM.cs");
 exec("./bricks/DLatch.cs");
 exec("./bricks/4bitDLatch.cs");
+exec("./bricks8bitDLatch.cs");
 exec("./bricks/ShiftRegisterDFlip-Flop.cs");
 
 //Chips
