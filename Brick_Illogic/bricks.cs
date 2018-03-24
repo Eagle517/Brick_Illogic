@@ -124,6 +124,12 @@ exec("./bricks/switch.cs");
 exec("./bricks/button.cs");
 exec("./bricks/eventgate.cs");
 
+//Bus
+exec("./bricks/3BitEnabler.cs");
+exec("./bricks/8BitEnabler.cs");
+exec("./bricks/3BitDFlipFlop.cs");
+exec("./bricks/8BitDFlipFlop.cs");
+
 //Math
 	//Addition
 exec("./bricks/HalfAdder.cs");
@@ -148,8 +154,7 @@ exec("./bricks/8bitDivisor.cs");
 exec("./bricks/256ByteRAM.cs");
 exec("./bricks/DLatch.cs");
 exec("./bricks/4bitDLatch.cs");
-exec("./bricks8bitDLatch.cs");
-exec("./bricks/ShiftRegisterDFlip-Flop.cs");
+exec("./bricks/8bitDLatch.cs");
 
 //Chips
 exec("./bricks/Enabler.cs");
