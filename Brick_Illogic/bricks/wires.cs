@@ -203,6 +203,36 @@ datablock fxDTSBrickData(LogicWire1x1x9Data : LogicWire1x64fData)
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x9.blb";
 };
 
+datablock fxDTSBrickData(LogicWire1x1x10Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x10";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x10.blb";
+};
+
+datablock fxDTSBrickData(LogicWire1x1x11Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x11";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x11.blb";
+};
+
+datablock fxDTSBrickData(LogicWire1x1x12Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x12";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x12.blb";
+};
+
+datablock fxDTSBrickData(LogicWire1x1x13Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x13";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x13.blb";
+};
+
+datablock fxDTSBrickData(LogicWire1x1x14Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x14";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x14.blb";
+};
+
 datablock fxDTSBrickData(LogicWire1x1x15Data : Brick1x1x5Data)
 {
 	category = "Logic Bricks";
@@ -211,6 +241,12 @@ datablock fxDTSBrickData(LogicWire1x1x15Data : Brick1x1x5Data)
 
 	isLogic = true;
 	isLogicWire = true;
+};
+
+datablock fxDTSBrickData(LogicWire1x1x16Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x16";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x16.blb";
 };
 
 datablock fxDTSBrickData(LogicWire1x1x17Data : LogicWire1x64fData)
