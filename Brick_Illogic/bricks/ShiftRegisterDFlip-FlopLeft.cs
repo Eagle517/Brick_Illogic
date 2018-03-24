@@ -41,10 +41,20 @@ datablock fxDTSBrickData(LogicGate_ShiftRegisterDFlipDASHFlopLeft_Data)
 
 function LogicGate_ShiftRegisterDFlipDASHFlopLeft_Data::doLogic(%this, %obj)
 {
-	
+	if($LBC::Ports::BrickState[%obj,1] && !%obj.clockPrevState)
+	{
+		%obj.clockPrevState = 1;
+
+		%obj.Logic_SetOutput(2, $LBC::Ports::BrickState[%obj, 0]);
+		%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0]);
+	}
+	else if(!$LBC::Ports::BrickState[%obj,1] && %obj.clockPrevState)
+	{
+		%obj.clockPrevState = 0;
+	}
 }
 
 function LogicGate_ShiftRegisterDFlipDASHFlopLeft_Data::Logic_onGateAdded(%this, %obj)
 {
-	
+	%obj.clockPrevState = 0;
 }
