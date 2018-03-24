@@ -46,12 +46,18 @@ function Logic_AddGate(%obj)
 		if(%dir < 4)
 			%dir = (%dir+%rot) % 4;
 
+		%type = %data.logicPortType[%i];
+		if(%type)
+			%hasInputs = true;
+
 		$LBC::Bricks::Port[%obj, %i] = %portID;
 		$LBC::Ports::State[%portID] = 0;
+		$LBC::Ports::LastState[%portID] = 0;
 		$LBC::Ports::BrickState[%obj, %i] = 0;
+		$LBC::Ports::LastBrickState[%obj, %i] = 0;
 
 		$LBC::Ports::Brick[%portID] = %obj;
-		$LBC::Ports::Type[%portID] = %data.logicPortType[%i];
+		$LBC::Ports::Type[%portID] = %type;
 		$LBC::Ports::Dir[%portID] = %dir;
 		$LBC::Ports::BrickIDX[%portID] = %i;
 
@@ -172,13 +178,15 @@ function Logic_AddGate(%obj)
 
 		if(%group == -1)
 			$LBC::Ports::Group[%portID] = -1;
-		else
-			Logic_QueueGroup(%group);
+		// else
+		// 	Logic_QueueGroup(%group);
 	}
 
 	$LBC::Bricks::isGate[%obj] = true;
 	$LBC::Bricks::isLogic[%obj] = true;
 
+	if(%hasInputs)
+		Logic_QueueGate(%obj);
 	if(isFunction(%dataName, "Logic_onGateAdded"))
 		%data.Logic_onGateAdded(%obj);
 }
@@ -230,6 +238,7 @@ function Logic_RemoveGate(%obj)
 				$LBC::Groups::Port[%group, (%idx = $LBC::Groups::PortIDX[%group, %port])] = (%gport = $LBC::Groups::Port[%group, $LBC::Groups::PortCount[%group]-1]);
 				$LBC::Groups::PortIDX[%group, %gport] = %idx;
 				$LBC::Groups::PortCount[%group]--;
+				//Logic_QueueGate($LBC::Ports::Brick[%port]);
 				Logic_QueueGroup(%group);
 			}
 			$LBC::Ports::Group[%port] = -1;
