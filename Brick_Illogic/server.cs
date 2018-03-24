@@ -4,6 +4,9 @@ exec("./logic.cs");
 exec("./bricks.cs");
 exec("./gatemaker.cs");
 
+if($LBC::Opts::Time $= "")
+	$LBC::Opts::Time = 1;
+
 function serverCmdLFX(%client)
 {
 	if(%client.isAdmin || %client.isSuperAdmin)
@@ -30,11 +33,11 @@ function serverCmdLT(%client)
 	}
 }
 
-function serverCmdlReload(%client)
+function serverCmdLST(%client, %time)
 {
 	if(%client.isAdmin || %client.isSuperAdmin)
 	{
-		messageAll('', '\c3%1\c6 reloaded Brick_Illogic', %client.name);
-		exec("add-ons/brick_illogic/server.cs");
+		$LBC::Opts::Time = mClamp(%time, 0, 999999);
+		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 millisecond%3.', %client.name, $LBC::Opts::Time, %time == 1 ? "":"s");
 	}
 }
