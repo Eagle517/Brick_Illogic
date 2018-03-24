@@ -37,7 +37,7 @@ datablock fxDTSBrickData(LogicGate_TextBrick_Data)
 //space, a-z, 0-9, punc
 function LogicGate_TextBrick_Data::doLogic(%this, %obj)
 {
-	if($LBC::Ports::BrickState[%obj, 1])
+	if($LBC::Ports::LastBrickState[%obj, 1] == 0 && $LBC::Ports::BrickState[%obj, 1])
 	{
 		%obj.LBC_print--;
 		if(%obj.LBC_print < 0)
@@ -46,13 +46,13 @@ function LogicGate_TextBrick_Data::doLogic(%this, %obj)
 		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
 	}
 
-	if($LBC::Ports::BrickState[%obj, 2])
+	if($LBC::Ports::LastBrickState[%obj, 2] == 0 && $LBC::Ports::BrickState[%obj, 2])
 	{
 		%obj.LBC_print = (%obj.LBC_print+1) % 72;
 		%obj.setPrint($LBC::TextBrick::Print[%obj.LBC_print]);
 	}
 	
-	if($LBC::Ports::BrickState[%obj, 0])
+	if($LBC::Ports::LastBrickState[%obj, 0] == 0 && $LBC::Ports::BrickState[%obj, 0])
 	{
 		%obj.LBC_print = 0;
 		%obj.setPrint($LBC::TextBrick::Print[0]);
