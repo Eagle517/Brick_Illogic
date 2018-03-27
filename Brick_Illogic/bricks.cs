@@ -118,6 +118,9 @@ exec("./bricks/NOR.cs");
 exec("./bricks/NAND.cs");
 exec("./bricks/XOR.cs");
 exec("./bricks/XNOR.cs");
+//-vertical
+exec("./bricks/verticalDiode.cs");
+exec("./bricks/verticalNOT.cs");
 
 //Inputs
 exec("./bricks/switch.cs");
