@@ -138,7 +138,7 @@ Logic_MainTick();
 function Logic_QueueGroup(%group)
 {
 	%group = %group | 0;
-	if(!$LBC::Groups::OnQueue[%group])
+	if(%group != -1 && !$LBC::Groups::OnQueue[%group])
 	{
 		$LBC::Groups::OnQueue[%group] = true;
 		$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
@@ -219,6 +219,8 @@ package IllogicLogic
 							%hy = getWord(%hitPos, 1);
 							%hz = getWord(%hitPos, 2);
 
+							%vCheck = 0.01;
+
 							%hitNorm = vectorNormalize(getWords(%ray, 4, 6));
 							%nx = atoi(getWord(%hitNorm, 0)|0);
 							if(%nx < -1 || %nx > 1)
@@ -229,6 +231,8 @@ package IllogicLogic
 							%nz = atoi(getWord(%hitNorm, 2)|0);
 							if(%nz < -1 || %nz > 1)
 								%nz = 0;
+							else if(%nz == 1 || %nz == -1)
+								%vCheck = 0.1;
 
 							%hitNorm = %nx SPC %ny SPC %nz;
 
@@ -261,12 +265,13 @@ package IllogicLogic
 									%hdistSqr = (%xx*%xx)+(%yy*%yy);
 									%vdistSqr = %zz*%zz;
 									%distSqr = %hdistSqr + %vdistSqr;
-									if((%vdistSqr < 0.01 && %hdistSqr < 0.0649) && (%distSqr < %bestDist || %bestDist == -1))
+									if((%vdistSqr < %vCheck && %hdistSqr < 0.0649) && (%distSqr < %bestDist || %bestDist == -1))
 									{
 										%bestDist = %distSqr;
 										%bestPort = %port;
 										%bestIdx = %i;
 									}
+									//%client.bottomPrint(%vCheck, 5);
 								}
 							}
 
