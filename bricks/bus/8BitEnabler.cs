@@ -121,6 +121,8 @@ function LogicGate__8BitEnabler_Data::doLogic(%this, %obj)
 		%obj.Logic_SetOutput(12, $LBC::Ports::BrickState[%obj, 2]);
 		%obj.Logic_SetOutput(11, $LBC::Ports::BrickState[%obj, 1]);
 		%obj.Logic_SetOutput(10, $LBC::Ports::BrickState[%obj, 0]);
+
+		%obj.Logic_SetOutput(9, 1);
 	}
 	else
 	{
@@ -132,7 +134,7 @@ function LogicGate__8BitEnabler_Data::doLogic(%this, %obj)
 		%obj.Logic_SetOutput(12, 0);
 		%obj.Logic_SetOutput(11, 0);
 		%obj.Logic_SetOutput(10, 0);
-	}
 
-	%obj.Logic_SetOutput(9, $LBC::Ports::BrickState[%obj, 8]);
+		%obj.Logic_SetOutput(9, 0);
+	}
 }
