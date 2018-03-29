@@ -286,6 +286,13 @@ function LogicGate__16bit128KiBRAM_Data::doLogic(%this, %obj)
 
 	//Read
 	if($LBC::Ports::BrickState[%obj, 33])
+	{
 		for(%i=0;%i<16;%i++)
 			%obj.Logic_SetOutput(%i+34, (%obj.data[%obj.addr] & (1 << %i)) != 0);
+	}
+	else
+	{
+		for(%i=0;%i<16;%i++)
+			%obj.Logic_SetOutput(%i+34, 0);
+	}
 }
