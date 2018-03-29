@@ -154,13 +154,14 @@ exec("./bricks/8bitDivisor.cs");
 //exec("./bricks/4bitComparator.cs");
 
 //Memory
-exec("./bricks/256ByteRAM.cs");
 exec("./bricks/DLatch.cs");
 exec("./bricks/4bitDLatch.cs");
 exec("./bricks/8bitDLatch.cs");
+exec("./bricks/256ByteRAM.cs");
+exec("./bricks/16bit128KiBRAM.cs");
 
 //Chips
-exec("./bricks/Enabler.cs");
+//exec("./bricks/Enabler.cs");
 exec("./bricks/Shifter.cs");
 exec("./bricks/4bitDecoder.cs");
 exec("./bricks/4bitEncoder.cs");
