@@ -2,8 +2,8 @@ datablock fxDTSBrickData(LogicGate_4bitDFlipFlop_Data)
 {
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/4bitDFlipFlop.blb";
 	category = "Logic Bricks";
-	subCategory = "Memory";
-	uiName = "4bit D Flip Flop";
+	subCategory = "Bus";
+	uiName = "4bit D FlipFlop";
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -13,8 +13,8 @@ datablock fxDTSBrickData(LogicGate_4bitDFlipFlop_Data)
 	isLogicGate = true;
 	isLogicInput = false;
 
-	logicUIName = "4bit D Latch";
-	logicUIDesc = "Q* becomes D* when clocked";
+	logicUIName = "4bit D FlipFlop";
+	logicUIDesc = "4 bit d flipflop with clock propagate";
 
 	numLogicPorts = 10;
 
@@ -41,12 +41,12 @@ datablock fxDTSBrickData(LogicGate_4bitDFlipFlop_Data)
 	logicPortType[4] = 1;
 	logicPortPos[4] = "3 0 0";
 	logicPortDir[4] = 2;
-	logicPortUIName[4] = "Clock In";
+	logicPortUIName[4] = "ClockIn";
 
 	logicPortType[5] = 0;
 	logicPortPos[5] = "-3 0 0";
 	logicPortDir[5] = 0;
-	logicPortUIName[5] = "Clock Out";
+	logicPortUIName[5] = "ClockOut";
 
 	logicPortType[6] = 0;
 	logicPortPos[6] = "3 0 0";

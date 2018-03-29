@@ -1,10 +1,10 @@
 datablock fxDTSBrickData(Logic1x2fDFlipFlop : Logic1x2fORData)
 {
 	subCategory = "Memory";
-	uiName = "D Flip Flop";
+	uiName = "D FlipFlop";
 	iconName = "Add-Ons/Brick_Illogic/bricks/blb/DLatch.blb";
 
-	logicUIName = "D Flip Flop";
+	logicUIName = "D FlipFlop";
 	logicUIDesc = "Q becomes D when C rises";
 
 	logicPortUIName[0] = "C";

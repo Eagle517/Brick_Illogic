@@ -269,7 +269,7 @@ datablock fxDTSBrickData(LogicWire1x1fVisualData : LogicWire1x1fData)
 	isLogicVisual = true;
 };
 
-datablock fxDTSBrickData(LogicWire1x1fVisualData : LogicWire1x1x2Data)
+datablock fxDTSBrickData(LogicWire1x1x2VisualData : LogicWire1x1x2Data)
 {
 	subCategory = "Wires - Special";
 	uiName = "Visual Wire 1x1x2";
