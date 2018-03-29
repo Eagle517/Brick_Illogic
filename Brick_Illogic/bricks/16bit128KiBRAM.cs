@@ -181,12 +181,12 @@ datablock fxDTSBrickData(LogicGate__16bit128KiBRAM_Data)
 	logicPortType[32] = 1;
 	logicPortPos[32] = "15 -15 0";
 	logicPortDir[32] = 2;
-	logicPortUIName[32] = "Read";
+	logicPortUIName[32] = "Write(Clock)";
 
 	logicPortType[33] = 1;
 	logicPortPos[33] = "15 15 0";
 	logicPortDir[33] = 2;
-	logicPortUIName[33] = "Write(Clock)";
+	logicPortUIName[33] = "Read";
 
 	logicPortType[34] = 0;
 	logicPortPos[34] = "15 15 0";
@@ -276,12 +276,16 @@ function LogicGate__16bit128KiBRAM_Data::doLogic(%this, %obj)
 		%obj.addr += $LBC::Ports::BrickState[%obj, %i+16] * (1 << %i);
 
 	//Write clock
-	if(!$LBC::Ports::LastBrickState[%obj, 33] && $LBC::Ports::BrickState[%obj, 33])
+	if(!$LBC::Ports::LastBrickState[%obj, 32] && $LBC::Ports::BrickState[%obj, 32])
+	{
 		for(%i=0;%i<16;%i++)
-			%obj.data[%obj.addr, %i] = $LBC::Ports::BrickState[%obj, %i];
+			%data += $LBC::Ports::BrickState[%obj, %i] * (1 << %i);
+
+		%obj.data[%obj.addr] = %data;
+	}
 
 	//Read
-	if($LBC::Ports::BrickState[%obj, 32])
+	if($LBC::Ports::BrickState[%obj, 33])
 		for(%i=0;%i<16;%i++)
-			%obj.Logic_SetOutput(%i+34, %obj.dOut[%obj.addr, %i]);
+			%obj.Logic_SetOutput(%i+34, (%obj.data[%obj.addr] & (1 << %i)) != 0);
 }
