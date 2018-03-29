@@ -271,10 +271,17 @@ datablock fxDTSBrickData(LogicGate__16bit128KiBRAM_Data)
 
 function LogicGate__16bit128KiBRAM_Data::doLogic(%this, %obj)
 {
-	
-}
+	%obj.addr = 0;
+	for(%i=0;%i<16;%i++)
+		%obj.addr += $LBC::Ports::BrickState[%obj, %i+16] * (1 << %i);
 
-function LogicGate__16bit128KiBRAM_Data::Logic_onGateAdded(%this, %obj)
-{
-	
+	//Write clock
+	if(!$LBC::Ports::LastBrickState[%obj, 33] && $LBC::Ports::BrickState[%obj, 33])
+		for(%i=0;%i<16;%i++)
+			%obj.data[%obj.addr, %i] = $LBC::Ports::BrickState[%obj, %i];
+
+	//Read
+	if($LBC::Ports::BrickState[%obj, 32])
+		for(%i=0;%i<16;%i++)
+			%obj.Logic_SetOutput(%i+34, %obj.dOut[%obj.addr, %i]);
 }
