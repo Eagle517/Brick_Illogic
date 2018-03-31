@@ -128,7 +128,7 @@ exec("./bricks/gates/verticalNOT.cs");
 exec("./bricks/bus/3BitEnabler.cs");
 exec("./bricks/bus/8BitEnabler.cs");
 exec("./bricks/bus/3BitDFlipFlop.cs");
-exec("./bricks/bus/4bitDFlipFlop.cs"); //-make flip flop, move to bus
+exec("./bricks/bus/4bitDFlipFlop.cs");
 exec("./bricks/bus/8BitDFlipFlop.cs");
 
 //Inputs
@@ -157,12 +157,12 @@ exec("./bricks/math/8bitDivisor.cs");
 //exec("./bricks/4bitComparator.cs");
 
 //Memory
+exec("./bricks/memory/DFlipFlop.cs");
 exec("./bricks/memory/256ByteRAM.cs");
 exec("./bricks/memory/16bit128KiBRAM.cs");
- //-make flip flop
 
 //Chips
-exec("./bricks/chips/Enabler.cs"); //-make legacy version, replace with 1x4x1 (use 4 bit latch blb)
+exec("./bricks/chips/Enabler.cs");
 exec("./bricks/chips/Shifter.cs");
 exec("./bricks/chips/4bitDecoder.cs");
 exec("./bricks/chips/4bitEncoder.cs");
