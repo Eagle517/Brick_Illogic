@@ -1,9 +1,9 @@
-datablock fxDTSBrickData(LogicGate_Enabler_Data)
+datablock fxDTSBrickData(LogicGate_LegacyEnabler_Data)
 {
-	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/Enabler.blb";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/LegacyEnabler.blb";
 	category = "Logic Bricks";
 	subCategory = "Chips";
-	uiName = "Enabler";
+	uiName = "Legacy Enabler";
 	iconName = "";
 	hasPrint = 1;
 	printAspectRatio = "Logic";
@@ -13,7 +13,7 @@ datablock fxDTSBrickData(LogicGate_Enabler_Data)
 	isLogicGate = true;
 	isLogicInput = false;
 
-	logicUIName = "Enabler";
+	logicUIName = "Legacy Enabler";
 	logicUIDesc = "Allows or blocks wire signals";
 
 	numLogicPorts = 10;
@@ -69,7 +69,7 @@ datablock fxDTSBrickData(LogicGate_Enabler_Data)
 	logicPortUIName[9] = "Enable Carry";
 };
 
-function LogicGate_Enabler_Data::doLogic(%this, %obj)
+function LogicGate_LegacyEnabler_Data::doLogic(%this, %obj)
 {
 	if($LBC::Ports::BrickState[%obj,4])
 	{

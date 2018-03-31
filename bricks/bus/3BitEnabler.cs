@@ -66,12 +66,15 @@ function LogicGate__3BitEnabler_Data::doLogic(%this, %obj)
 		%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 0]);
 		%obj.Logic_SetOutput(4, $LBC::Ports::BrickState[%obj, 1]);
 		%obj.Logic_SetOutput(5, $LBC::Ports::BrickState[%obj, 2]);
+
+		%obj.Logic_SetOutput(7, 1);
 	}
 	else
 	{
 		%obj.Logic_SetOutput(3, 0);
 		%obj.Logic_SetOutput(4, 0);
 		%obj.Logic_SetOutput(5, 0);
+
+		%obj.Logic_SetOutput(7, 0);
 	}
-	%obj.Logic_SetOutput(7, $LBC::Ports::BrickState[%obj, 6]);
 }

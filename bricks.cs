@@ -110,67 +110,71 @@ activatePackage("IllogicBricks");
 exec("./bricks/wires.cs");
 
 //Gates
-exec("./bricks/diode.cs");
-exec("./bricks/NOT.cs");
-exec("./bricks/OR.cs");
-exec("./bricks/AND.cs");
-exec("./bricks/NOR.cs");
-exec("./bricks/NAND.cs");
-exec("./bricks/XOR.cs");
-exec("./bricks/XNOR.cs");
-//-vertical
-exec("./bricks/verticalDiode.cs");
-exec("./bricks/verticalNOT.cs");
+exec("./bricks/gates/diode.cs");
+exec("./bricks/gates/NOT.cs");
+exec("./bricks/gates/OR.cs");
+exec("./bricks/gates/AND.cs");
+exec("./bricks/gates/NOR.cs");
+exec("./bricks/gates/NAND.cs");
+exec("./bricks/gates/XOR.cs");
+exec("./bricks/gates/XNOR.cs");
 
-//Inputs
-exec("./bricks/switch.cs");
-exec("./bricks/button.cs");
-exec("./bricks/eventgate.cs");
+	//Vertical
+exec("./bricks/gates/verticalDiode.cs");
+exec("./bricks/gates/verticalNOT.cs");
+
 
 //Bus
-exec("./bricks/3BitEnabler.cs");
-exec("./bricks/8BitEnabler.cs");
-exec("./bricks/3BitDFlipFlop.cs");
-exec("./bricks/8BitDFlipFlop.cs");
+exec("./bricks/bus/3BitEnabler.cs");
+exec("./bricks/bus/8BitEnabler.cs");
+exec("./bricks/bus/3BitDFlipFlop.cs");
+exec("./bricks/bus/4bitDFlipFlop.cs"); //-make flip flop, move to bus
+exec("./bricks/bus/8BitDFlipFlop.cs");
+
+//Inputs
+exec("./bricks/inputs/switch.cs");
+exec("./bricks/inputs/button.cs");
+exec("./bricks/inputs/eventgate.cs");
 
 //Math
 	//Addition
-exec("./bricks/HalfAdder.cs");
-exec("./bricks/FullAdder.cs");
-exec("./bricks/8bitAdder.cs");
+exec("./bricks/math/HalfAdder.cs");
+exec("./bricks/math/FullAdder.cs");
+exec("./bricks/math/8bitAdder.cs");
 
 	//Subtraction
-exec("./bricks/HalfSubtractor.cs");
-exec("./bricks/FullSubtractor.cs");
-exec("./bricks/8bitSubtractor.cs");
+exec("./bricks/math/HalfSubtractor.cs");
+exec("./bricks/math/FullSubtractor.cs");
+exec("./bricks/math/8bitSubtractor.cs");
 
 	//Multiplication
-exec("./bricks/8bitMultiplier.cs");
+exec("./bricks/math/8bitMultiplier.cs");
 
 	//Division
-exec("./bricks/8bitDivisor.cs");
+exec("./bricks/math/8bitDivisor.cs");
 
 	//Other weird shit
 //exec("./bricks/4bitComparator.cs");
 
 //Memory
-exec("./bricks/DLatch.cs");
-exec("./bricks/4bitDLatch.cs");
-exec("./bricks/8bitDLatch.cs");
-exec("./bricks/256ByteRAM.cs");
-exec("./bricks/16bit128KiBRAM.cs");
+exec("./bricks/memory/256ByteRAM.cs");
+exec("./bricks/memory/16bit128KiBRAM.cs");
+
+
+ //-make flip flop
 
 //Chips
-//exec("./bricks/Enabler.cs");
-exec("./bricks/Shifter.cs");
-exec("./bricks/4bitDecoder.cs");
-exec("./bricks/4bitEncoder.cs");
-exec("./bricks/8bitComparator.cs");
-exec("./bricks/7segdecoder.cs");
-//exec("./bricks/BinarytoBCD.cs"); //Debating on implementing BCD stuff
+exec("./bricks/chips/Enabler.cs"); //-make legacy version, replace with 1x4x1 (use 4 bit latch blb)
+exec("./bricks/chips/Shifter.cs");
+exec("./bricks/chips/4bitDecoder.cs");
+exec("./bricks/chips/4bitEncoder.cs");
+exec("./bricks/chips/8bitComparator.cs");
+exec("./bricks/chips/7segdecoder.cs");
+exec("./bricks/chips/LegacyEnabler.cs");
+//exec("./bricks/chips/BinarytoBCD.cs"); //Debating on implementing BCD stuff
 
 //Special
-exec("./bricks/bridge.cs");
-exec("./bricks/pixel.cs");
-exec("./bricks/TextBrick.cs");
-exec("./bricks/Clock.cs");
+exec("./bricks/special/bridge.cs");
+exec("./bricks/special/pixel.cs");
+exec("./bricks/special/TextBrick.cs");
+exec("./bricks/special/Clock.cs");

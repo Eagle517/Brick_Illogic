@@ -6,7 +6,6 @@ function Logic_MainTick()
 	for(%i = 0; %i < $LBC::Groups::UpdateQueueCount; %i++)
 	{
 		%group = $LBC::Groups::UpdateQueue[%i];
-		$LBC::Groups::OnQueue[%group] = false;
 
 		%newState = 0;
 		%state = $LBC::Groups::State[%group];
@@ -111,7 +110,12 @@ function Logic_MainTick()
 				}
 			}
 		}
+
+		$LBC::Groups::OnQueue[%group] = false;
 	}
+
+	// for(%i = 0; %i < $LBC::Groups::UpdateQueueCount; %i++)
+	// 	$LBC::Groups::OnQueue[$LBC::Groups::UpdateQueue[%i]] = false;
 	$LBC::Groups::UpdateQueueCount = 0;
 
 	for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
@@ -129,6 +133,9 @@ function Logic_MainTick()
 			$LBC::Ports::LastBrickState[%gate, %a] = $LBC::Ports::State[%port];
 		}
 	}
+
+	// for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
+	// 	$LBC::Gates::OnQueue[$LBC::Gates::UpdateQueue[%i]] = false;
 	$LBC::Gates::UpdateQueueCount = 0;
 
 }
@@ -165,7 +172,7 @@ function fxDTSBrick::Logic_SetOutput(%this, %port, %state)
 		$LBC::Ports::BrickState[%this, %port] = %state;
 		
 		%group = $LBC::Ports::Group[%portID];
-		if(%group != -1 && !$LBC::Groups::OnQueue[%group])
+		if(%group != -1 && !$LBC::Groups::OnQueue[%group] && !$LBC::Gates::OnQueue[%this])
 		{
 			$LBC::Groups::OnQueue[%group] = true;
 			$LBC::Groups::UpdateQueue[$LBC::Groups::UpdateQueueCount+0] = %group;
