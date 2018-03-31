@@ -172,7 +172,8 @@ exec("./bricks/chips/LegacyEnabler.cs");
 //exec("./bricks/chips/BinarytoBCD.cs"); //Debating on implementing BCD stuff
 
 //Special
-exec("./bricks/special/bridge.cs");
-exec("./bricks/special/pixel.cs");
-exec("./bricks/special/TextBrick.cs");
 exec("./bricks/special/Clock.cs");
+exec("./bricks/special/bridge.cs");
+exec("./bricks/special/TextBrick.cs");
+exec("./bricks/special/pixel.cs");
+exec("./bricks/special/SpecialScreenMemory1.cs");
