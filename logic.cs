@@ -287,7 +287,7 @@ package IllogicLogic
 							{
 								%states = trim(%states);
 								%gateDesc = %data.logicUIDesc;
-								%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "\c6"@%gateDesc NL "\c0"@%states, 3);
+								%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "<color:ffffff>"@%gateDesc NL "\c0"@%states, 3);
 								return;
 							}
 							

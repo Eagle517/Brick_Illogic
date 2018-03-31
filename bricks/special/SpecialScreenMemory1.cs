@@ -14,7 +14,7 @@ datablock fxDTSBrickData(LogicGate_SpecialScreenMemory1_Data)
 	isLogicInput = false;
 
 	logicUIName = "Special Screen Memory 1";
-	logicUIDesc = "<color:ffffff>C = A & B;<br>C D Q form a D Flipflop;<br>P = Q & C;";
+	logicUIDesc = "C = A & B;<br>C D Q form a D Flipflop;<br>P = Q & C;";
 
 	numLogicPorts = 5;
 
@@ -49,7 +49,7 @@ function LogicGate_SpecialScreenMemory1_Data::doLogic(%this, %obj)
 	%clock = $LBC::Ports::BrickState[%obj, 0] && $LBC::Ports::BrickState[%obj, 1];
 	%lastClock = $LBC::Ports::LastBrickState[%obj, 0] && $LBC::Ports::LastBrickState[%obj, 1];
 	
-	if(%clock && !%lastClock)
+	if(!%clock && %lastClock)
 		%obj.Logic_SetOutput(3, $LBC::Ports::BrickState[%obj, 2]);
 
 	%obj.Logic_SetOutput(4, $LBC::Ports::BrickState[%obj, 3] && %clock);
