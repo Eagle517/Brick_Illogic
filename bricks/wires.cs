@@ -255,6 +255,12 @@ datablock fxDTSBrickData(LogicWire1x1x17Data : LogicWire1x64fData)
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x17.blb";
 };
 
+datablock fxDTSBrickData(LogicWire1x1x128Data : LogicWire1x64fData)
+{
+	uiName = "Wire 1x1x128";
+	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x1x128.blb";
+};
+
 datablock fxDTSBrickData(LogicWire1x2x5Data : LogicWire1x64fData)
 {
 	uiName = "Wire 1x2x5";
