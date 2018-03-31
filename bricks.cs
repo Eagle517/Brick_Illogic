@@ -157,6 +157,7 @@ exec("./bricks/math/8bitDivisor.cs");
 //exec("./bricks/4bitComparator.cs");
 
 //Memory
+exec("./bricks/memory/DFlipFlop.cs");
 exec("./bricks/memory/256ByteRAM.cs");
 exec("./bricks/memory/16bit128KiBRAM.cs");
  //-make flip flop
