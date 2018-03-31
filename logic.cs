@@ -298,7 +298,7 @@ package IllogicLogic
 							%group = $LBC::Ports::Group[%bestPort];
 
 							if(trim(%desc) !$= "")
-								%text = "\c6"@%gateName NL "\c5Port: "@%name NL "\c6"@%desc NL "\c5State: "@ (%state ? "\c2ON":"\c0OFF") NL "\c5Group: \c6"@%group;
+								%text = "\c6"@%gateName NL "\c5Port: "@%name NL "<color:ffffff>"@%desc NL "\c5State: "@ (%state ? "\c2ON":"\c0OFF") NL "\c5Group: \c6"@%group;
 							else
 								%text = "\c6"@%gateName NL "\c5Port: \c6"@%name NL "\c5State: "@ (%state ? "\c2ON":"\c0OFF") NL "\c5Group: \c6"@%group;
 

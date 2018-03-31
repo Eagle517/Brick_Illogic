@@ -924,7 +924,7 @@ package Illogic_GateMaker
 
 						if(%bestDist == -1)
 						{
-							%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "\c6"@%gateDesc, 3);
+							%client.centerPrint("<font:consolas:20>\c6"@%gateName NL "<color:ffffff>"@%gateDesc, 3);
 							return;
 						}
 						
@@ -933,7 +933,7 @@ package Illogic_GateMaker
 						%desc = %bestPort.portDesc;
 
 						if(trim(%desc) !$= "")
-							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name NL "\c6"@%desc;
+							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name NL "<color:ffffff>"@%desc;
 						else
 							%text = "\c6"@%gateName NL "\c5Port #: \c6"@%bestIdx NL "\c5Port Name: \c6"@%name;
 
