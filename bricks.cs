@@ -158,7 +158,8 @@ exec("./bricks/math/8bitDivisor.cs");
 
 //Memory
 exec("./bricks/memory/256ByteRAM.cs");
-exec("./bricks/memory/DFlipFlop.cs"); //-make flip flop
+exec("./bricks/memory/16bit128KiBRAM.cs");
+ //-make flip flop
 
 //Chips
 exec("./bricks/chips/Enabler.cs"); //-make legacy version, replace with 1x4x1 (use 4 bit latch blb)
