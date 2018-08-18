@@ -3,6 +3,26 @@ function Logic_MainTick()
 	cancel($LBC::Schedules::MainSched);
 	$LBC::Schedules::MainSched = schedule($LBC::Opts::Time, 0, "Logic_MainTick");
 
+	for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
+	{
+		%gate = $LBC::Gates::UpdateQueue[%i];
+		$LBC::Gates::OnQueue[%gate] = false;
+
+		$LBC::Bricks::Datablock[%gate].doLogic(%gate);
+		
+		%ports = $LBC::Bricks::PortCount[%gate];
+		for(%a = 0; %a < %ports; %a++)
+		{
+			%port = $LBC::Bricks::Port[%gate, %a];
+			$LBC::Ports::LastState[%port] = $LBC::Ports::State[%port];
+			$LBC::Ports::LastBrickState[%gate, %a] = $LBC::Ports::State[%port];
+		}
+	}
+
+	// for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
+	// 	$LBC::Gates::OnQueue[$LBC::Gates::UpdateQueue[%i]] = false;
+	$LBC::Gates::UpdateQueueCount = 0;
+
 	for(%i = 0; %i < $LBC::Groups::UpdateQueueCount; %i++)
 	{
 		%group = $LBC::Groups::UpdateQueue[%i];
@@ -117,27 +137,6 @@ function Logic_MainTick()
 	// for(%i = 0; %i < $LBC::Groups::UpdateQueueCount; %i++)
 	// 	$LBC::Groups::OnQueue[$LBC::Groups::UpdateQueue[%i]] = false;
 	$LBC::Groups::UpdateQueueCount = 0;
-
-	for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
-	{
-		%gate = $LBC::Gates::UpdateQueue[%i];
-		$LBC::Gates::OnQueue[%gate] = false;
-
-		$LBC::Bricks::Datablock[%gate].doLogic(%gate);
-		
-		%ports = $LBC::Bricks::PortCount[%gate];
-		for(%a = 0; %a < %ports; %a++)
-		{
-			%port = $LBC::Bricks::Port[%gate, %a];
-			$LBC::Ports::LastState[%port] = $LBC::Ports::State[%port];
-			$LBC::Ports::LastBrickState[%gate, %a] = $LBC::Ports::State[%port];
-		}
-	}
-
-	// for(%i = 0; %i < $LBC::Gates::UpdateQueueCount; %i++)
-	// 	$LBC::Gates::OnQueue[$LBC::Gates::UpdateQueue[%i]] = false;
-	$LBC::Gates::UpdateQueueCount = 0;
-
 }
 Logic_MainTick();
 
