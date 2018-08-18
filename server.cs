@@ -42,7 +42,7 @@ function serverCmdLST(%client, %time)
 	if(%client.isAdmin || %client.isSuperAdmin)
 	{
 		$LBC::Opts::Time = mClamp(%time, 1, 999999); //Weird jittery behavior when set to 0
-		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 millisecond%3.', %client.name, $LBC::Opts::Time, %time == 1 ? "":"s");
+		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 milliseconds.', %client.name, $LBC::Opts::Time, $LBC::Opts::Time == 1 ? "":"s");
 	}
 }
 
