@@ -26,12 +26,13 @@ To begin using it, use `/lMakeGate x y z`
 The print on the gate is orientated to face the y+ direction.
 
 ### Credits
-Eagle517 (25351) - Made the mod
+[Eagle517](https://github.com/Eagle517) (25351) - Made the mod
 
-Entity (49803) - Brick icons & advanced gate bricks
+[Auios](https://github.com/Auios) (4669) - Brick icons & advanced gate bricks
 
-Pah1023 (12247) - Made the base code for wire groups
+
+[Pah1023](https://github.com/Pah1023) (12247) - Made the base code for wire groups
 
 Redo (12878) - Helped with some of the code
 
-Klarck (26586) - Found a lot of bugs
+[Klarck](https://github.com/Ykulvaarlck) (26586) - Found a lot of bugs
