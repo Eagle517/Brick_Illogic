@@ -41,8 +41,22 @@ function serverCmdLST(%client, %time)
 {
 	if(%client.isAdmin || %client.isSuperAdmin)
 	{
-		$LBC::Opts::Time = mClamp(%time, 0, 999999);
-		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 millisecond%3.', %client.name, $LBC::Opts::Time, %time == 1 ? "":"s");
+		if($Server::Dedicated)
+			$LBC::Opts::Time = mClamp(%time, 0, 999999);
+		else
+			$LBC::Opts::Time = mClamp(%time, 1, 999999);
+		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 millisecond%3.', %client.name, $LBC::Opts::Time, $LBC::Opts::Time == 1 ? "":"s");
+	}
+}
+
+function serverCmdLS(%client)
+{
+	if(%client.isAdmin || %client.isSuperAdmin)
+	{
+		Logic_MainTick();
+		if($LBC::Opts::Enabled == false)
+			cancel($LBC::Schedules::MainSched);
+		messageAll('', '\c3%1\c6 has forced a logic tick.', %client.name);
 	}
 }
 
