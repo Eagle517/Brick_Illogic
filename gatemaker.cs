@@ -913,7 +913,8 @@ package Illogic_GateMaker
 								%hdistSqr = (%xx*%xx)+(%yy*%yy);
 								%vdistSqr = %zz*%zz;
 								%distSqr = %hdistSqr + %vdistSqr;
-								if((%vdistSqr < 0.01 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
+								//talk(%vdistSqr SPC %hdistSqr);
+								if((%vdistSqr < 0.011 && %hdistSqr < 0.125) && (%distSqr < %bestDist || %bestDist == -1))
 								{
 									%bestDist = %distSqr;
 									%bestPort = %port;
@@ -928,7 +929,7 @@ package Illogic_GateMaker
 							return;
 						}
 						
-						%type = $LBC::Ports::Type[%bestPort];
+						%type = %bestPort.portType;
 						%name = (%bestPort.portName $= "") ? "Port " @ %bestIdx : %bestPort.portName;
 						%desc = %bestPort.portDesc;
 

@@ -6,6 +6,8 @@ exec("./gatemaker.cs");
 
 if($LBC::Opts::Time $= "")
 	$LBC::Opts::Time = 1;
+if($LBC::Opts::Enabled $= "")
+	$LBC::Opts::Enabled = true;
 
 function serverCmdLFX(%client)
 {
@@ -22,11 +24,13 @@ function serverCmdLT(%client)
 	{
 		if(isEventPending($LBC::Schedules::MainSched))
 		{
+			$LBC::Opts::Enabled = false;
 			cancel($LBC::Schedules::MainSched);
 			messageAll('', '\c3%1\c6 has disabled the logic tick.', %client.name);
 		}
 		else
 		{
+			$LBC::Opts::Enabled = true;
 			Logic_MainTick();
 			messageAll('', '\c3%1\c6 has enabled the logic tick.', %client.name);
 		}
@@ -39,5 +43,16 @@ function serverCmdLST(%client, %time)
 	{
 		$LBC::Opts::Time = mClamp(%time, 0, 999999);
 		messageAll('', '\c3%1\c6 has set the logic tick time to \c3%2\c6 millisecond%3.', %client.name, $LBC::Opts::Time, %time == 1 ? "":"s");
+	}
+}
+
+function serverCmdLS(%client)
+{
+	if(%client.isAdmin || %client.isSuperAdmin)
+	{
+		Logic_MainTick();
+		if($LBC::Opts::Enabled == false)
+			cancel($LBC::Schedules::MainSched);
+		messageAll('', '\c3%1\c6 has forced a logic tick.', %client.name);
 	}
 }
