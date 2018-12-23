@@ -62,6 +62,23 @@ function serverCmdlMakeGate(%client, %x, %y, %z)
 	}
 }
 
+function serverCmdlLoadGate(%client, %dbName)
+{
+	if(!%client.isAdmin && !%client.isSuperAdmin)
+		return;
+
+	if(isObject(%client.LGM_gate))
+	{
+		messageClient(%client, '', '\c6Delete your gate before loading one.');
+		return;
+	}
+
+	if(!isObject(%dbName) || !%dbName.isLogicGate)
+		messageClient(%client, '', '\c6Enter the datablock name of the gate.');
+	else
+		%client.Logic_LoadGate(%dbName.getID());
+}
+
 function serverCmdlMoveGate(%client)
 {
 	if(isObject(%client.LGM_gate) && !isObject(%client.LGM_port))
@@ -225,6 +242,85 @@ function GameConnection::Logic_MakeGate(%this, %pos, %wid, %len, %height)
 	messageClient(%this, '', '\c3/lAddPorts\c6 - add ports to the gate');
 	messageClient(%this, '', '\c3/lSaveGate\c6 - saves a .blb and .cs to config/server/logicgates/');
 	messageClient(%this, '', '\c3/lDeleteGate\c6 - deletes the gate being worked on');
+}
+
+function GameConnection::Logic_LoadGate(%this, %db)
+{
+	serverCmdlMakeGate(%this, %db.brickSizeX, %db.brickSizeY, %db.brickSizeZ);
+
+	%gate = %this.LGM_gate;
+	%gate.gateName = %db.logicUIName;
+	%gate.gateDesc = %db.logicUIDesc;
+
+	%gpos = %gate.getPosition();
+
+	%dirRot[0] = "-1 0 0";
+	%dirRot[1] = "0 1 0";
+	%dirRot[2] = "1 0 0";
+	%dirRot[3] = "0 -1 0";
+	%dirRot[4] = "0 0 1";
+	%dirRot[5] = "0 0 -1";
+
+	%ports = %db.numLogicPorts;
+	for(%i = 0; %i < %ports; %i++)
+	{
+		%dir = %db.logicPortDir[%i];
+		%type = %db.logicPortType[%i];
+		%portPos = %db.logicPortPos[%i];
+
+		// if(%i < %ports-1)
+		// {
+		// 	%pos = getWord(%portPos, 0)*0.0625 SPC getWord(%portPos, 1)*0.0625 SPC getWord(%portPos, 2)*0.025;
+		// 	%portPos = getWord(%portPos, 0)/16 SPC getWord(%portPos, 1)/16 SPC getWord(%portPos, 2)/20;
+		// }
+		// else
+		// {
+		// 	%pos = getWord(%portPos, 0)*0.25 SPC getWord(%portPos, 1)*0.25 SPC getWord(%portPos, 2)*0.1;
+		// 	%portPos = getWord(%portPos, 0)/4 SPC getWord(%portPos, 1)/4 SPC getWord(%portPos, 2)/5;
+		// }
+
+		%pos = getWord(%portPos, 0)*0.25 SPC getWord(%portPos, 1)*0.25 SPC getWord(%portPos, 2)*0.1;
+		%portPos = getWord(%portPos, 0)/4 SPC getWord(%portPos, 1)/4 SPC getWord(%portPos, 2)/5;
+
+		%norm = %dirRot[%dir];
+		%nx = getWord(%norm, 0);
+		%ny = getWord(%norm, 1);
+		%nz = getWord(%norm, 2);
+
+		%isVert = false;
+		if(mAbs(%nx) == 1)
+			%euler = "0 0" SPC -90*%nx;
+		else if(mAbs(%ny) == 1)
+			%euler = "0 0" SPC 90*%ny-90;
+		else if(mAbs(%nz) == 1)
+		{
+			%euler = 180-(90*(%nz+1)) SPC "0 0";
+			%isVert = true;
+		}
+
+		if(%type == 0)
+			%data = %isVert ? "Illogic_BrickOutputVertData" : "Illogic_BrickOutputData";
+		else if(%type == 1)
+			%data = %isVert ? "Illogic_BrickInputVertData" : "Illogic_BrickInputData";
+
+		%rot = getWords(MatrixCreateFromEuler(vectorScale(%euler, $pi/180)), 3, 6);
+		%shape = new StaticShape()
+		{
+			datablock = %data;
+			portType = %type;
+			portNorm = %norm;
+			portPos = %portPos;
+			portDir = %dir;
+			isVert = %isVert;
+			state = 0;
+			portName = %db.logicPortUIName[%i];
+		};
+		%shape.setTransform(vectorAdd(%gpos, %pos) SPC %rot);
+
+		missionCleanup.add(%shape);
+		%gate.ports[%gate.portCount] = %shape;
+		%gate.portCount++;
+	}
 }
 
 function GameConnection::Logic_DeleteGate(%this)

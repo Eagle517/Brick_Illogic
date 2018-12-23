@@ -56,17 +56,6 @@ function serverCmdLS(%client)
 		Logic_MainTick();
 		if($LBC::Opts::Enabled == false)
 			cancel($LBC::Schedules::MainSched);
-		messageAll('', '\c3%1\c6 has forced a logic tick.', %client.name);
-	}
-}
-
-function serverCmdLS(%client)
-{
-	if(%client.isAdmin || %client.isSuperAdmin)
-	{
-		Logic_MainTick();
-		if($LBC::Opts::Enabled == false)
-			cancel($LBC::Schedules::MainSched);
-		messageAll('', '\c3%1\c6 has forced a logic tick.', %client.name);
+		commandToAll('bottomprint', "\c3" @ %client.name @ "\c6 has forced a logic tick.", 3, 1);
 	}
 }

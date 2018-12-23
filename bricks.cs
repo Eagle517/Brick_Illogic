@@ -44,24 +44,48 @@ package IllogicBricks
 	function fxDTSBrickData::onPlant(%this, %obj)
 	{
 		parent::onPlant(%this, %obj);
-		if(%this.isLogic)
+
+		if(isObject(%obj))
 		{
-			if(%this.isLogicWire)
-				Logic_AddWire(%obj);
-			else if(%this.isLogicGate)
-				Logic_AddGate(%obj);
+			%client = %obj.getGroup().client;
+			if(isObject(%client) && !%client.isAdmin && !%client.isSuperAdmin && %this.isLogicAdminOnly)
+			{
+				%client.centerPrint("You cannot place this gate.", 2);
+				%obj.schedule(0, "delete");
+				return;
+			}
+
+			if(%this.isLogic)
+			{
+				if(%this.isLogicWire)
+					Logic_AddWire(%obj);
+				else if(%this.isLogicGate)
+					Logic_AddGate(%obj);
+			}
 		}
 	}
 
 	function fxDTSBrickData::onLoadPlant(%this, %obj)
 	{
 		parent::onLoadPlant(%this, %obj);
-		if(%this.isLogic)
+
+		if(isObject(%obj))
 		{
-			if(%this.isLogicWire)
-				Logic_AddWire(%obj);
-			else if(%this.isLogicGate)
-				Logic_AddGate(%obj);
+			%client = %obj.getGroup().client;
+			if(isObject(%client) && !%client.isAdmin && !%client.isSuperAdmin && %this.isLogicAdminOnly)
+			{
+				%client.centerPrint("You cannot place this gate.", 2);
+				%obj.schedule(0, "delete");
+				return;
+			}
+
+			if(%this.isLogic)
+			{
+				if(%this.isLogicWire)
+					Logic_AddWire(%obj);
+				else if(%this.isLogicGate)
+					Logic_AddGate(%obj);
+			}
 		}
 	}
 
@@ -160,6 +184,8 @@ exec("./bricks/math/8bitDivisor.cs");
 exec("./bricks/memory/DFlipFlop.cs");
 exec("./bricks/memory/256ByteRAM.cs");
 exec("./bricks/memory/16bit128KiBRAM.cs");
+exec("./bricks/memory/DFlipflopGridMemory.cs");
+exec("./bricks/memory/DFlipflopGridMemory2.cs");
 
 //Chips
 exec("./bricks/chips/Enabler.cs");
@@ -175,5 +201,7 @@ exec("./bricks/chips/LegacyEnabler.cs");
 exec("./bricks/special/Clock.cs");
 exec("./bricks/special/bridge.cs");
 exec("./bricks/special/TextBrick.cs");
-exec("./bricks/special/pixel.cs");
+exec("./bricks/special/Pixel.cs");
+exec("./bricks/special/HorizontalPixel.cs");
 exec("./bricks/special/SpecialScreenMemory1.cs");
+exec("./bricks/special/robot/RobotController.cs");

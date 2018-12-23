@@ -132,12 +132,23 @@ function Logic_AddGate(%obj)
 					for(%a = 0; %a < %ports; %a++)
 					{
 						%aport = $LBC::Bricks::Port[%sobj, %a];
+						%adir = $LBC::Ports::Dir[%aport];
+
+						if(%dir > 3)
+						{
+							if(%dir == %adir)
+								continue;
+						}
+						else if(mabs(%adir-%dir) != 2)
+							continue;
 
 						%xx = $LBC::Ports::ConnPos[%portID, 0]-$LBC::Ports::ConnPos[%aport, 0];
 						%yy = $LBC::Ports::ConnPos[%portID, 1]-$LBC::Ports::ConnPos[%aport, 1];
 						%zz = $LBC::Ports::ConnPos[%portID, 2]-$LBC::Ports::ConnPos[%aport, 2];
 						%distSqr = (%xx*%xx)+(%yy*%yy)+(%zz*%zz);
-						if(%distSqr <= 0.011 && (%distSqr < %bestDist || %bestDist == -1))
+						// talk(%obj.getDatablock().logicPortUIName[%i] SPC %sobj.getDatablock().logicPortUIName[%a]);
+						// talk(%dir SPC %adir SPC %distSqr SPC %zz);
+						if((%distSqr <= 0.011 || %zz <= 0.41) && (%distSqr < %bestDist || %bestDist == -1))
 						{
 							%bestDist = %distSqr;
 							%bestPort = %aport;
