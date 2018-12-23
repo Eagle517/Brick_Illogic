@@ -267,6 +267,16 @@ datablock fxDTSBrickData(LogicWire1x2x5Data : LogicWire1x64fData)
 	brickFile = "Add-Ons/Brick_Illogic/bricks/blb/wires/1x2x5.blb";
 };
 
+datablock fxDTSBrickData(LogicWire64x64fData : brick64x64fData)
+{
+	category = "Logic Bricks";
+	subCategory = "Wires";
+	uiName = "Wire 64x64f";
+
+	isLogic = true;
+	isLogicWire = true;
+};
+
 //VISUAL
 datablock fxDTSBrickData(LogicWire1x1fVisualData : LogicWire1x1fData)
 {
@@ -300,6 +310,17 @@ datablock fxDTSBrickData(LogicWire1x2x5VisualData : LogicWire1x2x5Data)
 {
 	subCategory = "Wires - Special";
 	uiName = "Visual Wire 1x2x5";
+	isLogicVisual = true;
+};
+
+datablock fxDTSBrickData(LogicWire2x2fVisualData : brick2x2fData)
+{
+	category = "Logic Bricks";
+	subCategory = "Wires - Special";
+	uiName = "Visual Wire 2x2f";
+
+	isLogic = true;
+	isLogicWire = true;
 	isLogicVisual = true;
 };
 
